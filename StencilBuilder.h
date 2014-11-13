@@ -134,68 +134,55 @@ namespace StencilBuilder
     return Operator<Left, Add, Right>(left, right);
   }
 
-  /*
-  // Scalar class representing the scalar, whose operations expand compile time
-  struct Scalar
-  {
-    Scalar(double *data) : data_(data) {}
-
-    double operator[](const int i) const { return data_[i]; }
-
-    template<class T> void operator= (const T &expression) { data_[0] =  expression[0]; }
-    template<class T> void operator+=(const T &expression) { data_[0] += expression[0]; }
-
-    double *data_;
-  };
-  */
-
   // Field class representing the field, whose operations expand compile time.
-  struct Field
+  class Field
   {
-    Field(const Grid &grid) : grid_(grid) { data_ = new double[grid_.ntot]; }
-    ~Field() { delete[] data_; }
+    public:
+      Field(const Grid &grid) : grid_(grid) { data_ = new double[grid_.ntot]; }
+      ~Field() { delete[] data_; }
 
-    double& operator[](const int i) const { return data_[i]; }
+      double& operator[](const int i) const { return data_[i]; }
 
-    double& operator()(const int i, const int j, const int k) const
-    { return data_[i + j*grid_.icells + k*grid_.ijcells]; }
+      double& operator()(const int i, const int j, const int k) const
+      { return data_[i + j*grid_.icells + k*grid_.ijcells]; }
 
-    // Assignment operator, this operator stats the inline expansion.
-    template<class T> void operator= (const T &expression)
-    {
-      const int jj = grid_.icells;
-      const int kk = grid_.ijcells;
+      // Assignment operator, this operator starts the inline expansion.
+      template<class T> void operator= (const T &expression)
+      {
+        const int jj = grid_.icells;
+        const int kk = grid_.ijcells;
 
-      for (int k=grid_.kstart; k<grid_.kend; ++k)
-        for (int j=grid_.jstart; j<grid_.jend; ++j)
-          #pragma ivdep
-          for (int i=grid_.istart; i<grid_.iend; ++i)
-          {
-            const int ijk = i + j*jj + k*kk;
-            data_[ijk] = expression[ijk];
-          }
-    }
+        for (int k=grid_.kstart; k<grid_.kend; ++k)
+          for (int j=grid_.jstart; j<grid_.jend; ++j)
+            #pragma ivdep
+            for (int i=grid_.istart; i<grid_.iend; ++i)
+            {
+              const int ijk = i + j*jj + k*kk;
+              data_[ijk] = expression[ijk];
+            }
+      }
 
-    // Compound assignment operator, this operator stats the inline expansion.
-    template<class T> void operator+=(const T &expression)
-    {
-      const int jj = grid_.icells;
-      const int kk = grid_.ijcells;
+      // Compound assignment operator, this operator starts the inline expansion.
+      template<class T> void operator+=(const T &expression)
+      {
+        const int jj = grid_.icells;
+        const int kk = grid_.ijcells;
 
-      for (int k=grid_.kstart; k<grid_.kend; ++k)
-        for (int j=grid_.jstart; j<grid_.jend; ++j)
-          #pragma ivdep
-          for (int i=grid_.istart; i<grid_.iend; ++i)
-          {
-            const int ijk = i + j*jj + k*kk;
-            data_[ijk] += expression[ijk];
-          }
-    }
+        for (int k=grid_.kstart; k<grid_.kend; ++k)
+          for (int j=grid_.jstart; j<grid_.jend; ++j)
+            #pragma ivdep
+            for (int i=grid_.istart; i<grid_.iend; ++i)
+            {
+              const int ijk = i + j*jj + k*kk;
+              data_[ijk] += expression[ijk];
+            }
+      }
 
-    // Reference to the grid on which the field is created
-    const Grid &grid_;
-    // Pointer to the raw data.
-    double *data_;
+    private:
+      // Reference to the grid on which the field is created
+      const Grid &grid_;
+      // Pointer to the raw data.
+      double *data_;
   };
 
   // Specialization for assignment with a constant.

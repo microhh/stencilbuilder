@@ -12,9 +12,9 @@ int main()
   const int jtot = 256;
   const int ktot = 256;
   const int gc   = 4;
-  const int iter = 10;
+  const int iter = 5;
 
-  // Calculate the required variables.
+  // Initialize the grid.
   Grid grid(itot, jtot, ktot, gc);
 
   // Map the StencilBuilder Field to the raw array.
@@ -29,6 +29,7 @@ int main()
     a[n] = 0.001 * (std::rand() % 1000) - 0.5;
     b[n] = 0.001 * (std::rand() % 1000) - 0.5;
     c[n] = 0.001 * (std::rand() % 1000) - 0.5;
+
     at[n] = 0.;
   }
 
@@ -55,8 +56,7 @@ int main()
     at = 0.;
   }
 
-  // Print a value in the middle of the field to check whether
-  // both versions give the same result.
+  // Print a value in the middle of the field.
   std::cout << std::setprecision(8) << "a = " << a(itot/2, jtot/2, ktot/2) << std::endl;
 
   return 0;

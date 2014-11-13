@@ -93,7 +93,7 @@ int main()
   const int jtot = 256;
   const int ktot = 256;
   const int gc   = 4;
-  const int iter = 10;
+  const int iter = 5;
 
   // Calculate the required variables.
   const int ntot = (itot+2*gc)*(jtot+2*gc)*(ktot+2*gc);
@@ -141,8 +141,7 @@ int main()
              icells, ijcells);
   }
 
-  // Print a value in the middle of the field to check whether
-  // both versions give the same result.
+  // Print a value in the middle of the field.
   const int ijk = itot/2 + (jtot/2)*icells + (ktot/2)*ijcells;
   std::cout << std::setprecision(8) << "a = " << a_data[ijk] << std::endl;
 
