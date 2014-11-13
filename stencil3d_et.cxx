@@ -17,7 +17,7 @@ int main()
   // Initialize the grid.
   Grid grid(itot, jtot, ktot, gc);
 
-  // Map the StencilBuilder Field to the raw array.
+  // Create fields on the grid.
   Field a (grid);
   Field b (grid);
   Field c (grid);
