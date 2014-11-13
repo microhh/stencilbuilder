@@ -1,3 +1,5 @@
+#include<memory>
+
 namespace StencilBuilder
 {
   struct Grid
@@ -138,8 +140,9 @@ namespace StencilBuilder
   class Field
   {
     public:
-      Field(const Grid &grid) : grid_(grid) { data_ = new double[grid_.ntot]; }
-      ~Field() { delete[] data_; }
+      Field(const Grid &grid)
+        : grid_(grid),
+          data_(new double[grid_.ntot]) {}
 
       double& operator[](const int i) const { return data_[i]; }
 
@@ -181,8 +184,8 @@ namespace StencilBuilder
     private:
       // Reference to the grid on which the field is created
       const Grid &grid_;
-      // Pointer to the raw data.
-      double *data_;
+      // Smart pointer to the raw data.
+      std::unique_ptr<double[]> data_;
   };
 
   // Specialization for assignment with a constant.
