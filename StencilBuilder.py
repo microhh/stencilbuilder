@@ -40,7 +40,7 @@ class NodeStencil(Node):
   def __init__(self, inner):
     self.inner = inner
     self.depth = inner.depth + 1
-    if(type(inner) == Scalar):
+    if (type(inner) == Scalar):
       self.pad = 6
     else:
       self.pad = 8
@@ -53,10 +53,14 @@ class NodeStencil(Node):
     return ci0*self.inner[i-2] + ci1*self.inner[i-1] + ci2*self.inner[i] + ci3*self.inner[i+1]
 
   def getString(self, i, pad):
-    if(self.depth > 1):
+    if (self.depth > 1):
       ws = ''.rjust(pad)
       pad += self.pad
-      return "( ci0 * {0}\n{ws}+ ci1 * {1}\n{ws}+ ci2 * {2}\n{ws}+ ci3 * {3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad), ws=ws)
+      if (self.depth > 2):
+        lb = '\n'
+      else:
+        lb = ''
+      return "( ci0 * {0}\n{lb}{ws}+ ci1 * {1}\n{lb}{ws}+ ci2 * {2}\n{lb}{ws}+ ci3 * {3} ){lb}".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad), ws=ws, lb=lb)
     else:
       return "( ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad))
 
@@ -72,9 +76,9 @@ class Scalar(Node):
 
   def getString(self, i, pad):
     nn = i-3
-    if(nn > 0):
+    if (nn > 0):
       return "{0}[i+{1}]".format(self.name, nn)
-    elif(nn < 0):
+    elif (nn < 0):
       return "{0}[i-{1}]".format(self.name, abs(nn))
     else:
       return "{0}[i  ]".format(self.name, abs(nn))
