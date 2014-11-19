@@ -81,5 +81,5 @@ d = Scalar(d_data, "d")
 
 # d = ScalarAdd( ScalarMult(a,b), c )
 d = interp( interp(a) + interp(b) ) * c
-print(d.getString(3))
+print("d[i] = {0};".format(d.getString(3)))
 print(d[3])
