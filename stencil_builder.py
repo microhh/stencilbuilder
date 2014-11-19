@@ -13,6 +13,8 @@ class NodeAdd(Node):
   def __init__(self, left, right):
     self.left  = left
     self.right = right
+    self.depth = max(left.depth, right.depth)
+    self.nest  = left.nest + 1
 
   def __getitem__(self, i):
     return self.left[i] + self.right[i]
@@ -24,6 +26,8 @@ class NodeMult(Node):
   def __init__(self, left, right):
     self.left  = left
     self.right = right
+    self.depth = max(left.depth, right.depth)
+    self.nest  = left.nest + 1
 
   def __getitem__(self, i):
     return self.left[i] * self.right[i]
@@ -34,6 +38,8 @@ class NodeMult(Node):
 class NodeStencil(Node):
   def __init__(self, inner):
     self.inner = inner
+    self.depth = inner.depth + 1
+    self.nest  = inner.nest + 1
 
   def __getitem__(self, i):
     ci0 = 1.
@@ -43,14 +49,19 @@ class NodeStencil(Node):
     return ci0*self.inner[i-2] + ci1*self.inner[i-1] + ci2*self.inner[i] + ci3*self.inner[i+1]
 
   def getString(self, i):
-    return "( ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3} )".format(self.inner.getString(i-2), self.inner.getString(i-1), self.inner.getString(i), self.inner.getString(i+1))
+    if(self.depth > 1):
+      pad = (self.depth-1)*2
+      return "( ci0*{0}\n{4:{pad}}+ ci1*{1}\n{4:{pad}}+ ci2*{2}\n{4:{pad}}+ ci3*{3} )".format(self.inner.getString(i-2), self.inner.getString(i-1), self.inner.getString(i), self.inner.getString(i+1), ' ', pad = pad)
+    else:
+      return "( ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3} )".format(self.inner.getString(i-2), self.inner.getString(i-1), self.inner.getString(i), self.inner.getString(i+1))
 
 # Scalar class representing one grid cell
 class Scalar(Node):
   def __init__(self, data, name):
-    self.data = data
-    self.name = name
-    self.nest = 0
+    self.data  = data
+    self.name  = name
+    self.depth = 0
+    self.nest  = 0
 
   def __getitem__(self, i):
     return self.data[i]
@@ -79,7 +90,16 @@ b = Scalar(b_data, "b")
 c = Scalar(c_data, "c")
 d = Scalar(d_data, "d")
 
-# d = ScalarAdd( ScalarMult(a,b), c )
+print( "interp( interp(a) + interp(b) ) * c")
 d = interp( interp(a) + interp(b) ) * c
-print("d[i] = {0};".format(d.getString(3)))
-print(d[3])
+print("{0};".format(d.getString(3)))
+
+
+print( "interp( c * interp(a) + interp(b) )")
+d = interp( c * interp(a) + interp(b) )
+print("{0};".format(d.getString(3)))
+
+print( "interp( interp( interp(a) + interp(b) ) )")
+d = interp( interp( interp(a) + interp(b) ) )
+print("{0};".format(d.getString(3)))
+
