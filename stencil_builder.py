@@ -14,32 +14,34 @@ class NodeAdd(Node):
     self.left  = left
     self.right = right
     self.depth = max(left.depth, right.depth)
-    self.nest  = left.nest + 1
+    self.pad   = 2
 
   def __getitem__(self, i):
     return self.left[i] + self.right[i]
 
-  def getString(self, i):
-    return "( {0} + {1} )".format(self.left.getString(i), self.right.getString(i))
+  def getString(self, i, pad):
+    pad += self.pad
+    return "( {0} + {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
 
 class NodeMult(Node):
   def __init__(self, left, right):
     self.left  = left
     self.right = right
     self.depth = max(left.depth, right.depth)
-    self.nest  = left.nest + 1
+    self.pad   = 2
 
   def __getitem__(self, i):
     return self.left[i] * self.right[i]
 
-  def getString(self, i):
-    return "( {0} * {1} )".format(self.left.getString(i), self.right.getString(i))
+  def getString(self, i, pad):
+    pad += self.pad
+    return "( {0} * {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
 
 class NodeStencil(Node):
   def __init__(self, inner):
     self.inner = inner
     self.depth = inner.depth + 1
-    self.nest  = inner.nest + 1
+    self.pad = 6
 
   def __getitem__(self, i):
     ci0 = 1.
@@ -48,12 +50,13 @@ class NodeStencil(Node):
     ci3 = 1.
     return ci0*self.inner[i-2] + ci1*self.inner[i-1] + ci2*self.inner[i] + ci3*self.inner[i+1]
 
-  def getString(self, i):
+  def getString(self, i, pad):
     if(self.depth > 1):
-      pad = (self.depth-1)*2
-      return "( ci0*{0}\n{4:{pad}}+ ci1*{1}\n{4:{pad}}+ ci2*{2}\n{4:{pad}}+ ci3*{3} )".format(self.inner.getString(i-2), self.inner.getString(i-1), self.inner.getString(i), self.inner.getString(i+1), ' ', pad = pad)
+      ws = ''.rjust(pad)
+      pad += self.pad
+      return "( ci0*{0}\n{ws}+ ci1*{1}\n{ws}+ ci2*{2}\n{ws}+ ci3*{3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad), ws=ws)
     else:
-      return "( ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3} )".format(self.inner.getString(i-2), self.inner.getString(i-1), self.inner.getString(i), self.inner.getString(i+1))
+      return "( ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad))
 
 # Scalar class representing one grid cell
 class Scalar(Node):
@@ -61,12 +64,11 @@ class Scalar(Node):
     self.data  = data
     self.name  = name
     self.depth = 0
-    self.nest  = 0
 
   def __getitem__(self, i):
     return self.data[i]
 
-  def getString(self, i):
+  def getString(self, i, pad):
     nn = i-3
     if(nn > 0):
       return "{0}[i+{1}]".format(self.name, nn)
@@ -92,14 +94,16 @@ d = Scalar(d_data, "d")
 
 print( "interp( interp(a) + interp(b) ) * c")
 d = interp( interp(a) + interp(b) ) * c
-print("{0};".format(d.getString(3)))
-
+print("d[i] = {0};".format(d.getString(3, 7)))
 
 print( "interp( c * interp(a) + interp(b) )")
 d = interp( c * interp(a) + interp(b) )
-print("{0};".format(d.getString(3)))
+print("d[i] = {0};".format(d.getString(3, 7)))
 
 print( "interp( interp( interp(a) + interp(b) ) )")
 d = interp( interp( interp(a) + interp(b) ) )
-print("{0};".format(d.getString(3)))
+print("d[i] = {0};".format(d.getString(3, 7)))
 
+print( "interp( interp( interp( interp(a) ) ) )" )
+d = interp( interp( interp( interp(a) ) ) )
+print("d[i] = {0};".format(d.getString(3, 7)))
