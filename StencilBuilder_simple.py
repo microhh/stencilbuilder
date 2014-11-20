@@ -19,8 +19,18 @@ class NodeAdd(Node):
     return self.left[i] + self.right[i]
 
   def getString(self, i, pad):
-    pad += self.pad
-    return "( {0} + {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
+    if (self.depth > 1):
+      ws = ''.rjust(pad)
+      pad += self.pad
+
+      lb = ''
+      for n in range(1, self.depth):
+        lb = lb + '\n'
+
+      return "( {0}\n{lb}{ws}+ {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad), ws=ws, lb=lb)
+
+    else:
+      return "( {0} + {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
 
 class NodeMult(Node):
   def __init__(self, left, right):
@@ -33,8 +43,18 @@ class NodeMult(Node):
     return self.left[i] * self.right[i]
 
   def getString(self, i, pad):
-    pad += self.pad
-    return "( {0} * {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
+    if (self.depth > 1):
+      ws = ''.rjust(pad)
+      pad += self.pad
+
+      lb = ''
+      for n in range(1, self.depth):
+        lb = lb + '\n'
+
+      return "( {0}\n{lb}{ws}* {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad), ws=ws, lb=lb)
+
+    else:
+      return "( {0} * {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
 
 class NodeStencil(Node):
   def __init__(self, inner):
