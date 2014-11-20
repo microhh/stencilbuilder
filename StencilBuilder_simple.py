@@ -1,7 +1,7 @@
 #!/bin/python
 
 # Base Node class
-class Node:
+class Node(object):
   def __add__(self, right):
     return NodeAdd(self, right)
 
@@ -86,10 +86,7 @@ class NodeStencil(Node):
   def __init__(self, inner):
     self.inner = inner
     self.depth = inner.depth + 1
-    if (type(inner) == Scalar):
-      self.pad = 6
-    else:
-      self.pad = 8
+    self.pad = 8
 
   def getString(self, i, pad, maxDepth):
     maxDepth = max(self.depth, maxDepth)
@@ -114,8 +111,15 @@ class NodeStencil(Node):
           self.inner.getString(i  , pad, maxDepth),
           self.inner.getString(i+1, pad, maxDepth),
           ws=ws, lb=lb, ob=ob, cb=cb)
-    else:
+    elif (type(self.inner) == Scalar):
       return "{ob}ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3}{cb}".format(
+          self.inner.getString(i-2, pad, maxDepth),
+          self.inner.getString(i-1, pad, maxDepth),
+          self.inner.getString(i  , pad, maxDepth),
+          self.inner.getString(i+1, pad, maxDepth),
+          ob=ob, cb=cb)
+    else:
+      return "{ob}ci0 * {0} + ci1 * {1} + ci2 * {2} + ci3 * {3}{cb}".format(
           self.inner.getString(i-2, pad, maxDepth),
           self.inner.getString(i-1, pad, maxDepth),
           self.inner.getString(i  , pad, maxDepth),
