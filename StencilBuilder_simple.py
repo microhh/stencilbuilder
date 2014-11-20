@@ -13,12 +13,21 @@ class NodeAdd(Node):
     self.left  = left
     self.right = right
     self.depth = max(left.depth, right.depth)
-    self.pad   = 2
+    if(self.depth > 1):
+      self.pad = 2
+    else:
+      self.pad = 0
 
-  def __getitem__(self, i):
-    return self.left[i] + self.right[i]
+  def getString(self, i, pad, maxDepth):
+    maxDepth = max(self.depth, maxDepth)
+    if (self.depth == maxDepth):
+      pad = pad - 2
+      ob = ''
+      cb = ''
+    else:
+      ob = '( '
+      cb = ' )'
 
-  def getString(self, i, pad):
     if (self.depth > 1):
       ws = ''.rjust(pad)
       pad += self.pad
@@ -27,34 +36,51 @@ class NodeAdd(Node):
       for n in range(1, self.depth):
         lb = lb + '\n'
 
-      return "( {0}\n{lb}{ws}+ {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad), ws=ws, lb=lb)
+      return "{ob}{0}\n{lb}{ws}+ {1}{cb}".format(self.left.getString(i, pad, maxDepth),
+                                                 self.right.getString(i, pad, maxDepth),
+                                                 ws=ws, lb=lb, ob=ob, cb=cb)
 
     else:
-      return "( {0} + {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
+      return "{ob}{0} + {1}{cb}".format(self.left.getString(i, pad, maxDepth),
+                                        self.right.getString(i, pad, maxDepth),
+                                        ob=ob, cb=cb)
 
 class NodeMult(Node):
   def __init__(self, left, right):
     self.left  = left
     self.right = right
     self.depth = max(left.depth, right.depth)
-    self.pad   = 2
+    if(self.depth > 1):
+      self.pad = 2
+    else:
+      self.pad = 0
 
-  def __getitem__(self, i):
-    return self.left[i] * self.right[i]
+  def getString(self, i, pad, maxDepth):
+    maxDepth = max(self.depth, maxDepth)
+    if (self.depth == maxDepth):
+      pad = pad - 2
+      ob = ''
+      cb = ''
+    else:
+      ob = '( '
+      cb = ' )'
 
-  def getString(self, i, pad):
     if (self.depth > 1):
       ws = ''.rjust(pad)
       pad += self.pad
 
       lb = ''
-      for n in range(1, self.depth):
+      for n in range(1, self.depth, maxDepth):
         lb = lb + '\n'
 
-      return "( {0}\n{lb}{ws}* {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad), ws=ws, lb=lb)
+      return "{ob}{0}\n{lb}{ws}* {1}{cb}".format(self.left.getString(i, pad, maxDepth),
+                                                 self.right.getString(i, pad, maxDepth),
+                                                 ws=ws, lb=lb, ob=ob, cb=cb)
 
     else:
-      return "( {0} * {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
+      return "{ob}{0} * {1}{cb}".format(self.left.getString(i, pad, maxDepth),
+                                        self.right.getString(i, pad, maxDepth),
+                                        ob=ob, cb=cb)
 
 class NodeStencil(Node):
   def __init__(self, inner):
@@ -65,14 +91,16 @@ class NodeStencil(Node):
     else:
       self.pad = 8
 
-  def __getitem__(self, i):
-    ci0 = 1.
-    ci1 = 1.
-    ci2 = 1.
-    ci3 = 1.
-    return ci0*self.inner[i-2] + ci1*self.inner[i-1] + ci2*self.inner[i] + ci3*self.inner[i+1]
+  def getString(self, i, pad, maxDepth):
+    maxDepth = max(self.depth, maxDepth)
+    if (self.depth == maxDepth):
+      pad = pad - 2
+      ob = ''
+      cb = ''
+    else:
+      ob = '( '
+      cb = ' )'
 
-  def getString(self, i, pad):
     if (self.depth > 1):
       ws = ''.rjust(pad)
       pad += self.pad
@@ -80,9 +108,19 @@ class NodeStencil(Node):
       lb = ''
       for n in range(2, self.depth):
         lb = lb + '\n'
-      return "( ci0 * {0}\n{lb}{ws}+ ci1 * {1}\n{lb}{ws}+ ci2 * {2}\n{lb}{ws}+ ci3 * {3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad), ws=ws, lb=lb)
+      return "{ob}ci0 * {0}\n{lb}{ws}+ ci1 * {1}\n{lb}{ws}+ ci2 * {2}\n{lb}{ws}+ ci3 * {3}{cb}".format(
+          self.inner.getString(i-2, pad, maxDepth),
+          self.inner.getString(i-1, pad, maxDepth),
+          self.inner.getString(i  , pad, maxDepth),
+          self.inner.getString(i+1, pad, maxDepth),
+          ws=ws, lb=lb, ob=ob, cb=cb)
     else:
-      return "( ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad))
+      return "{ob}ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3}{cb}".format(
+          self.inner.getString(i-2, pad, maxDepth),
+          self.inner.getString(i-1, pad, maxDepth),
+          self.inner.getString(i  , pad, maxDepth),
+          self.inner.getString(i+1, pad, maxDepth),
+          ob=ob, cb=cb)
 
 # Scalar class representing one grid cell
 class Scalar(Node):
@@ -91,17 +129,13 @@ class Scalar(Node):
     self.name  = name
     self.depth = 0
 
-  def __getitem__(self, i):
-    return self.data[i]
-
-  def getString(self, i, pad):
-    nn = i-3
-    if (nn > 0):
-      return "{0}[i+{1}]".format(self.name, nn)
-    elif (nn < 0):
-      return "{0}[i-{1}]".format(self.name, abs(nn))
+  def getString(self, i, pad, maxDepth):
+    if (i > 0):
+      return "{0}[i+{1}]".format(self.name, i)
+    elif (i < 0):
+      return "{0}[i-{1}]".format(self.name, abs(i))
     else:
-      return "{0}[i  ]".format(self.name, abs(nn))
+      return "{0}[i  ]".format(self.name, abs(i))
 
 # Define functions.
 def interp(inner):
