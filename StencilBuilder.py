@@ -16,8 +16,18 @@ class NodeAdd(Node):
     self.pad   = 2
 
   def getString(self, i, pad):
-    pad += self.pad
-    return "( {0} + {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
+    if (self.depth > 1):
+      ws = ''.rjust(pad)
+      pad += self.pad
+
+      lb = ''
+      for n in range(1, self.depth):
+        lb = lb + '\n'
+
+      return "( {0}\n{lb}{ws}+ {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad), ws=ws, lb=lb)
+
+    else:
+      return "( {0} + {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
 
 class NodeMult(Node):
   def __init__(self, left, right):
@@ -27,8 +37,18 @@ class NodeMult(Node):
     self.pad   = 2
 
   def getString(self, i, pad):
-    pad += self.pad
-    return "( {0} * {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
+    if (self.depth > 1):
+      ws = ''.rjust(pad)
+      pad += self.pad
+
+      lb = ''
+      for n in range(1, self.depth):
+        lb = lb + '\n'
+
+      return "( {0}\n{lb}{ws}* {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad), ws=ws, lb=lb)
+
+    else:
+      return "( {0} * {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
 
 class NodeStencil(Node):
   def __init__(self, inner):
@@ -79,13 +99,9 @@ class Scalar(Node):
     else:
       return "{0}[i  ]".format(self.name, abs(i))
 
-  def printStencil(self, pad):
-    self.getString(0, pad)
-
 # Define functions.
 def interp(inner):
   return NodeStencilInterp(inner)
 
 def grad(inner):
   return NodeStencilGrad(inner)
-

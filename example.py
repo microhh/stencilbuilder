@@ -9,5 +9,5 @@ w  = Scalar("c")
 ut = Scalar("d")
 
 print( "duu/dx")
-ut = grad( interp(u) * interp(u) )
-print("ut[i] = {0};".format(ut.getString(0, 8)))
+ut = grad( interp(u) * interp(u) ) + grad( interp(v) * interp(u) ) + grad( interp(w) * interp(u) )
+print("ut[i] = {0};".format(ut.getString(0,9)))
