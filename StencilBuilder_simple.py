@@ -39,6 +39,10 @@ class NodeAdd(Node):
       return "{ob}{0}\n{lb}{ws}+ {1}{cb}".format(self.left.getString(i, pad, maxDepth),
                                                  self.right.getString(i, pad, maxDepth),
                                                  ws=ws, lb=lb, ob=ob, cb=cb)
+    elif (type(self.left) == Scalar and type(self.right) == Scalar):
+      return "{ob}{0}+{1}{cb}".format(self.left.getString(i, pad, maxDepth),
+                                      self.right.getString(i, pad, maxDepth),
+                                      ob=ob, cb=cb)
 
     else:
       return "{ob}{0} + {1}{cb}".format(self.left.getString(i, pad, maxDepth),
@@ -77,6 +81,10 @@ class NodeMult(Node):
                                                  self.right.getString(i, pad, maxDepth),
                                                  ws=ws, lb=lb, ob=ob, cb=cb)
 
+    elif (type(self.left) == Scalar and type(self.right) == Scalar):
+      return "{ob}{0}*{1}{cb}".format(self.left.getString(i, pad, maxDepth),
+                                      self.right.getString(i, pad, maxDepth),
+                                      ob=ob, cb=cb)
     else:
       return "{ob}{0} * {1}{cb}".format(self.left.getString(i, pad, maxDepth),
                                         self.right.getString(i, pad, maxDepth),
