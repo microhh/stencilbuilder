@@ -15,9 +15,6 @@ class NodeAdd(Node):
     self.depth = max(left.depth, right.depth)
     self.pad   = 2
 
-  def __getitem__(self, i):
-    return self.left[i] + self.right[i]
-
   def getString(self, i, pad):
     pad += self.pad
     return "( {0} + {1} )".format(self.left.getString(i, pad), self.right.getString(i, pad))
@@ -28,9 +25,6 @@ class NodeMult(Node):
     self.right = right
     self.depth = max(left.depth, right.depth)
     self.pad   = 2
-
-  def __getitem__(self, i):
-    return self.left[i] * self.right[i]
 
   def getString(self, i, pad):
     pad += self.pad
@@ -45,13 +39,7 @@ class NodeStencil(Node):
     else:
       self.pad = 8
 
-  def __getitem__(self, i):
-    ci0 = 1.
-    ci1 = 1.
-    ci2 = 1.
-    ci3 = 1.
-    return ci0*self.inner[i-2] + ci1*self.inner[i-1] + ci2*self.inner[i] + ci3*self.inner[i+1]
-
+class NodeStencilInterp(NodeStencil):
   def getString(self, i, pad):
     if (self.depth > 1):
       ws = ''.rjust(pad)
@@ -64,25 +52,40 @@ class NodeStencil(Node):
     else:
       return "( ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad))
 
+class NodeStencilGrad(NodeStencil):
+  def getString(self, i, pad):
+    if (self.depth > 1):
+      ws = ''.rjust(pad)
+      pad += self.pad
+
+      lb = ''
+      for n in range(2, self.depth):
+        lb = lb + '\n'
+      return "( cg0 * {0}\n{lb}{ws}+ cg1 * {1}\n{lb}{ws}+ cg2 * {2}\n{lb}{ws}+ cg3 * {3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad), ws=ws, lb=lb)
+    else:
+      return "( cg0*{0} + cg1*{1} + cg2*{2} + cg3*{3} )".format(self.inner.getString(i-2, pad), self.inner.getString(i-1, pad), self.inner.getString(i, pad), self.inner.getString(i+1, pad))
+
 # Scalar class representing one grid cell
 class Scalar(Node):
-  def __init__(self, data, name):
-    self.data  = data
+  def __init__(self, name):
     self.name  = name
     self.depth = 0
 
-  def __getitem__(self, i):
-    return self.data[i]
-
   def getString(self, i, pad):
-    nn = i-3
-    if (nn > 0):
-      return "{0}[i+{1}]".format(self.name, nn)
-    elif (nn < 0):
-      return "{0}[i-{1}]".format(self.name, abs(nn))
+    if (i > 0):
+      return "{0}[i+{1}]".format(self.name, i)
+    elif (i < 0):
+      return "{0}[i-{1}]".format(self.name, abs(i))
     else:
-      return "{0}[i  ]".format(self.name, abs(nn))
+      return "{0}[i  ]".format(self.name, abs(i))
+
+  def printStencil(self, pad):
+    self.getString(0, pad)
 
 # Define functions.
 def interp(inner):
-  return NodeStencil(inner)
+  return NodeStencilInterp(inner)
+
+def grad(inner):
+  return NodeStencilGrad(inner)
+
