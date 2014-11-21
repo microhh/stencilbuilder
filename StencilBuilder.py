@@ -106,7 +106,7 @@ class NodeStencilInterp(Node):
   def __init__(self, inner, dim):
     self.inner = inner
     self.depth = inner.depth + 1
-    self.pad = 6
+    self.pad = 8
 
     self.dim = dim
     self.loc = copy.deepcopy(inner.loc)
@@ -138,8 +138,8 @@ class NodeStencilInterp(Node):
       ob = ''
       cb = ''
     else:
-      ob = '('
-      cb = ')'
+      ob = '( '
+      cb = ' )'
 
     if (self.depth > 1):
       ws = ''.rjust(pad)
@@ -148,14 +148,21 @@ class NodeStencilInterp(Node):
       lb = ''
       for n in range(2, self.depth):
         lb = lb + '\n'
-      return "{ob}ci0*{0}\n{lb}{ws}+ ci1*{1}\n{lb}{ws}+ ci2*{2}\n{lb}{ws}+ ci3*{3}{cb}".format(
+      return "{ob}ci0 * {0}\n{lb}{ws}+ ci1 * {1}\n{lb}{ws}+ ci2 * {2}\n{lb}{ws}+ ci3 * {3}{cb}".format(
           self.inner.getString(i0, j0, k0, pad, maxDepth),
           self.inner.getString(i1, j1, k1, pad, maxDepth),
           self.inner.getString(i2, j2, k2, pad, maxDepth),
           self.inner.getString(i3, j3, k3, pad, maxDepth),
           ws=ws, lb=lb, ob=ob, cb=cb)
-    else:
+    elif (type(self.inner) == Scalar):
       return "{ob}ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3}{cb}".format(
+          self.inner.getString(i0, j0, k0, pad, maxDepth),
+          self.inner.getString(i1, j1, k1, pad, maxDepth),
+          self.inner.getString(i2, j2, k2, pad, maxDepth),
+          self.inner.getString(i3, j3, k3, pad, maxDepth),
+          ob=ob, cb=cb)
+    else:
+      return "{ob}ci0 * {0} + ci1 * {1} + ci2 * {2} + ci3 * {3}{cb}".format(
           self.inner.getString(i0, j0, k0, pad, maxDepth),
           self.inner.getString(i1, j1, k1, pad, maxDepth),
           self.inner.getString(i2, j2, k2, pad, maxDepth),
@@ -166,7 +173,7 @@ class NodeStencilGrad(Node):
   def __init__(self, inner, dim):
     self.inner = inner
     self.depth = inner.depth + 1
-    self.pad = 6
+    self.pad = 8
 
     self.dim = dim
     self.loc = copy.deepcopy(inner.loc)
@@ -198,8 +205,8 @@ class NodeStencilGrad(Node):
       ob = ''
       cb = ''
     else:
-      ob = '('
-      cb = ')'
+      ob = '( '
+      cb = ' )'
 
     if (self.depth > 1):
       ws = ''.rjust(pad)
@@ -208,19 +215,27 @@ class NodeStencilGrad(Node):
       lb = ''
       for n in range(2, self.depth):
         lb = lb + '\n'
-      return "{ob}cg0*{0}\n{lb}{ws}+ cg1*{1}\n{lb}{ws}+ cg2*{2}\n{lb}{ws}+ cg3*{3}{cb}".format(
+      return "{ob}cg0 * {0}\n{lb}{ws}+ cg1 * {1}\n{lb}{ws}+ cg2 * {2}\n{lb}{ws}+ cg3 * {3}{cb}".format(
           self.inner.getString(i0, j0, k0, pad, maxDepth),
           self.inner.getString(i1, j1, k1, pad, maxDepth),
           self.inner.getString(i2, j2, k2, pad, maxDepth),
           self.inner.getString(i3, j3, k3, pad, maxDepth),
           ws=ws, lb=lb, ob=ob, cb=cb)
-    else:
+    elif (type(self.inner) == Scalar):
       return "{ob}cg0*{0} + cg1*{1} + cg2*{2} + cg3*{3}{cb}".format(
           self.inner.getString(i0, j0, k0, pad, maxDepth),
           self.inner.getString(i1, j1, k1, pad, maxDepth),
           self.inner.getString(i2, j2, k2, pad, maxDepth),
           self.inner.getString(i3, j3, k3, pad, maxDepth),
           ob=ob, cb=cb)
+    else:
+      return "{ob}cg0 * {0} + cg1 * {1} + cg2 * {2} + cg3 * {3}{cb}".format(
+          self.inner.getString(i0, j0, k0, pad, maxDepth),
+          self.inner.getString(i1, j1, k1, pad, maxDepth),
+          self.inner.getString(i2, j2, k2, pad, maxDepth),
+          self.inner.getString(i3, j3, k3, pad, maxDepth),
+          ob=ob, cb=cb)
+
 
 # Scalar class representing one grid cell
 class Scalar(Node):
