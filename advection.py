@@ -1,12 +1,15 @@
 #!/bin/python
 
 import numpy as np
-from StencilBuilder_advanced import *
+from StencilBuilder import *
 
-u  = Scalar("u")
-v  = Scalar("v")
-w  = Scalar("w")
-ut = Scalar("ut")
+uloc = 1
+sloc = 0
+
+u  = Scalar("u" , uloc)
+v  = Scalar("v" , uloc)
+w  = Scalar("w" , uloc)
+ut = Scalar("ut", uloc)
 
 ut = grad( interp(u) * interp(u) ) \
    + grad( interp(v) * interp(u) ) \
