@@ -3,16 +3,19 @@
 import numpy as np
 from StencilBuilder import *
 
-uloc = 1
-sloc = 0
+uloc = np.array([1,0,0])
+vloc = np.array([0,1,0])
+wloc = np.array([0,0,1])
 
 u  = Scalar("u" , uloc)
-v  = Scalar("v" , uloc)
-w  = Scalar("w" , uloc)
+v  = Scalar("v" , vloc)
+w  = Scalar("w" , wloc)
 ut = Scalar("ut", uloc)
 
-ut = grad( interp(u) * interp(u) ) \
-   + grad( interp(v) * interp(u) ) \
-   + grad( interp(w) * interp(u) )
+#ut = gradx( interpx(u) * interpx(u) ) \
+#   + grady( interpx(v) * interpy(u) ) \
+#   + gradz( interpx(w) * interpz(u) )
+
+ut = gradx( interpx(u) * interpx(u) )
 
 print("ut[i] = {0};\n".format(ut.getString(0,8,0)))
