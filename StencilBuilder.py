@@ -25,7 +25,7 @@ class NodeAdd(Node):
     else:
       raise (RuntimeError)
 
-  def getString(self, i, pad, maxDepth):
+  def getString(self, i, j, k, pad, maxDepth):
     maxDepth = max(self.depth, maxDepth)
     if (self.depth == maxDepth):
       pad = pad - 2
@@ -43,17 +43,17 @@ class NodeAdd(Node):
       for n in range(1, self.depth):
         lb = lb + '\n'
 
-      return "{ob}{0}\n{lb}{ws}+ {1}{cb}".format(self.left.getString(i, pad, maxDepth),
-                                                 self.right.getString(i, pad, maxDepth),
+      return "{ob}{0}\n{lb}{ws}+ {1}{cb}".format(self.left.getString(i, j, k, pad, maxDepth),
+                                                 self.right.getString(i, j, k, pad, maxDepth),
                                                  ws=ws, lb=lb, ob=ob, cb=cb)
     elif (type(self.left) == Scalar and type(self.right) == Scalar):
-      return "{ob}{0}+{1}{cb}".format(self.left.getString(i, pad, maxDepth),
-                                      self.right.getString(i, pad, maxDepth),
+      return "{ob}{0}+{1}{cb}".format(self.left.getString(i, j, k, pad, maxDepth),
+                                      self.right.getString(i, j, k, pad, maxDepth),
                                       ob=ob, cb=cb)
 
     else:
-      return "{ob}{0} + {1}{cb}".format(self.left.getString(i, pad, maxDepth),
-                                        self.right.getString(i, pad, maxDepth),
+      return "{ob}{0} + {1}{cb}".format(self.left.getString(i, j, k, pad, maxDepth),
+                                        self.right.getString(i, j, k, pad, maxDepth),
                                         ob=ob, cb=cb)
 
 class NodeMult(Node):
@@ -71,7 +71,7 @@ class NodeMult(Node):
     else:
       raise (RuntimeError)
 
-  def getString(self, i, pad, maxDepth):
+  def getString(self, i, j, k, pad, maxDepth):
     maxDepth = max(self.depth, maxDepth)
     if (self.depth == maxDepth):
       pad = pad - 2
@@ -89,17 +89,17 @@ class NodeMult(Node):
       for n in range(1, self.depth, maxDepth):
         lb = lb + '\n'
 
-      return "{ob}{0}\n{lb}{ws}* {1}{cb}".format(self.left.getString(i, pad, maxDepth),
-                                                 self.right.getString(i, pad, maxDepth),
+      return "{ob}{0}\n{lb}{ws}* {1}{cb}".format(self.left.getString(i, j, k, pad, maxDepth),
+                                                 self.right.getString(i, j, k, pad, maxDepth),
                                                  ws=ws, lb=lb, ob=ob, cb=cb)
 
     elif (type(self.left) == Scalar and type(self.right) == Scalar):
-      return "{ob}{0}*{1}{cb}".format(self.left.getString(i, pad, maxDepth),
-                                      self.right.getString(i, pad, maxDepth),
+      return "{ob}{0}*{1}{cb}".format(self.left.getString(i, j, k, pad, maxDepth),
+                                      self.right.getString(i, j, k, pad, maxDepth),
                                       ob=ob, cb=cb)
     else:
-      return "{ob}{0} * {1}{cb}".format(self.left.getString(i, pad, maxDepth),
-                                        self.right.getString(i, pad, maxDepth),
+      return "{ob}{0} * {1}{cb}".format(self.left.getString(i, j, k, pad, maxDepth),
+                                        self.right.getString(i, j, k, pad, maxDepth),
                                         ob=ob, cb=cb)
 
 class NodeStencilInterp(Node):
@@ -111,7 +111,7 @@ class NodeStencilInterp(Node):
     self.loc = copy.deepcopy(inner.loc)
     self.loc[dim] = not self.loc[dim]
 
-  def getString(self, i, pad, maxDepth):
+  def getString(self, i, j, k, pad, maxDepth):
     maxDepth = max(self.depth, maxDepth)
     if (self.depth == maxDepth):
       pad = pad - 2
@@ -129,24 +129,24 @@ class NodeStencilInterp(Node):
       for n in range(2, self.depth):
         lb = lb + '\n'
       return "{ob}ci0 * {0}\n{lb}{ws}+ ci1 * {1}\n{lb}{ws}+ ci2 * {2}\n{lb}{ws}+ ci3 * {3}{cb}".format(
-          self.inner.getString(i-1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i   - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+2 - self.loc[0], pad, maxDepth),
+          self.inner.getString(i-1 - self.loc[0], j, k, pad, maxDepth),
+          self.inner.getString(i   - self.loc[0], j, k, pad, maxDepth),
+          self.inner.getString(i+1 - self.loc[0], j, k, pad, maxDepth),
+          self.inner.getString(i+2 - self.loc[0], j, k, pad, maxDepth),
           ws=ws, lb=lb, ob=ob, cb=cb)
     elif (type(self.inner) == Scalar):
       return "{ob}ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3}{cb}".format(
-          self.inner.getString(i-1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i   - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+2 - self.loc[0], pad, maxDepth),
+          self.inner.getString(i-1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i   - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+2 - self.loc[0], j, k,  pad, maxDepth),
           ob=ob, cb=cb)
     else:
       return "{ob}ci0 * {0} + ci1 * {1} + ci2 * {2} + ci3 * {3}{cb}".format(
-          self.inner.getString(i-1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i   - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+2 - self.loc[0], pad, maxDepth),
+          self.inner.getString(i-1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i   - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+2 - self.loc[0], j, k,  pad, maxDepth),
           ob=ob, cb=cb)
 
 class NodeStencilGrad(Node):
@@ -158,7 +158,7 @@ class NodeStencilGrad(Node):
     self.loc = copy.deepcopy(inner.loc)
     self.loc[dim] = not self.loc[dim]
 
-  def getString(self, i, pad, maxDepth):
+  def getString(self, i, j, k, pad, maxDepth):
     maxDepth = max(self.depth, maxDepth)
     if (self.depth == maxDepth):
       pad = pad - 2
@@ -176,24 +176,24 @@ class NodeStencilGrad(Node):
       for n in range(2, self.depth):
         lb = lb + '\n'
       return "{ob}cg0 * {0}\n{lb}{ws}+ cg1 * {1}\n{lb}{ws}+ cg2 * {2}\n{lb}{ws}+ cg3 * {3}{cb}".format(
-          self.inner.getString(i-1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i   - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+2 - self.loc[0], pad, maxDepth),
+          self.inner.getString(i-1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i   - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+2 - self.loc[0], j, k,  pad, maxDepth),
           ws=ws, lb=lb, ob=ob, cb=cb)
     elif (type(self.inner) == Scalar):
       return "{ob}cg0*{0} + cg1*{1} + cg2*{2} + cg3*{3}{cb}".format(
-          self.inner.getString(i-1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i   - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+2 - self.loc[0], pad, maxDepth),
+          self.inner.getString(i-1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i   - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+2 - self.loc[0], j, k,  pad, maxDepth),
           ob=ob, cb=cb)
     else:
       return "{ob}cg0 * {0} + cg1 * {1} + cg2 * {2} + cg3 * {3}{cb}".format(
-          self.inner.getString(i-2 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i-1 - self.loc[0], pad, maxDepth),
-          self.inner.getString(i   - self.loc[0], pad, maxDepth),
-          self.inner.getString(i+1 - self.loc[0], pad, maxDepth),
+          self.inner.getString(i-2 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i-1 - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i   - self.loc[0], j, k,  pad, maxDepth),
+          self.inner.getString(i+1 - self.loc[0], j, k,  pad, maxDepth),
           ob=ob, cb=cb)
 
 
@@ -204,7 +204,7 @@ class Scalar(Node):
     self.depth = 0
     self.loc   = loc
 
-  def getString(self, i, pad, maxDepth):
+  def getString(self, i, j, k, pad, maxDepth):
     if (i > 0):
       return "{0}[i+{1}]".format(self.name, i)
     elif (i < 0):
