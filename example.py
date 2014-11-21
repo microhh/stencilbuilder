@@ -16,8 +16,8 @@ s = Scalar("s", sloc)
 a = Scalar("a", sloc)
 
 a = s * interpx(u)
-print("a[i] = {0};\n".format(a.getString(0,0,0,7,0)))
+print("a[i] = {0};\n".format(a.getString(0,0,0,7)))
 
 a = grady(s * interpx(u)) + grady(s * interpx(u)) * grady(s * interpx(u))
-print("a[i] = {0};\n".format(a.getString(0,0,0,7,0)))
+print("a[i] = {0};\n".format(a.getString(0,0,0,7)))
 
