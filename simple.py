@@ -1,7 +1,7 @@
 #!/bin/python
 
 import numpy as np
-from StencilBuilder import *
+from StencilBuilder_simple import *
 
 a_data = np.random.uniform(0., 1., 7)
 b_data = np.random.uniform(0., 1., 7)
