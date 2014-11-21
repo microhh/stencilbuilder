@@ -96,6 +96,7 @@ class NodeStencil(Node):
     self.depth = inner.depth + 1
     self.pad = 8
 
+class NodeStencilInterp(NodeStencil):
   def getString(self, i, pad, maxDepth):
     maxDepth = max(self.depth, maxDepth)
     if (self.depth == maxDepth):
@@ -134,10 +135,49 @@ class NodeStencil(Node):
           self.inner.getString(i+1, pad, maxDepth),
           ob=ob, cb=cb)
 
+class NodeStencilGrad(NodeStencil):
+  def getString(self, i, pad, maxDepth):
+    maxDepth = max(self.depth, maxDepth)
+    if (self.depth == maxDepth):
+      pad = pad - 2
+      ob = ''
+      cb = ''
+    else:
+      ob = '( '
+      cb = ' )'
+
+    if (self.depth > 1):
+      ws = ''.rjust(pad)
+      pad += self.pad
+
+      lb = ''
+      for n in range(2, self.depth):
+        lb = lb + '\n'
+      return "{ob}cg0 * {0}\n{lb}{ws}+ cg1 * {1}\n{lb}{ws}+ cg2 * {2}\n{lb}{ws}+ cg3 * {3}{cb}".format(
+          self.inner.getString(i-2, pad, maxDepth),
+          self.inner.getString(i-1, pad, maxDepth),
+          self.inner.getString(i  , pad, maxDepth),
+          self.inner.getString(i+1, pad, maxDepth),
+          ws=ws, lb=lb, ob=ob, cb=cb)
+    elif (type(self.inner) == Scalar):
+      return "{ob}cg0*{0} + cg1*{1} + cg2*{2} + cg3*{3}{cb}".format(
+          self.inner.getString(i-2, pad, maxDepth),
+          self.inner.getString(i-1, pad, maxDepth),
+          self.inner.getString(i  , pad, maxDepth),
+          self.inner.getString(i+1, pad, maxDepth),
+          ob=ob, cb=cb)
+    else:
+      return "{ob}cg0 * {0} + cg1 * {1} + cg2 * {2} + cg3 * {3}{cb}".format(
+          self.inner.getString(i-2, pad, maxDepth),
+          self.inner.getString(i-1, pad, maxDepth),
+          self.inner.getString(i  , pad, maxDepth),
+          self.inner.getString(i+1, pad, maxDepth),
+          ob=ob, cb=cb)
+
+
 # Scalar class representing one grid cell
 class Scalar(Node):
-  def __init__(self, data, name):
-    self.data  = data
+  def __init__(self, name):
     self.name  = name
     self.depth = 0
 
@@ -151,4 +191,7 @@ class Scalar(Node):
 
 # Define functions.
 def interp(inner):
-  return NodeStencil(inner)
+  return NodeStencilInterp(inner)
+
+def grad(inner):
+  return NodeStencilGrad(inner)
