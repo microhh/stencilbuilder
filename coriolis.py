@@ -17,5 +17,4 @@ ut = fc * interpx( interpy( v ) )
 vt = fc * interpx( interpy( u ) )
 
 print("ut[i] = {0};\n".format(ut.getString(0,0,0,8)))
-
 print("vt[i] = {0};\n".format(vt.getString(0,0,0,8)))
