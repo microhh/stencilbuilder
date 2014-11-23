@@ -15,7 +15,7 @@ void advecu(double *ut, double *u, double *v, double *w,
       for (int i=istart; i<iend; ++i)
       {
         const int ijk = i + j*jj + k*kk;
-        //$ SBStart
+        //$ SBStart ut
         uloc = np.array([1,0,0])
         vloc = np.array([0,1,0])
         wloc = np.array([0,0,1])
@@ -33,8 +33,6 @@ void advecu(double *ut, double *u, double *v, double *w,
         ut = gradx( interpx(u) * interpx(u) ) * dxi \
            + grady( interpx(v) * interpy(u) ) * dyi \
            + gradz( interpx(w) * interpz(u) ) * dzi4
-
-        print("ut[i,j,k] = {0};".format(ut.getString(0,0,0,12)))
         //$ SBEnd
       }
 }
@@ -56,7 +54,7 @@ void advecv(double *vt, double *u, double *v, double *w,
       for (int i=istart; i<iend; ++i)
       {
         const int ijk = i + j*jj + k*kk;
-        //$ SBStart
+        //$ SBStart vt
         uloc = np.array([1,0,0])
         vloc = np.array([0,1,0])
         wloc = np.array([0,0,1])
@@ -74,8 +72,6 @@ void advecv(double *vt, double *u, double *v, double *w,
         vt = gradx( interpy(u) * interpx(v) ) * dxi \
            + grady( interpy(v) * interpy(v) ) * dyi \
            + gradz( interpy(w) * interpz(v) ) * dzi4
-
-        print("vt[i,j,k] = {0};".format(ut.getString(0,0,0,12)))
         //$ SBEnd
       }
 }
