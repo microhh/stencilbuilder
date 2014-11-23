@@ -23,4 +23,4 @@ ut = gradx( gradx(u) ) * dxidxi \
    + grady( grady(u) ) * dyidyi \
    + gradz( gradz(u) * dzhi4 ) * dzi4
 
-print("ut[i] = {0};\n".format(ut.getString(0,0,0,8)))
+print("ut[i,j,k] = {0};\n".format(ut.getString(0,0,0,12)))

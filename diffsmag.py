@@ -28,4 +28,4 @@ ut = gradx( evisc  * ( gradx(u)*dxi   + gradx(u)*dxi ) ) \
    + grady( eviscy * ( grady(u)*dyi   + gradx(v)*dxi ) ) \
    + gradz( eviscz * ( gradz(u)*dzhi4 + gradx(w)*dxi ) )
 
-print("ut[i] = {0};\n".format(ut.getString(0,0,0,8)))
+print("ut[i,j,k] = {0};\n".format(ut.getString(0,0,0,12)))

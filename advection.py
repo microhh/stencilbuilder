@@ -20,4 +20,4 @@ ut = gradx( interpx(u) * interpx(u) ) * dxi \
    + grady( interpx(v) * interpy(u) ) * dyi \
    + gradz( interpx(w) * interpz(u) ) * dzi4
 
-print("ut[i] = {0};\n".format(ut.getString(0,0,0,8)))
+print("ut[i,j,k] = {0};\n".format(ut.getString(0,0,0,12)))
