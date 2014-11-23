@@ -8,12 +8,10 @@ vloc = np.array([0,1,0])
 wloc = np.array([0,0,1])
 sloc = np.array([0,0,0])
 
-u = Scalar("u", uloc)
-v = Scalar("v", vloc)
-w = Scalar("w", wloc)
-s = Scalar("s", sloc)
-
-a = Scalar("a", sloc)
+u = Field("u", uloc)
+v = Field("v", vloc)
+w = Field("w", wloc)
+s = Field("s", sloc)
 
 a = s * interpx(u)
 print("a[i] = {0};\n".format(a.getString(0,0,0,7)))

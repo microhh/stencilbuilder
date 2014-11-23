@@ -40,7 +40,7 @@ class NodeAdd(Node):
       return "{ob}{0}\n{lb}{ws}+ {1}{cb}".format(self.left.getString(i, j, k, pad),
                                                  self.right.getString(i, j, k, pad),
                                                  ws=ws, lb=lb, ob=ob, cb=cb)
-    elif (type(self.left) == Scalar and type(self.right) == Scalar):
+    elif (type(self.left) == Field and type(self.right) == Field):
       return "{ob}{0}+{1}{cb}".format(self.left.getString(i, j, k, pad),
                                       self.right.getString(i, j, k, pad),
                                       ob=ob, cb=cb)
@@ -81,7 +81,7 @@ class NodeMult(Node):
                                                  self.right.getString(i, j, k, pad),
                                                  ws=ws, lb=lb, ob=ob, cb=cb)
 
-    elif (type(self.left) == Scalar and type(self.right) == Scalar):
+    elif (type(self.left) == Field and type(self.right) == Field):
       return "{ob}{0}*{1}{cb}".format(self.left.getString(i, j, k, pad),
                                       self.right.getString(i, j, k, pad),
                                       ob=ob, cb=cb)
@@ -136,7 +136,7 @@ class NodeStencilInterp(Node):
           self.inner.getString(i2, j2, k2, pad),
           self.inner.getString(i3, j3, k3, pad),
           ws=ws, lb=lb, ob=ob, cb=cb)
-    elif (type(self.inner) == Scalar):
+    elif (type(self.inner) == Field):
       return "{ob}ci0*{0} + ci1*{1} + ci2*{2} + ci3*{3}{cb}".format(
           self.inner.getString(i0, j0, k0, pad),
           self.inner.getString(i1, j1, k1, pad),
@@ -197,7 +197,7 @@ class NodeStencilGrad(Node):
           self.inner.getString(i2, j2, k2, pad),
           self.inner.getString(i3, j3, k3, pad),
           ws=ws, lb=lb, ob=ob, cb=cb)
-    elif (type(self.inner) == Scalar):
+    elif (type(self.inner) == Field):
       return "{ob}cg0*{0} + cg1*{1} + cg2*{2} + cg3*{3}{cb}".format(
           self.inner.getString(i0, j0, k0, pad),
           self.inner.getString(i1, j1, k1, pad),
@@ -213,8 +213,8 @@ class NodeStencilGrad(Node):
           ob=ob, cb=cb)
 
 
-# Scalar class representing one grid cell
-class Scalar(Node):
+# Field class representing a three dimensional field
+class Field(Node):
   def __init__(self, name, loc):
     self.name  = name
     self.depth = 0

@@ -7,9 +7,9 @@ uloc = np.array([1,0,0])
 vloc = np.array([0,1,0])
 wloc = np.array([0,0,1])
 
-u  = Scalar("u" , uloc)
-v  = Scalar("v" , vloc)
-w  = Scalar("w" , wloc)
+u  = Field("u" , uloc)
+v  = Field("v" , vloc)
+w  = Field("w" , wloc)
 
 ut = interpx( interpy( v ) )
 vt = interpx( interpy( u ) )
