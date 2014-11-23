@@ -20,7 +20,18 @@ class NodeAdd(Node):
     else:
       self.pad = 0
 
-    if (np.array_equal(left.loc, right.loc)):
+    # In case of Vector, only check the k-location
+    if (type(left) == Vector):
+      if (left.loc[2] == right.loc[2]):
+        self.loc = right.loc
+      else:
+        raise (RuntimeError)
+    elif (type(right) == Vector):
+      if (left.loc[2] == right.loc[2]):
+        self.loc = left.loc
+      else:
+        raise (RuntimeError)
+    elif (np.array_equal(left.loc, right.loc)):
       self.loc = copy.deepcopy(left.loc)
     else:
       raise (RuntimeError)
@@ -60,7 +71,18 @@ class NodeMult(Node):
     else:
       self.pad = 0
 
-    if (np.array_equal(left.loc, right.loc)):
+    # In case of Vector, only check the k-location
+    if (type(left) == Vector):
+      if (left.loc[2] == right.loc[2]):
+        self.loc = right.loc
+      else:
+        raise (RuntimeError)
+    elif (type(right) == Vector):
+      if (left.loc[2] == right.loc[2]):
+        self.loc = left.loc
+      else:
+        raise (RuntimeError)
+    elif (np.array_equal(left.loc, right.loc)):
       self.loc = copy.deepcopy(left.loc)
     else:
       raise (RuntimeError)
@@ -212,7 +234,6 @@ class NodeStencilGrad(Node):
           self.inner.getString(i3, j3, k3, pad),
           ob=ob, cb=cb)
 
-
 # Field class representing a three dimensional field
 class Field(Node):
   def __init__(self, name, loc):
@@ -241,6 +262,23 @@ class Field(Node):
       kk = "  "
 
     return "{0}[i{1},j{2},k{3}]".format(self.name, ii, jj, kk)
+
+# Vector class representing a profile
+class Vector(Node):
+  def __init__(self, name, loc):
+    self.name  = name
+    self.depth = 0
+    self.loc   = np.array([0, 0, loc])
+
+  def getString(self, i, j, k, pad):
+    if (k > 0):
+      kk = "+{0}".format(k)
+    elif (k < 0):
+      kk = "{0}".format(k)
+    else:
+      kk = "  "
+
+    return "{0}[k{1}]".format(self.name, kk)
 
 # Define functions.
 def interpx(inner):
