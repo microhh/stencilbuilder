@@ -1,40 +1,32 @@
-from cStringIO import StringIO
 from StencilBuilder import *
-import sys
 
 f = file("test.cxx")
 lines = f.readlines()
 f.close()
 
 record = False
-block  = []
-linenumber = 0
+blocks = []
+
+lineindex = -1
+block = []
 for n in lines:
-  linenumber += 1
-  n = n.strip()
+  lineindex += 1
   line = n.find("//$")
+
+  # Process the keyword
   if(line != -1):
     kw = n[line + 3::].strip()
-    print("KEYWORD: {0}".format(kw))
+    #print("KEYWORD: {0}".format(kw))
     if(kw == "SBStart"):
-      startline = linenumber
+      startline = lineindex
       record = True
       continue
 
     elif(kw == "SBEnd"):
-      endline = linenumber
+      endline = lineindex
       record = False
-
-      # Execute the block
-      blockstr = ""
-      for n in block:
-        print("DSL: {0}".format(n))
-        blockstr += n + "\n"
-      old_stdout = sys.stdout
-      tmp = sys.stdout = StringIO()
-      exec(blockstr)
-      sys.stdout = old_stdout
-      blockout = tmp.getvalue()
+      blocks.append((block, startline, endline))
+      block = []
       continue
 
     else:
@@ -43,5 +35,14 @@ for n in lines:
   if(record):
     block.append(n)
 
-print(blockout)
-print("DONE")
+# Execute the blocks in reverse order
+blocks.reverse()
+
+for n in blocks:
+  # Delete the StencilBuilder lines
+  del(lines[n[1]:n[2]+1])
+  # Replace it with the new code
+  lines[n[1]:n[1]] = n[0]
+
+for n in lines:
+  print(n.rstrip())
