@@ -11,8 +11,10 @@ u  = Field("u" , uloc)
 v  = Field("v" , vloc)
 w  = Field("w" , wloc)
 
-ut = interpx( interpy( v ) )
-vt = interpx( interpy( u ) )
+fc = Scalar("fc")
+
+ut = fc * interpx( interpy( v ) )
+vt = fc * interpx( interpy( u ) )
 
 print("ut[i] = {0};\n".format(ut.getString(0,0,0,8)))
 

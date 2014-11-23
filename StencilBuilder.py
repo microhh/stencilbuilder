@@ -20,8 +20,14 @@ class NodeAdd(Node):
     else:
       self.pad = 0
 
+    if (type(left) == Scalar):
+      self.loc = right.loc
+    elif (type(right) == Scalar):
+      self.loc = left.loc
+      
     # In case of Vector, only check the k-location
-    if (type(left) == Vector):
+    # CvH types of Vector*Vector will go wrong...
+    elif (type(left) == Vector):
       if (left.loc[2] == right.loc[2]):
         self.loc = right.loc
       else:
@@ -71,8 +77,14 @@ class NodeMult(Node):
     else:
       self.pad = 0
 
+    if (type(left) == Scalar):
+      self.loc = right.loc
+    elif (type(right) == Scalar):
+      self.loc = left.loc
+      
     # In case of Vector, only check the k-location
-    if (type(left) == Vector):
+    # CvH types of Vector*Vector will go wrong...
+    elif (type(left) == Vector):
       if (left.loc[2] == right.loc[2]):
         self.loc = right.loc
       else:
@@ -279,6 +291,15 @@ class Vector(Node):
       kk = "  "
 
     return "{0}[k{1}]".format(self.name, kk)
+
+class Scalar(Node):
+  def __init__(self, name):
+    self.name  = name
+    self.depth = 0
+
+  def getString(self, i, j, k, pad):
+    return "{0}".format(self.name)
+
 
 # Define functions.
 def interpx(inner):
