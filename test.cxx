@@ -15,15 +15,15 @@ void advecu(double *ut, double *u, double *v, double *w,
       for (int i=istart; i<iend; ++i)
       {
         const int ijk = i + j*jj + k*kk;
-        #pragma StencilBuilder start
+        //$ SBStart
         uloc = np.array([1,0,0])
         vloc = np.array([0,1,0])
         wloc = np.array([0,0,1])
         zloc = 0
         
-        u  = Field("u", uloc)
-        v  = Field("v", vloc)
-        w  = Field("w", wloc)
+        u = Field("u", uloc)
+        v = Field("v", vloc)
+        w = Field("w", wloc)
         
         dxi = Scalar("dxi")
         dyi = Scalar("dyi")
@@ -33,7 +33,9 @@ void advecu(double *ut, double *u, double *v, double *w,
         ut = gradx( interpx(u) * interpx(u) ) * dxi \
            + grady( interpx(v) * interpy(u) ) * dyi \
            + gradz( interpx(w) * interpz(u) ) * dzi4
-        #pragma StencilBuilder end
+
+        print("ut[i,j,k] = {0};".format(ut.getString(0,0,0,12)))
+        //$ SBEnd
 }
 
 int main()
