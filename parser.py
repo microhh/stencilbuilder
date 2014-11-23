@@ -1,6 +1,6 @@
 from StencilBuilder import *
 
-f = file("test.cxx")
+f = file("test.cxx", "r")
 lines = f.readlines()
 f.close()
 
@@ -72,3 +72,8 @@ for n in blocks:
 
 for n in lines:
   print(n.rstrip())
+
+f = file("test_new.cxx", "w")
+for n in lines:
+  f.write("{0}\n".format(n))
+f.close()
