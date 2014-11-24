@@ -26,11 +26,6 @@ void advecu(double *ut, double *u, double *v, double *w,
       {
         const int ijk = i + j*jj + k*kk;
         //$ SBStart ut
-        uloc = np.array([1,0,0])
-        vloc = np.array([0,1,0])
-        wloc = np.array([0,0,1])
-        zloc = 0
-        
         u = Field("u", uloc)
         v = Field("v", vloc)
         w = Field("w", wloc)
@@ -65,11 +60,6 @@ void advecv(double *vt, double *u, double *v, double *w,
       {
         const int ijk = i + j*jj + k*kk;
         //$ SBStart vt
-        uloc = np.array([1,0,0])
-        vloc = np.array([0,1,0])
-        wloc = np.array([0,0,1])
-        zloc = 0
-        
         u = Field("u", uloc)
         v = Field("v", vloc)
         w = Field("w", wloc)

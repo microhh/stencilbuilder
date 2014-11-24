@@ -67,16 +67,12 @@ for n in blocks:
     for t in range(len(tmplist)):
       tmplist[t] = ''.rjust(n[4]) + tmplist[t]
 
-    print(tmplist[0])
     test[-1:-1] = tmplist[:]
 
   # Delete the StencilBuilder lines
   del(lines[n[1]:n[2]+1])
   # Replace it with the new code
   lines[n[1]:n[1]] = test[:]
-
-for n in lines:
-  print(n.rstrip())
 
 f = file("test_new.cxx", "w")
 for n in lines:
