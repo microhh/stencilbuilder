@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from StencilBuilder import *
 
 f = file("test.cxx", "r")

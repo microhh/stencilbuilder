@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python
 
 # Base Node class
 class Node(object):
