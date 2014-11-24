@@ -4,6 +4,10 @@ f = file("test.cxx", "r")
 lines = f.readlines()
 f.close()
 
+# Remove the line breaks
+for n in range(len(lines)):
+  lines[n] = lines[n].rstrip()
+
 record = False
 blocks = []
 
@@ -56,14 +60,13 @@ for n in blocks:
     #indent = ''.rjust(n[4])
     indent = len(v) + 10
     evalstring = v + ".getString(0,0,0,{0})".format(indent)
-    tmplist = (v + "[i,j,k] = " + eval(evalstring)).split('\n')
+    tmplist = (v + "[i,j,k] = " + eval(evalstring) + ";").split('\n')
     # Indent each line to make it fit properly aligned into the code
     for t in range(len(tmplist)):
       tmplist[t] = ''.rjust(n[4]) + tmplist[t]
 
     print(tmplist[0])
     test[-1:-1] = tmplist[:]
-
 
   # Delete the StencilBuilder lines
   del(lines[n[1]:n[2]+1])

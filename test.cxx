@@ -1,12 +1,22 @@
+const double ci0 = 1.;
+const double ci1 = 1.;
+const double ci2 = 1.;
+const double ci3 = 1.;
+
+const double cg0 = 1.;
+const double cg1 = 1.;
+const double cg2 = 1.;
+const double cg3 = 1.;
+
 void advecu(double *ut, double *u, double *v, double *w,
             double *dzi4, double *dzhi4, double dxi, double dyi)
 {
   const int istart = 0;
-  const int iend   = 0;
+  const int iend   = 1;
   const int jstart = 0;
-  const int jend   = 0;
+  const int jend   = 1;
   const int kstart = 0;
-  const int kend   = 0;
+  const int kend   = 1;
   const int jj = 0;
   const int kk = 0;
 
@@ -41,13 +51,13 @@ void advecv(double *vt, double *u, double *v, double *w,
             double *dzi4, double *dzhi4, double dxi, double dyi)
 {
   const int istart = 0;
-  const int iend   = 0;
+  const int iend   = 1;
   const int jstart = 0;
-  const int jend   = 0;
+  const int jend   = 1;
   const int kstart = 0;
-  const int kend   = 0;
-  const int jj = 0;
-  const int kk = 0;
+  const int kend   = 1;
+  const int jj = 1;
+  const int kk = 1;
 
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
@@ -79,6 +89,7 @@ void advecv(double *vt, double *u, double *v, double *w,
 int main()
 {
   double *u, *v, *w;
+  double *ut, *vt;
   double *dzi4, *dzhi4;
   double dxi, dyi;
 
