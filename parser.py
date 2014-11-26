@@ -67,7 +67,10 @@ for n in blocks:
     for t in range(len(tmplist)):
       tmplist[t] = ''.rjust(n[4]) + tmplist[t]
 
-    test[-1:-1] = tmplist[:]
+    # insert a empty line in between statements
+    if(len(test) > 0):
+      test.append('')
+    test.extend(tmplist)
 
   # Delete the StencilBuilder lines
   del(lines[n[1]:n[2]+1])
