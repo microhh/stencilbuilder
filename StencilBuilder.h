@@ -146,7 +146,7 @@ namespace StencilBuilder
       { return data_[i + j*grid_.icells + k*grid_.ijcells]; }
 
       // Assignment operator, this operator starts the inline expansion.
-      template<class T> void operator= (const T &expression)
+      template<class T> void operator= (const T& restrict expression)
       {
         const int jj = grid_.icells;
         const int kk = grid_.ijcells;
@@ -162,7 +162,7 @@ namespace StencilBuilder
       }
 
       // Compound assignment operator, this operator starts the inline expansion.
-      template<class T> void operator+=(const T &expression)
+      template<class T> void operator+=(const T& restrict expression)
       {
         const int jj = grid_.icells;
         const int kk = grid_.ijcells;
@@ -185,7 +185,7 @@ namespace StencilBuilder
   };
 
   // Specialization for assignment with a constant.
-  template<> void Field::operator= (const double &expression)
+  template<> void Field::operator= (const double& restrict expression)
   {
     const int jj = grid_.icells;
     const int kk = grid_.ijcells;
