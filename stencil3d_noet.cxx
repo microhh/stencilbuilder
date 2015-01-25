@@ -2,6 +2,8 @@
 #include <iomanip>
 #include <cstdlib>
 
+#define restrict __restrict__
+
 // Fourth order interpolation function.
 inline double interp(const double m2, const double m1, const double p1, const double p2)
 {
@@ -15,8 +17,8 @@ inline double grad(const double m2, const double m1, const double p1, const doub
 }
 
 // Test function with a similar structure as the advection operator.
-void advection(double * const __restrict__ at, const double * const __restrict__ a,
-               const double * const __restrict__ b, const double * const __restrict__ c,
+void advection(double * const restrict at, const double * const __restrict__ a,
+               const double * const restrict b, const double * const __restrict__ c,
                const int istart, const int iend,
                const int jstart, const int jend,
                const int kstart, const int kend,
@@ -56,7 +58,7 @@ void advection(double * const __restrict__ at, const double * const __restrict__
 }
 
 // Test function for time integration.
-void tendency(double * const __restrict__ at, double * const __restrict__ a,
+void tendency(double * const restrict at, double * const __restrict__ a,
               const double dt,
               const int istart, const int iend,
               const int jstart, const int jend,

@@ -1,3 +1,5 @@
+#define restrict __restrict__
+
 namespace StencilBuilder
 {
   struct Grid
@@ -184,7 +186,7 @@ namespace StencilBuilder
     private:
       // Reference to the grid on which the field is created
       const Grid &grid_;
-      // Smart pointer to the raw data.
+      // Pointer to the raw data.
       double * restrict data_;
   };
 
