@@ -7,13 +7,13 @@
 // Fourth order interpolation function.
 inline double interp(const double m2, const double m1, const double p1, const double p2)
 {
-  return (-1./16)*m2 + (9./16)*m1 + (9./16)*p1 + (-1./16)*p2;
+  return (-1./16)*(m2+p2) + (9./16)*(m1+p1);
 }
 
 // Fourth order gradient function.
 inline double grad(const double m2, const double m1, const double p1, const double p2)
 {
-  return (1./24.)*m2 + (-27./24.)*m1 + (27./24.)*p1 + (-1./24.)*p2;
+  return (1./24.)*(m2-p2) + (27./24.)*(p1-m1);
 }
 
 // Test function with a similar structure as the advection operator.

@@ -35,19 +35,15 @@ namespace StencilBuilder
   // Fourth order interpolation.
   struct Interp
   {
-    static double apply_m2(const double a) { return (-1./16.)*a; }
-    static double apply_m1(const double a) { return ( 9./16.)*a; }
-    static double apply_p1(const double a) { return ( 9./16.)*a; }
-    static double apply_p2(const double a) { return (-1./16.)*a; }
+    static double apply_narrow(const double a, const double b) { return ( 9./16.)*(a+b); }
+    static double apply_wide  (const double a, const double b) { return (-1./16.)*(a+b); }
   };
 
   // Fourth order gradient.
   struct Grad
   {
-    static double apply_m2(const double a) { return (  1./24.)*a; }
-    static double apply_m1(const double a) { return (-27./24.)*a; }
-    static double apply_p1(const double a) { return ( 27./24.)*a; }
-    static double apply_p2(const double a) { return ( -1./24.)*a; }
+    static double apply_narrow(const double a, const double b) { return (-27./24.)*(a-b); }
+    static double apply_wide  (const double a, const double b) { return (  1./24.)*(a-b); }
   };
 
   // STENCIL NODE CLASS
@@ -62,11 +58,9 @@ namespace StencilBuilder
 
     double operator[](const int i) const
     {
-      const double sm2 = Op::apply_m2(inner_[i + (-2+toCenter)*nn_]);
-      const double sm1 = Op::apply_m1(inner_[i + (-1+toCenter)*nn_]);
-      const double sp1 = Op::apply_p1(inner_[i + (   toCenter)*nn_]);
-      const double sp2 = Op::apply_p2(inner_[i + (+1+toCenter)*nn_]);
-      return sm2 + sm1 + sp1 + sp2;
+      const double wide   = Op::apply_wide  (inner_[i + (-2+toCenter)*nn_], inner_[i + (+1+toCenter)*nn_]);
+      const double narrow = Op::apply_narrow(inner_[i + (-1+toCenter)*nn_], inner_[i + (   toCenter)*nn_]);
+      return wide + narrow;
     }
   };
 
