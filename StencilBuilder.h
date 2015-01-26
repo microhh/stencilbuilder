@@ -4,17 +4,17 @@ namespace StencilBuilder
 {
   struct Grid
   {
-    Grid(const int itot, const int jtot, const int ktot, const int gc)
-      : itot(itot), jtot(jtot), ktot(ktot), gc(gc),
-        ntot((itot+2*gc)*(jtot+2*gc)*(ktot+2*gc)),
-        istart(gc),
-        jstart(gc),
-        kstart(gc),
-        iend(itot+gc),
-        jend(jtot+gc),
-        kend(ktot+gc),
-        icells(itot+2*gc),
-        ijcells((itot+2*gc)*(jtot+2*gc)) {}
+    Grid(const int itot, const int jtot, const int ktot, const int gc) :
+      itot(itot), jtot(jtot), ktot(ktot), gc(gc),
+      ntot((itot+2*gc)*(jtot+2*gc)*(ktot+2*gc)),
+      istart(gc),
+      jstart(gc),
+      kstart(gc),
+      iend(itot+gc),
+      jend(jtot+gc),
+      kend(ktot+gc),
+      icells(itot+2*gc),
+      ijcells((itot+2*gc)*(jtot+2*gc)) {}
 
     const int itot;
     const int jtot;
@@ -51,9 +51,9 @@ namespace StencilBuilder
   template<int toCenter, class Inner, class Op>
   struct Stencil
   {
-    Stencil(const Inner &inner, const int nn) : inner_(inner), nn_(nn) {}
+    Stencil(const Inner& inner, const int nn) : inner_(inner), nn_(nn) {}
 
-    const Inner &inner_;
+    const Inner& inner_;
     const int nn_;
 
     double operator[](const int i) const
@@ -66,14 +66,14 @@ namespace StencilBuilder
 
   // Stencil generation operator for interpolation.
   template<int toCenter, class Inner>
-  Stencil<toCenter, Inner, Interp> interp(const Inner &inner, const int nn)
+  Stencil<toCenter, Inner, Interp> interp(const Inner& inner, const int nn)
   {
     return Stencil<toCenter, Inner, Interp>(inner, nn);
   }
 
   // Stencil generation operator for gradient.
   template<int toCenter, class Inner>
-  Stencil<toCenter, Inner, Grad> grad(const Inner &inner, const int nn)
+  Stencil<toCenter, Inner, Grad> grad(const Inner& inner, const int nn)
   {
     return Stencil<toCenter, Inner, Grad>(inner, nn);
   }
@@ -96,10 +96,10 @@ namespace StencilBuilder
   template<class Left, class Op, class Right>
   struct Operator
   {
-    Operator(const Left &left, const Right &right) : left_(left), right_(right) {}
+    Operator(const Left& left, const Right& right) : left_(left), right_(right) {}
 
-    const Left &left_;
-    const Right &right_;
+    const Left& left_;
+    const Right& right_;
 
     double operator[](const int i) const { return Op::apply(left_[i], right_[i]); }
   };
@@ -108,24 +108,24 @@ namespace StencilBuilder
   template<class Op, class Right>
   struct Operator<double, Op, Right>
   {
-    Operator(const double &left, const Right &right) : left_(left), right_(right) {}
+    Operator(const double& left, const Right& right) : left_(left), right_(right) {}
 
-    const double &left_;
-    const Right &right_;
+    const double& left_;
+    const Right& right_;
 
     double operator[](const int i) const { return Op::apply(left_, right_[i]); }
   };
 
   // Template classes for the multiplication operator.
   template<class Left, class Right>
-  Operator<Left, Multiply, Right> operator*(const Left &left, const Right &right)
+  Operator<Left, Multiply, Right> operator*(const Left& left, const Right& right)
   {
     return Operator<Left, Multiply, Right>(left, right);
   }
 
   // Template classes for the addition operators.
   template<class Left, class Right>
-  Operator<Left, Add, Right> operator+(const Left &left, const Right &right)
+  Operator<Left, Add, Right> operator+(const Left& left, const Right& right)
   {
     return Operator<Left, Add, Right>(left, right);
   }
@@ -134,7 +134,7 @@ namespace StencilBuilder
   class Field
   {
     public:
-      Field(const Grid &grid)
+      Field(const Grid& grid)
         : grid_(grid),
           data_(new double[grid_.ntot]) {}
 
@@ -179,9 +179,9 @@ namespace StencilBuilder
 
     private:
       // Reference to the grid on which the field is created
-      const Grid &grid_;
+      const Grid& grid_;
       // Pointer to the raw data.
-      double * restrict data_;
+      double* restrict data_;
   };
 
   // Specialization for assignment with a constant.

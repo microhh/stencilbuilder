@@ -65,7 +65,6 @@ void tendency(double * const restrict at, double * const __restrict__ a,
               const int kstart, const int kend,
               const int icells, const int ijcells)
 {
-  const int ii = 1;
   const int jj = icells;
   const int kk = ijcells;
 
