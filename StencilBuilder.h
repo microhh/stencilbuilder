@@ -134,9 +134,9 @@ namespace StencilBuilder
   class Field
   {
     public:
-      Field(const Grid& grid)
-        : grid_(grid),
-          data_(new double[grid_.ntot]) {}
+      Field(const Grid& grid) :
+        grid_(grid),
+        data_(new double[grid_.ntot]) {}
 
       ~Field() { delete[] data_; }
 
