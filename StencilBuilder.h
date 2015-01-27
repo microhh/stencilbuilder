@@ -161,6 +161,22 @@ namespace StencilBuilder
             }
       }
 
+      // Overload, NOT specialization, for assignment with a constant.
+      void operator= (const double& restrict expression)
+      {
+        const int jj = grid_.icells;
+        const int kk = grid_.ijcells;
+
+        for (int k=grid_.kstart; k<grid_.kend; ++k)
+          for (int j=grid_.jstart; j<grid_.jend; ++j)
+            #pragma ivdep
+            for (int i=grid_.istart; i<grid_.iend; ++i)
+            {
+              const int ijk = i + j*jj + k*kk;
+              data_[ijk] = expression;
+            }
+      }
+
       // Compound assignment operator, this operator starts the inline expansion.
       template<class T> void operator+=(const T& restrict expression)
       {
@@ -183,20 +199,4 @@ namespace StencilBuilder
       // Pointer to the raw data.
       double* restrict data_;
   };
-
-  // Specialization for assignment with a constant.
-  template<> void Field::operator= (const double& restrict expression)
-  {
-    const int jj = grid_.icells;
-    const int kk = grid_.ijcells;
-
-    for (int k=grid_.kstart; k<grid_.kend; ++k)
-      for (int j=grid_.jstart; j<grid_.jend; ++j)
-        #pragma ivdep
-        for (int i=grid_.istart; i<grid_.iend; ++i)
-        {
-          const int ijk = i + j*jj + k*kk;
-          data_[ijk] = expression;
-        }
-  }
 }
