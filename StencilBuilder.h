@@ -35,15 +35,15 @@ namespace StencilBuilder
   // Fourth order interpolation.
   struct Interp
   {
-    static double apply_narrow(const double a, const double b) { return ( 9./16.)*(a+b); }
-    static double apply_wide  (const double a, const double b) { return (-1./16.)*(a+b); }
+    static inline double apply_narrow(const double a, const double b) { return ( 9./16.)*(a+b); }
+    static inline double apply_wide  (const double a, const double b) { return (-1./16.)*(a+b); }
   };
 
   // Fourth order gradient.
   struct Grad
   {
-    static double apply_narrow(const double a, const double b) { return (-27./24.)*(a-b); }
-    static double apply_wide  (const double a, const double b) { return (  1./24.)*(a-b); }
+    static inline double apply_narrow(const double a, const double b) { return (-27./24.)*(a-b); }
+    static inline double apply_wide  (const double a, const double b) { return (  1./24.)*(a-b); }
   };
 
   // STENCIL NODE CLASS
@@ -56,7 +56,7 @@ namespace StencilBuilder
     const Inner& inner_;
     const int nn_;
 
-    double operator[](const int i) const
+    inline double operator[](const int i) const
     {
       const double wide   = Op::apply_wide  (inner_[i + (-2+toCenter)*nn_], inner_[i + (+1+toCenter)*nn_]);
       const double narrow = Op::apply_narrow(inner_[i + (-1+toCenter)*nn_], inner_[i + (   toCenter)*nn_]);
@@ -66,14 +66,14 @@ namespace StencilBuilder
 
   // Stencil generation operator for interpolation.
   template<int toCenter, class Inner>
-  Stencil<toCenter, Inner, Interp> interp(const Inner& inner, const int nn)
+  inline Stencil<toCenter, Inner, Interp> interp(const Inner& inner, const int nn)
   {
     return Stencil<toCenter, Inner, Interp>(inner, nn);
   }
 
   // Stencil generation operator for gradient.
   template<int toCenter, class Inner>
-  Stencil<toCenter, Inner, Grad> grad(const Inner& inner, const int nn)
+  inline Stencil<toCenter, Inner, Grad> grad(const Inner& inner, const int nn)
   {
     return Stencil<toCenter, Inner, Grad>(inner, nn);
   }
@@ -82,13 +82,13 @@ namespace StencilBuilder
   // Multiplication operator.
   struct Multiply
   {
-    static double apply(const double left, const double right) { return left*right; }
+    static inline double apply(const double left, const double right) { return left*right; }
   };
 
   // Addition operator.
   struct Add
   {
-    static double apply(const double left, const double right) { return left+right; }
+    static inline double apply(const double left, const double right) { return left+right; }
   };
 
   // OPERATOR NODE CLASS
@@ -101,7 +101,7 @@ namespace StencilBuilder
     const Left& left_;
     const Right& right_;
 
-    double operator[](const int i) const { return Op::apply(left_[i], right_[i]); }
+    inline double operator[](const int i) const { return Op::apply(left_[i], right_[i]); }
   };
 
   // Operator aggregation class, specialization for left scalar multiplication
@@ -113,19 +113,19 @@ namespace StencilBuilder
     const double& left_;
     const Right& right_;
 
-    double operator[](const int i) const { return Op::apply(left_, right_[i]); }
+    inline double operator[](const int i) const { return Op::apply(left_, right_[i]); }
   };
 
   // Template classes for the multiplication operator.
   template<class Left, class Right>
-  Operator<Left, Multiply, Right> operator*(const Left& left, const Right& right)
+  inline Operator<Left, Multiply, Right> operator*(const Left& left, const Right& right)
   {
     return Operator<Left, Multiply, Right>(left, right);
   }
 
   // Template classes for the addition operators.
   template<class Left, class Right>
-  Operator<Left, Add, Right> operator+(const Left& left, const Right& right)
+  inline Operator<Left, Add, Right> operator+(const Left& left, const Right& right)
   {
     return Operator<Left, Add, Right>(left, right);
   }
@@ -140,13 +140,14 @@ namespace StencilBuilder
 
       ~Field() { delete[] data_; }
 
-      double& operator[](const int i) const { return data_[i]; }
+      inline double& operator[](const int i) const { return data_[i]; }
 
-      double& operator()(const int i, const int j, const int k) const
+      inline double& operator()(const int i, const int j, const int k) const
       { return data_[i + j*grid_.icells + k*grid_.ijcells]; }
 
       // Assignment operator, this operator starts the inline expansion.
-      template<class T> void operator= (const T& restrict expression)
+      template<class T>
+      inline Field& operator= (const T& restrict expression)
       {
         const int jj = grid_.icells;
         const int kk = grid_.ijcells;
@@ -159,10 +160,12 @@ namespace StencilBuilder
               const int ijk = i + j*jj + k*kk;
               data_[ijk] = expression[ijk];
             }
+
+        return *this;
       }
 
       // Overload, NOT specialization, for assignment with a constant.
-      void operator= (const double& restrict expression)
+      inline Field& operator= (const double& restrict expression)
       {
         const int jj = grid_.icells;
         const int kk = grid_.ijcells;
@@ -175,10 +178,13 @@ namespace StencilBuilder
               const int ijk = i + j*jj + k*kk;
               data_[ijk] = expression;
             }
+
+        return *this;
       }
 
       // Compound assignment operator, this operator starts the inline expansion.
-      template<class T> void operator+=(const T& restrict expression)
+      template<class T>
+      inline Field& operator+=(const T& restrict expression)
       {
         const int jj = grid_.icells;
         const int kk = grid_.ijcells;
@@ -191,6 +197,8 @@ namespace StencilBuilder
               const int ijk = i + j*jj + k*kk;
               data_[ijk] += expression[ijk];
             }
+
+        return *this;
       }
 
     private:
