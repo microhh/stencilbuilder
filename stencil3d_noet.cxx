@@ -7,55 +7,55 @@
 // Fourth order interpolation function.
 inline double interp(const double m2, const double m1, const double p1, const double p2)
 {
-    return (-1./16)*(m2+p2) + (9./16)*(m1+p1);
-  }
+  return (-1./16)*(m2+p2) + (9./16)*(m1+p1);
+}
 
-  // Fourth order gradient function.
-  inline double grad(const double m2, const double m1, const double p1, const double p2)
-  {
-    return (1./24.)*(m2-p2) + (27./24.)*(p1-m1);
-  }
+// Fourth order gradient function.
+inline double grad(const double m2, const double m1, const double p1, const double p2)
+{
+  return (1./24.)*(m2-p2) + (27./24.)*(p1-m1);
+}
 
-  // Test function with a similar structure as the advection operator.
-  void advection(double * const restrict at, const double * const restrict a,
-                 const double * const restrict b, const double * const restrict c,
-                 const int istart, const int iend,
-                 const int jstart, const int jend,
-                 const int kstart, const int kend,
-                 const int icells, const int ijcells)
-  {
-    const int ii1 = 1;
-    const int ii2 = 2;
-    const int ii3 = 3;
-    const int jj1 = 1*icells;
-    const int jj2 = 2*icells;
-    const int jj3 = 3*icells;
-    const int kk1 = 1*ijcells;
-    const int kk2 = 2*ijcells;
-    const int kk3 = 3*ijcells;
+// Test function with a similar structure as the advection operator.
+void advection(double * const restrict at, const double * const restrict a,
+               const double * const restrict b, const double * const restrict c,
+               const int istart, const int iend,
+               const int jstart, const int jend,
+               const int kstart, const int kend,
+               const int icells, const int ijcells)
+{
+  const int ii1 = 1;
+  const int ii2 = 2;
+  const int ii3 = 3;
+  const int jj1 = 1*icells;
+  const int jj2 = 2*icells;
+  const int jj3 = 3*icells;
+  const int kk1 = 1*ijcells;
+  const int kk2 = 2*ijcells;
+  const int kk3 = 3*ijcells;
 
-    for (int k=kstart; k<kend; ++k)
-      for (int j=jstart; j<jend; ++j)
-        #pragma ivdep
-        for (int i=istart; i<iend; ++i)
-        {
-          const int ijk = i + j*jj1 + k*kk1;
-          at[ijk] += grad( interp( a[ijk-ii3], a[ijk-ii2], a[ijk-ii1], a[ijk    ] ) * interp( a[ijk-ii3], a[ijk-ii2], a[ijk-ii1], a[ijk    ] ),
-                           interp( a[ijk-ii2], a[ijk-ii1], a[ijk    ], a[ijk+ii1] ) * interp( a[ijk-ii2], a[ijk-ii1], a[ijk    ], a[ijk+ii1] ),
-                           interp( a[ijk-ii1], a[ijk    ], a[ijk+ii1], a[ijk+ii2] ) * interp( a[ijk-ii1], a[ijk    ], a[ijk+ii1], a[ijk+ii2] ),
-                           interp( a[ijk    ], a[ijk+ii1], a[ijk+ii2], a[ijk+ii3] ) * interp( a[ijk    ], a[ijk+ii1], a[ijk+ii2], a[ijk+ii3] ))
+  for (int k=kstart; k<kend; ++k)
+    for (int j=jstart; j<jend; ++j)
+      #pragma ivdep
+      for (int i=istart; i<iend; ++i)
+      {
+        const int ijk = i + j*jj1 + k*kk1;
+        at[ijk] += grad( interp( a[ijk-ii3], a[ijk-ii2], a[ijk-ii1], a[ijk    ] ) * interp( a[ijk-ii3], a[ijk-ii2], a[ijk-ii1], a[ijk    ] ),
+                         interp( a[ijk-ii2], a[ijk-ii1], a[ijk    ], a[ijk+ii1] ) * interp( a[ijk-ii2], a[ijk-ii1], a[ijk    ], a[ijk+ii1] ),
+                         interp( a[ijk-ii1], a[ijk    ], a[ijk+ii1], a[ijk+ii2] ) * interp( a[ijk-ii1], a[ijk    ], a[ijk+ii1], a[ijk+ii2] ),
+                         interp( a[ijk    ], a[ijk+ii1], a[ijk+ii2], a[ijk+ii3] ) * interp( a[ijk    ], a[ijk+ii1], a[ijk+ii2], a[ijk+ii3] ))
 
-                   + grad( interp( b[ijk-ii2-jj1], b[ijk-ii1-jj1], b[ijk-jj1], b[ijk+ii1-jj1] ) * interp( a[ijk-jj3], a[ijk-jj2], a[ijk-jj1], a[ijk    ] ),
-                           interp( b[ijk-ii2    ], b[ijk-ii1    ], b[ijk    ], b[ijk+ii1    ] ) * interp( a[ijk-jj2], a[ijk-jj1], a[ijk    ], a[ijk+jj1] ),
-                           interp( b[ijk-ii2+jj1], b[ijk-ii1+jj1], b[ijk+jj1], b[ijk+ii1+jj1] ) * interp( a[ijk-jj1], a[ijk    ], a[ijk+jj1], a[ijk+jj2] ),
-                           interp( b[ijk-ii2+jj2], b[ijk-ii1+jj2], b[ijk+jj2], b[ijk+ii1+jj2] ) * interp( a[ijk    ], a[ijk+jj1], a[ijk+jj2], a[ijk+jj3] ))
+                 + grad( interp( b[ijk-ii2-jj1], b[ijk-ii1-jj1], b[ijk-jj1], b[ijk+ii1-jj1] ) * interp( a[ijk-jj3], a[ijk-jj2], a[ijk-jj1], a[ijk    ] ),
+                         interp( b[ijk-ii2    ], b[ijk-ii1    ], b[ijk    ], b[ijk+ii1    ] ) * interp( a[ijk-jj2], a[ijk-jj1], a[ijk    ], a[ijk+jj1] ),
+                         interp( b[ijk-ii2+jj1], b[ijk-ii1+jj1], b[ijk+jj1], b[ijk+ii1+jj1] ) * interp( a[ijk-jj1], a[ijk    ], a[ijk+jj1], a[ijk+jj2] ),
+                         interp( b[ijk-ii2+jj2], b[ijk-ii1+jj2], b[ijk+jj2], b[ijk+ii1+jj2] ) * interp( a[ijk    ], a[ijk+jj1], a[ijk+jj2], a[ijk+jj3] ))
 
-                   + grad( interp( c[ijk-ii2-kk1], c[ijk-ii1-kk1], c[ijk-kk1], c[ijk+ii1-kk1] ) * interp( a[ijk-kk3], a[ijk-kk2], a[ijk-kk1], a[ijk    ] ),
-                           interp( c[ijk-ii2    ], c[ijk-ii1    ], c[ijk    ], c[ijk+ii1    ] ) * interp( a[ijk-kk2], a[ijk-kk1], a[ijk    ], a[ijk+kk1] ),
-                           interp( c[ijk-ii2+kk1], c[ijk-ii1+kk1], c[ijk+kk1], c[ijk+ii1+kk1] ) * interp( a[ijk-kk1], a[ijk    ], a[ijk+kk1], a[ijk+kk2] ),
-                           interp( c[ijk-ii2+kk2], c[ijk-ii1+kk2], c[ijk+kk2], c[ijk+ii1+kk2] ) * interp( a[ijk    ], a[ijk+kk1], a[ijk+kk2], a[ijk+kk3] ));
-        }
-  }
+                 + grad( interp( c[ijk-ii2-kk1], c[ijk-ii1-kk1], c[ijk-kk1], c[ijk+ii1-kk1] ) * interp( a[ijk-kk3], a[ijk-kk2], a[ijk-kk1], a[ijk    ] ),
+                         interp( c[ijk-ii2    ], c[ijk-ii1    ], c[ijk    ], c[ijk+ii1    ] ) * interp( a[ijk-kk2], a[ijk-kk1], a[ijk    ], a[ijk+kk1] ),
+                         interp( c[ijk-ii2+kk1], c[ijk-ii1+kk1], c[ijk+kk1], c[ijk+ii1+kk1] ) * interp( a[ijk-kk1], a[ijk    ], a[ijk+kk1], a[ijk+kk2] ),
+                         interp( c[ijk-ii2+kk2], c[ijk-ii1+kk2], c[ijk+kk2], c[ijk+ii1+kk2] ) * interp( a[ijk    ], a[ijk+kk1], a[ijk+kk2], a[ijk+kk3] ));
+      }
+}
 
   // Test function for time integration.
 void tendency(double * const restrict at, double * const restrict a,
