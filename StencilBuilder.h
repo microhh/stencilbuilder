@@ -43,7 +43,7 @@ namespace StencilBuilder
   struct Grad
   {
     static inline double apply(const double a, const double b, const double c, const double d)
-    { return (27./24.)*(c-b) - 1./24*(d-a); }
+    { return (27./24.)*(c-b) - (1./24)*(d-a); }
   };
 
   // STENCIL NODE CLASS
