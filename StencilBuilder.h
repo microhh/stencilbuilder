@@ -2,6 +2,9 @@
 
 namespace StencilBuilder
 {
+  typedef const int unitVector[3];
+  unitVector ivec = {1, 0, 0};
+
   struct Grid
   {
     Grid(const int itot, const int jtot, const int ktot, const int gc) :

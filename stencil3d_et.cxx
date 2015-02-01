@@ -33,11 +33,6 @@ int main()
     at[n] = 0.;
   }
 
-  // Define the distances in memory for the three dimensions.
-  const int ii = 1;
-  const int jj = grid.icells;
-  const int kk = grid.ijcells;
-
   // Initialize the time step.
   const double dt = 1.e-3;
 
