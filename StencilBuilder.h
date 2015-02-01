@@ -40,14 +40,14 @@ namespace StencilBuilder
   // Fourth order interpolation.
   struct Interp
   {
-    static inline const double apply(const double a, const double b, const double c, const double d)
+    static inline double apply(const double a, const double b, const double c, const double d)
     { return (9./16.)*(b+c) - (1./16.)*(a+d); }
   };
 
   // Fourth order gradient.
   struct Grad
   {
-    static inline const double apply(const double a, const double b, const double c, const double d)
+    static inline double apply(const double a, const double b, const double c, const double d)
     { return (27./24.)*(c-b) - (1./24)*(d-a); }
   };
 
@@ -60,7 +60,7 @@ namespace StencilBuilder
 
     const Inner& inner_;
 
-    inline const double operator()(const int i, const int j, const int k) const
+    inline double operator()(const int i, const int j, const int k) const
     {
       return Op::apply(inner_(i + vec[0]*(-2+loc), j + vec[1]*(-2+loc), k + vec[2]*(-2+loc)),
                        inner_(i + vec[0]*(-1+loc), j + vec[1]*(-1+loc), k + vec[2]*(-1+loc)),
@@ -123,13 +123,13 @@ namespace StencilBuilder
   // Multiplication operator.
   struct Multiply
   {
-    static inline const double apply(const double left, const double right) { return left*right; }
+    static inline double apply(const double left, const double right) { return left*right; }
   };
 
   // Addition operator.
   struct Add
   {
-    static inline const double apply(const double left, const double right) { return left+right; }
+    static inline double apply(const double left, const double right) { return left+right; }
   };
 
   // OPERATOR NODE CLASS
@@ -142,8 +142,7 @@ namespace StencilBuilder
     const Left& left_;
     const Right& right_;
 
-    // inline double operator[](const int i) const { return Op::apply(left_[i], right_[i]); }
-    inline const double operator()(const int i, const int j, const int k) const
+    inline double operator()(const int i, const int j, const int k) const
     { return Op::apply(left_(i, j, k), right_(i, j, k)); }
   };
 
@@ -156,8 +155,7 @@ namespace StencilBuilder
     const double& left_;
     const Right& right_;
 
-    // inline double operator[](const int i) const { return Op::apply(left_, right_[i]); }
-    inline const double operator()(const int i, const int j, const int k) const
+    inline double operator()(const int i, const int j, const int k) const
     { return Op::apply(left_, right_(i, j, k)); }
   };
 
@@ -186,9 +184,9 @@ namespace StencilBuilder
       ~Field() { delete[] data_; }
 
       inline double& operator[](const int i) { return data_[i]; }
-      inline const double operator[](const int i) const { return data_[i]; }
+      inline double operator[](const int i) const { return data_[i]; }
 
-      inline const double operator()(const int i, const int j, const int k) const
+      inline double operator()(const int i, const int j, const int k) const
       { return data_[i + j*grid_.icells + k*grid_.ijcells]; }
 
       inline double& operator()(const int i, const int j, const int k)
