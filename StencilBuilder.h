@@ -11,7 +11,6 @@ namespace StencilBuilder
   {
     Grid(const int itot, const int jtot, const int ktot, const int gc) :
       itot(itot), jtot(jtot), ktot(ktot), gc(gc),
-      ntot((itot+2*gc)*(jtot+2*gc)*(ktot+2*gc)),
       istart(gc),
       jstart(gc),
       kstart(gc),
@@ -19,13 +18,16 @@ namespace StencilBuilder
       jend(jtot+gc),
       kend(ktot+gc),
       icells(itot+2*gc),
-      ijcells((itot+2*gc)*(jtot+2*gc)) {}
+      jcells(jtot+2*gc),
+      kcells(ktot+2*gc),
+      ijcells(icells*jcells),
+      ijkcells(icells*jcells*kcells)
+    {}
 
     const int itot;
     const int jtot;
     const int ktot;
     const int gc;
-    const int ntot;
     const int istart;
     const int jstart;
     const int kstart;
@@ -33,7 +35,10 @@ namespace StencilBuilder
     const int jend;
     const int kend;
     const int icells;
+    const int jcells;
+    const int kcells;
     const int ijcells;
+    const int ijkcells;
   };
 
   // STENCIL OPERATORS.
@@ -179,9 +184,25 @@ namespace StencilBuilder
     public:
       Field(const Grid& grid) :
         grid_(grid),
-        data_(new double[grid_.ntot]) {}
+        data_(new double[grid_.ijkcells])
+      {
+        // Initialize the field at 0.
+        for (int n=0; n<grid_.ijkcells; ++n)
+          data_[n] = 0.;
+      }
 
       ~Field() { delete[] data_; }
+
+      // This function returns the raw pointer to the data.
+      double* get_data(){ return data_; }
+
+      void randomize()
+      {
+        for (int k=0; k<grid_.kcells; ++k)
+          for (int j=0; j<grid_.jcells; ++j)
+            for (int i=0; i<grid_.icells; ++i)
+              (*this)(i,j,k) = 0.001 * (std::rand() % 1000) - 0.5;
+      }
 
       inline double& operator[](const int i) { return data_[i]; }
       inline double operator[](const int i) const { return data_[i]; }
@@ -202,7 +223,7 @@ namespace StencilBuilder
             #pragma GCC ivdep
             #pragma ivdep
             for (int i=grid_.istart; i<grid_.iend; ++i)
-              (*this)(i, j, k) = expression(i, j, k);
+              (*this)(i,j,k) = expression(i,j,k);
 
         return *this;
       }
@@ -216,7 +237,7 @@ namespace StencilBuilder
             #pragma GCC ivdep
             #pragma ivdep
             for (int i=grid_.istart; i<grid_.iend; ++i)
-              (*this)(i, j, k) = expression;
+              (*this)(i,j,k) = expression;
 
         return *this;
       }
@@ -231,7 +252,7 @@ namespace StencilBuilder
             #pragma GCC ivdep
             #pragma ivdep
             for (int i=grid_.istart; i<grid_.iend; ++i)
-              (*this)(i, j, k) += expression(i, j, k);
+              (*this)(i,j,k) += expression(i,j,k);
 
         return *this;
       }

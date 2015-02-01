@@ -1,8 +1,9 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+#include "StencilBuilder.h"
 
-#define restrict __restrict__
+using namespace StencilBuilder;
 
 // Fourth order interpolation function.
 inline double interp(const double m2, const double m1, const double p1, const double p2)
@@ -99,34 +100,22 @@ int main()
   const int itot = 256;
   const int jtot = 256;
   const int ktot = 256;
-  const int gc   = 4;
+  const int gc = 4;
   const int iter = 5;
 
-  // Calculate the required variables.
-  const int ntot = (itot+2*gc)*(jtot+2*gc)*(ktot+2*gc);
-  const int istart = gc;
-  const int jstart = gc;
-  const int kstart = gc;
-  const int iend = itot+gc;
-  const int jend = jtot+gc;
-  const int kend = ktot+gc;
-  const int icells = itot+2*gc;
-  const int ijcells = (itot+2*gc)*(jtot+2*gc);
+  // Initialize the grid.
+  Grid grid(itot, jtot, ktot, gc);
 
-  // Allocate the raw arrays.
-  double *a_data  = new double[ntot];
-  double *b_data  = new double[ntot];
-  double *c_data  = new double[ntot];
-  double *at_data = new double[ntot];
+  // Create fields on the grid.
+  Field a (grid);
+  Field b (grid);
+  Field c (grid);
+  Field at(grid);
 
-  // Initialize the raw arrays.
-  for (int n=0; n<ntot; ++n)
-  {
-    a_data[n] = 0.001 * (std::rand() % 1000) - 0.5;
-    b_data[n] = 0.001 * (std::rand() % 1000) - 0.5;
-    c_data[n] = 0.001 * (std::rand() % 1000) - 0.5;
-    at_data[n] = 0.;
-  }
+  // Initialize the fields.
+  a.randomize();
+  b.randomize();
+  c.randomize();
 
   // Initialize a time step.
   const double dt = 1.e-3;
@@ -134,23 +123,22 @@ int main()
   // Execute the loop iter times.
   for (int ii=0; ii<iter; ++ii)
   {
-    advection(at_data, a_data, b_data, c_data,
-              istart, iend,
-              jstart, jend,
-              kstart, kend,
-              icells, ijcells);
+    advection(at.get_data(), a.get_data(), b.get_data(), c.get_data(),
+              grid.istart, grid.iend,
+              grid.jstart, grid.jend,
+              grid.kstart, grid.kend,
+              grid.icells, grid.ijcells);
 
-    tendency(at_data, a_data,
+    tendency(at.get_data(), a.get_data(),
              dt,
-             istart, iend,
-             jstart, jend,
-             kstart, kend,
-             icells, ijcells);
+             grid.istart, grid.iend,
+             grid.jstart, grid.jend,
+             grid.kstart, grid.kend,
+             grid.icells, grid.ijcells);
   }
 
   // Print a value in the middle of the field.
-  const int ijk = itot/2 + (jtot/2)*icells + (ktot/2)*ijcells;
-  std::cout << std::setprecision(8) << "a = " << a_data[ijk] << std::endl;
+  std::cout << std::setprecision(8) << "a = " << a(itot/2, jtot/2, ktot/2) << std::endl;
 
   return 0;
 }

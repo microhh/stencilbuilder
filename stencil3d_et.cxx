@@ -24,14 +24,9 @@ int main()
   Field at(grid);
 
   // Initialize the fields.
-  for (int n=0; n<grid.ntot; ++n)
-  {
-    a[n] = 0.001 * (std::rand() % 1000) - 0.5;
-    b[n] = 0.001 * (std::rand() % 1000) - 0.5;
-    c[n] = 0.001 * (std::rand() % 1000) - 0.5;
-
-    at[n] = 0.;
-  }
+  a.randomize();
+  b.randomize();
+  c.randomize();
 
   // Initialize the time step.
   const double dt = 1.e-3;
