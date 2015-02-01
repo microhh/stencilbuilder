@@ -2,8 +2,10 @@
 
 namespace StencilBuilder
 {
-  typedef const int unitVector[3];
-  unitVector ivec = {1, 0, 0};
+  typedef const int UnitVec[3];
+  constexpr UnitVec ivec = {1, 0, 0};
+  constexpr UnitVec jvec = {0, 1, 0};
+  constexpr UnitVec kvec = {0, 0, 1};
 
   struct Grid
   {
@@ -51,7 +53,7 @@ namespace StencilBuilder
 
   // STENCIL NODE CLASS
   // Stencil node in expression tree.
-  template<int loc, class Inner, class Op, const int ivec, const int jvec, const int kvec>
+  template<int loc, class Inner, class Op, UnitVec vec>
   struct Stencil
   {
     Stencil(const Inner& inner) : inner_(inner) {}
@@ -60,49 +62,49 @@ namespace StencilBuilder
 
     inline const double operator()(const int i, const int j, const int k) const
     {
-      return Op::apply(inner_(i + ivec*(-2+loc), j + jvec*(-2+loc), k + kvec*(-2+loc)),
-                       inner_(i + ivec*(-1+loc), j + jvec*(-1+loc), k + kvec*(-1+loc)),
-                       inner_(i + ivec*(   loc), j + jvec*(   loc), k + kvec*(   loc)),
-                       inner_(i + ivec*( 1+loc), j + jvec*( 1+loc), k + kvec*( 1+loc)));
+      return Op::apply(inner_(i + vec[0]*(-2+loc), j + vec[1]*(-2+loc), k + vec[2]*(-2+loc)),
+                       inner_(i + vec[0]*(-1+loc), j + vec[1]*(-1+loc), k + vec[2]*(-1+loc)),
+                       inner_(i + vec[0]*(   loc), j + vec[1]*(   loc), k + vec[2]*(   loc)),
+                       inner_(i + vec[0]*( 1+loc), j + vec[1]*( 1+loc), k + vec[2]*( 1+loc)));
     }
   };
 
   // Stencil generation operator for interpolation.
   template<int loc, class Inner>
-  inline Stencil<loc, Inner, Interp, 1, 0, 0> interpx(const Inner& inner)
+  inline Stencil<loc, Inner, Interp, ivec> interpx(const Inner& inner)
   {
-    return Stencil<loc, Inner, Interp, 1, 0, 0>(inner);
+    return Stencil<loc, Inner, Interp, ivec>(inner);
   }
 
   template<int loc, class Inner>
-  inline Stencil<loc, Inner, Interp, 0, 1, 0> interpy(const Inner& inner)
+  inline Stencil<loc, Inner, Interp, jvec> interpy(const Inner& inner)
   {
-    return Stencil<loc, Inner, Interp, 0, 1, 0>(inner);
+    return Stencil<loc, Inner, Interp, jvec>(inner);
   }
 
   template<int loc, class Inner>
-  inline Stencil<loc, Inner, Interp, 0, 0, 1> interpz(const Inner& inner)
+  inline Stencil<loc, Inner, Interp, kvec> interpz(const Inner& inner)
   {
-    return Stencil<loc, Inner, Interp, 0, 0, 1>(inner);
+    return Stencil<loc, Inner, Interp, kvec>(inner);
   }
 
   // Stencil generation operator for gradient.
   template<int loc, class Inner>
-  inline Stencil<loc, Inner, Grad, 1, 0, 0> gradx(const Inner& inner)
+  inline Stencil<loc, Inner, Grad, ivec> gradx(const Inner& inner)
   {
-    return Stencil<loc, Inner, Grad, 1, 0, 0>(inner);
+    return Stencil<loc, Inner, Grad, ivec>(inner);
   }
 
   template<int loc, class Inner>
-  inline Stencil<loc, Inner, Grad, 0, 1, 0> grady(const Inner& inner)
+  inline Stencil<loc, Inner, Grad, jvec> grady(const Inner& inner)
   {
-    return Stencil<loc, Inner, Grad, 0, 1, 0>(inner);
+    return Stencil<loc, Inner, Grad, jvec>(inner);
   }
 
   template<int loc, class Inner>
-  inline Stencil<loc, Inner, Grad, 0, 0, 1> gradz(const Inner& inner)
+  inline Stencil<loc, Inner, Grad, kvec> gradz(const Inner& inner)
   {
-    return Stencil<loc, Inner, Grad, 0, 0, 1>(inner);
+    return Stencil<loc, Inner, Grad, kvec>(inner);
   }
 
   // SCALAR OPERATORS
