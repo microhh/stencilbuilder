@@ -3,9 +3,9 @@
 namespace StencilBuilder
 {
   // Unit vectors
-  const int iVec[3] = {1, 0, 0};
-  const int jVec[3] = {0, 1, 0};
-  const int kVec[3] = {0, 0, 1};
+  constexpr int iVec[3] = {1, 0, 0};
+  constexpr int jVec[3] = {0, 1, 0};
+  constexpr int kVec[3] = {0, 0, 1};
 
   struct Grid
   {
