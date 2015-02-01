@@ -35,20 +35,20 @@ namespace StencilBuilder
   // Fourth order interpolation.
   struct Interp
   {
-    static inline double apply(const double a, const double b, const double c, const double d)
+    static inline const double apply(const double a, const double b, const double c, const double d)
     { return (9./16.)*(b+c) - (1./16.)*(a+d); }
   };
 
   // Fourth order gradient.
   struct Grad
   {
-    static inline double apply(const double a, const double b, const double c, const double d)
+    static inline const double apply(const double a, const double b, const double c, const double d)
     { return (27./24.)*(c-b) - (1./24)*(d-a); }
   };
 
   // STENCIL NODE CLASS
   // Stencil node in expression tree.
-  template<int toCenter, class Inner, class Op, const int ivec, const int jvec, const int kvec>
+  template<int loc, class Inner, class Op, const int ivec, const int jvec, const int kvec>
   struct Stencil
   {
     Stencil(const Inner& inner) : inner_(inner) {}
@@ -57,62 +57,62 @@ namespace StencilBuilder
 
     inline const double operator()(const int i, const int j, const int k) const
     {
-      return Op::apply(inner_(i + ivec*(-2+toCenter), j + jvec*(-2+toCenter), k + kvec*(-2+toCenter)),
-                       inner_(i + ivec*(-1+toCenter), j + jvec*(-1+toCenter), k + kvec*(-1+toCenter)),
-                       inner_(i + ivec*(   toCenter), j + jvec*(   toCenter), k + kvec*(   toCenter)),
-                       inner_(i + ivec*( 1+toCenter), j + jvec*( 1+toCenter), k + kvec*( 1+toCenter)));
+      return Op::apply(inner_(i + ivec*(-2+loc), j + jvec*(-2+loc), k + kvec*(-2+loc)),
+                       inner_(i + ivec*(-1+loc), j + jvec*(-1+loc), k + kvec*(-1+loc)),
+                       inner_(i + ivec*(   loc), j + jvec*(   loc), k + kvec*(   loc)),
+                       inner_(i + ivec*( 1+loc), j + jvec*( 1+loc), k + kvec*( 1+loc)));
     }
   };
 
   // Stencil generation operator for interpolation.
-  template<int toCenter, class Inner>
-  inline Stencil<toCenter, Inner, Interp, 1, 0, 0> interpx(const Inner& inner)
+  template<int loc, class Inner>
+  inline Stencil<loc, Inner, Interp, 1, 0, 0> interpx(const Inner& inner)
   {
-    return Stencil<toCenter, Inner, Interp, 1, 0, 0>(inner);
+    return Stencil<loc, Inner, Interp, 1, 0, 0>(inner);
   }
 
-  template<int toCenter, class Inner>
-  inline Stencil<toCenter, Inner, Interp, 0, 1, 0> interpy(const Inner& inner)
+  template<int loc, class Inner>
+  inline Stencil<loc, Inner, Interp, 0, 1, 0> interpy(const Inner& inner)
   {
-    return Stencil<toCenter, Inner, Interp, 0, 1, 0>(inner);
+    return Stencil<loc, Inner, Interp, 0, 1, 0>(inner);
   }
 
-  template<int toCenter, class Inner>
-  inline Stencil<toCenter, Inner, Interp, 0, 0, 1> interpz(const Inner& inner)
+  template<int loc, class Inner>
+  inline Stencil<loc, Inner, Interp, 0, 0, 1> interpz(const Inner& inner)
   {
-    return Stencil<toCenter, Inner, Interp, 0, 0, 1>(inner);
+    return Stencil<loc, Inner, Interp, 0, 0, 1>(inner);
   }
 
   // Stencil generation operator for gradient.
-  template<int toCenter, class Inner>
-  inline Stencil<toCenter, Inner, Grad, 1, 0, 0> gradx(const Inner& inner)
+  template<int loc, class Inner>
+  inline Stencil<loc, Inner, Grad, 1, 0, 0> gradx(const Inner& inner)
   {
-    return Stencil<toCenter, Inner, Grad, 1, 0, 0>(inner);
+    return Stencil<loc, Inner, Grad, 1, 0, 0>(inner);
   }
 
-  template<int toCenter, class Inner>
-  inline Stencil<toCenter, Inner, Grad, 0, 1, 0> grady(const Inner& inner)
+  template<int loc, class Inner>
+  inline Stencil<loc, Inner, Grad, 0, 1, 0> grady(const Inner& inner)
   {
-    return Stencil<toCenter, Inner, Grad, 0, 1, 0>(inner);
+    return Stencil<loc, Inner, Grad, 0, 1, 0>(inner);
   }
 
-  template<int toCenter, class Inner>
-  inline Stencil<toCenter, Inner, Grad, 0, 0, 1> gradz(const Inner& inner)
+  template<int loc, class Inner>
+  inline Stencil<loc, Inner, Grad, 0, 0, 1> gradz(const Inner& inner)
   {
-    return Stencil<toCenter, Inner, Grad, 0, 0, 1>(inner);
+    return Stencil<loc, Inner, Grad, 0, 0, 1>(inner);
   }
 
   // SCALAR OPERATORS
   // Multiplication operator.
   struct Multiply
   {
-    static inline double apply(const double left, const double right) { return left*right; }
+    static inline const double apply(const double left, const double right) { return left*right; }
   };
 
   // Addition operator.
   struct Add
   {
-    static inline double apply(const double left, const double right) { return left+right; }
+    static inline const double apply(const double left, const double right) { return left+right; }
   };
 
   // OPERATOR NODE CLASS
