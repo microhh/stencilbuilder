@@ -2,6 +2,11 @@
 
 namespace StencilBuilder
 {
+  // Unit vectors
+  const int iVec[3] = {1, 0, 0};
+  const int jVec[3] = {0, 1, 0};
+  const int kVec[3] = {0, 0, 1};
+
   struct Grid
   {
     Grid(const int itot, const int jtot, const int ktot, const int gc) :
@@ -48,33 +53,64 @@ namespace StencilBuilder
 
   // STENCIL NODE CLASS
   // Stencil node in expression tree.
-  template<int toCenter, class Inner, class Op>
+  template<int toCenter, class Inner, class Op, const int vec[3]>
   struct Stencil
   {
-    Stencil(const Inner& inner, const int nn) : inner_(inner), nn_(nn) {}
+    Stencil(const Inner& inner) : inner_(inner) {}
 
     const Inner& inner_;
-    const int nn_;
 
-    inline double operator[](const int i) const
+    // inline double operator[](const int i) const
+    // {
+    //   return Op::apply(inner_[i + (-2+toCenter)*nn_], inner_[i + (-1+toCenter)*nn_],
+    //                    inner_[i + (   toCenter)*nn_], inner_[i + ( 1+toCenter)*nn_]);
+    // }
+
+    inline double operator()(const int i, const int j, const int k) const
     {
-      return Op::apply(inner_[i + (-2+toCenter)*nn_], inner_[i + (-1+toCenter)*nn_],
-                       inner_[i + (   toCenter)*nn_], inner_[i + ( 1+toCenter)*nn_]);
+      return Op::apply(inner_(i + vec[0]*(-2+toCenter), j + vec[1]*(-2+toCenter), k + vec[2]*(-2+toCenter)),
+                       inner_(i + vec[0]*(-1+toCenter), j + vec[1]*(-1+toCenter), k + vec[2]*(-1+toCenter)),
+                       inner_(i + vec[0]*(   toCenter), j + vec[1]*(   toCenter), k + vec[2]*(   toCenter)),
+                       inner_(i + vec[0]*( 1+toCenter), j + vec[1]*( 1+toCenter), k + vec[2]*( 1+toCenter)));
     }
   };
 
   // Stencil generation operator for interpolation.
   template<int toCenter, class Inner>
-  inline Stencil<toCenter, Inner, Interp> interp(const Inner& inner, const int nn)
+  inline Stencil<toCenter, Inner, Interp, iVec> interpx(const Inner& inner)
   {
-    return Stencil<toCenter, Inner, Interp>(inner, nn);
+    return Stencil<toCenter, Inner, Interp, iVec>(inner);
+  }
+
+  template<int toCenter, class Inner>
+  inline Stencil<toCenter, Inner, Interp, jVec> interpy(const Inner& inner)
+  {
+    return Stencil<toCenter, Inner, Interp, jVec>(inner);
+  }
+
+  template<int toCenter, class Inner>
+  inline Stencil<toCenter, Inner, Interp, kVec> interpz(const Inner& inner)
+  {
+    return Stencil<toCenter, Inner, Interp, kVec>(inner);
   }
 
   // Stencil generation operator for gradient.
   template<int toCenter, class Inner>
-  inline Stencil<toCenter, Inner, Grad> grad(const Inner& inner, const int nn)
+  inline Stencil<toCenter, Inner, Grad, iVec> gradx(const Inner& inner)
   {
-    return Stencil<toCenter, Inner, Grad>(inner, nn);
+    return Stencil<toCenter, Inner, Grad, iVec>(inner);
+  }
+
+  template<int toCenter, class Inner>
+  inline Stencil<toCenter, Inner, Grad, jVec> grady(const Inner& inner)
+  {
+    return Stencil<toCenter, Inner, Grad, jVec>(inner);
+  }
+
+  template<int toCenter, class Inner>
+  inline Stencil<toCenter, Inner, Grad, kVec> gradz(const Inner& inner)
+  {
+    return Stencil<toCenter, Inner, Grad, kVec>(inner);
   }
 
   // SCALAR OPERATORS
@@ -100,7 +136,9 @@ namespace StencilBuilder
     const Left& left_;
     const Right& right_;
 
-    inline double operator[](const int i) const { return Op::apply(left_[i], right_[i]); }
+    // inline double operator[](const int i) const { return Op::apply(left_[i], right_[i]); }
+    inline double operator()(const int i, const int j, const int k) const
+    { return Op::apply(left_(i, j, k), right_(i, j, k)); }
   };
 
   // Operator aggregation class, specialization for left scalar multiplication
@@ -112,7 +150,9 @@ namespace StencilBuilder
     const double& left_;
     const Right& right_;
 
-    inline double operator[](const int i) const { return Op::apply(left_, right_[i]); }
+    // inline double operator[](const int i) const { return Op::apply(left_, right_[i]); }
+    inline double operator()(const int i, const int j, const int k) const
+    { return Op::apply(left_, right_(i, j, k)); }
   };
 
   // Template classes for the multiplication operator.
@@ -157,7 +197,7 @@ namespace StencilBuilder
             for (int i=grid_.istart; i<grid_.iend; ++i)
             {
               const int ijk = i + j*jj + k*kk;
-              data_[ijk] = expression[ijk];
+              data_[ijk] = expression(i, j, k);
             }
 
         return *this;
@@ -194,7 +234,7 @@ namespace StencilBuilder
             for (int i=grid_.istart; i<grid_.iend; ++i)
             {
               const int ijk = i + j*jj + k*kk;
-              data_[ijk] += expression[ijk];
+              data_[ijk] += expression(i, j, k);
             }
 
         return *this;
