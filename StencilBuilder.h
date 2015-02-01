@@ -148,7 +148,7 @@ namespace StencilBuilder
     const Right& right_;
 
     inline double operator()(const int i, const int j, const int k) const
-    { return Op::apply(left_(i, j, k), right_(i, j, k)); }
+    { return Op::apply(left_(i,j,k), right_(i,j,k)); }
   };
 
   // Operator aggregation class, specialization for left scalar multiplication
@@ -161,7 +161,7 @@ namespace StencilBuilder
     const Right& right_;
 
     inline double operator()(const int i, const int j, const int k) const
-    { return Op::apply(left_, right_(i, j, k)); }
+    { return Op::apply(left_, right_(i,j,k)); }
   };
 
   // Template classes for the multiplication operator.
