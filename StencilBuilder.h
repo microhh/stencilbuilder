@@ -71,52 +71,52 @@ namespace StencilBuilder
 
   // Stencil generation operator for interpolation.
   template<class Inner>
-  inline Stencil<1, Inner, Interp, ivec> interpx(const Inner& inner)
+  inline Stencil<1, Inner, Interp, ivec> Ix(const Inner& inner)
   { return Stencil<1, Inner, Interp, ivec>(inner); }
 
   template<class Inner>
-  inline Stencil<1, Inner, Interp, jvec> interpy(const Inner& inner)
+  inline Stencil<1, Inner, Interp, jvec> Iy(const Inner& inner)
   { return Stencil<1, Inner, Interp, jvec>(inner); }
 
   template<class Inner>
-  inline Stencil<1, Inner, Interp, kvec> interpz(const Inner& inner)
+  inline Stencil<1, Inner, Interp, kvec> Iz(const Inner& inner)
   { return Stencil<1, Inner, Interp, kvec>(inner); }
 
   template<class Inner>
-  inline Stencil<0, Inner, Interp, ivec> interpxh(const Inner& inner)
+  inline Stencil<0, Inner, Interp, ivec> Ix_h(const Inner& inner)
   { return Stencil<0, Inner, Interp, ivec>(inner); }
 
   template<class Inner>
-  inline Stencil<0, Inner, Interp, jvec> interpyh(const Inner& inner)
+  inline Stencil<0, Inner, Interp, jvec> Iy_h(const Inner& inner)
   { return Stencil<0, Inner, Interp, jvec>(inner); }
 
   template<class Inner>
-  inline Stencil<0, Inner, Interp, kvec> interpzh(const Inner& inner)
+  inline Stencil<0, Inner, Interp, kvec> Iz_h(const Inner& inner)
   { return Stencil<0, Inner, Interp, kvec>(inner); }
 
   // Stencil generation operator for gradient.
   template<class Inner>
-  inline Stencil<1, Inner, Grad, ivec> gradx(const Inner& inner)
+  inline Stencil<1, Inner, Grad, ivec> Gx(const Inner& inner)
   { return Stencil<1, Inner, Grad, ivec>(inner); }
 
   template<class Inner>
-  inline Stencil<1, Inner, Grad, jvec> grady(const Inner& inner)
+  inline Stencil<1, Inner, Grad, jvec> Gy(const Inner& inner)
   { return Stencil<1, Inner, Grad, jvec>(inner); }
 
   template<class Inner>
-  inline Stencil<1, Inner, Grad, kvec> gradz(const Inner& inner)
+  inline Stencil<1, Inner, Grad, kvec> Gz(const Inner& inner)
   { return Stencil<1, Inner, Grad, kvec>(inner); }
 
   template<class Inner>
-  inline Stencil<0, Inner, Grad, ivec> gradxh(const Inner& inner)
+  inline Stencil<0, Inner, Grad, ivec> Gx_h(const Inner& inner)
   { return Stencil<0, Inner, Grad, ivec>(inner); }
 
   template<class Inner>
-  inline Stencil<0, Inner, Grad, jvec> gradyh(const Inner& inner)
+  inline Stencil<0, Inner, Grad, jvec> Gy_h(const Inner& inner)
   { return Stencil<0, Inner, Grad, jvec>(inner); }
 
   template<class Inner>
-  inline Stencil<0, Inner, Grad, kvec> gradzh(const Inner& inner)
+  inline Stencil<0, Inner, Grad, kvec> Gz_h(const Inner& inner)
   { return Stencil<0, Inner, Grad, kvec>(inner); }
 
   // SCALAR OPERATORS
