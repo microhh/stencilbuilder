@@ -18,8 +18,8 @@ inline double grad(const double m2, const double m1, const double p1, const doub
 }
 
 // Test function with a similar structure as the advection operator.
-void advection(double * const restrict at, const double * const restrict a,
-               const double * const restrict b, const double * const restrict c,
+void advection(double * const restrict ut, const double * const restrict u,
+               const double * const restrict v, const double * const restrict w,
                const int istart, const int iend,
                const int jstart, const int jend,
                const int kstart, const int kend,
@@ -43,20 +43,20 @@ void advection(double * const restrict at, const double * const restrict a,
       for (int i=istart; i<iend; ++i)
       {
         const int ijk = i + j*jj1 + k*kk1;
-        at[ijk] += grad( interp( a[ijk-ii3], a[ijk-ii2], a[ijk-ii1], a[ijk    ] ) * interp( a[ijk-ii3], a[ijk-ii2], a[ijk-ii1], a[ijk    ] ),
-                         interp( a[ijk-ii2], a[ijk-ii1], a[ijk    ], a[ijk+ii1] ) * interp( a[ijk-ii2], a[ijk-ii1], a[ijk    ], a[ijk+ii1] ),
-                         interp( a[ijk-ii1], a[ijk    ], a[ijk+ii1], a[ijk+ii2] ) * interp( a[ijk-ii1], a[ijk    ], a[ijk+ii1], a[ijk+ii2] ),
-                         interp( a[ijk    ], a[ijk+ii1], a[ijk+ii2], a[ijk+ii3] ) * interp( a[ijk    ], a[ijk+ii1], a[ijk+ii2], a[ijk+ii3] ))
+        ut[ijk] += grad( interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ) * interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
+                         interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ) * interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
+                         interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ) * interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
+                         interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ) * interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ))
 
-                 + grad( interp( b[ijk-ii2-jj1], b[ijk-ii1-jj1], b[ijk-jj1], b[ijk+ii1-jj1] ) * interp( a[ijk-jj3], a[ijk-jj2], a[ijk-jj1], a[ijk    ] ),
-                         interp( b[ijk-ii2    ], b[ijk-ii1    ], b[ijk    ], b[ijk+ii1    ] ) * interp( a[ijk-jj2], a[ijk-jj1], a[ijk    ], a[ijk+jj1] ),
-                         interp( b[ijk-ii2+jj1], b[ijk-ii1+jj1], b[ijk+jj1], b[ijk+ii1+jj1] ) * interp( a[ijk-jj1], a[ijk    ], a[ijk+jj1], a[ijk+jj2] ),
-                         interp( b[ijk-ii2+jj2], b[ijk-ii1+jj2], b[ijk+jj2], b[ijk+ii1+jj2] ) * interp( a[ijk    ], a[ijk+jj1], a[ijk+jj2], a[ijk+jj3] ))
+                 + grad( interp( v[ijk-ii2-jj1], v[ijk-ii1-jj1], v[ijk-jj1], v[ijk+ii1-jj1] ) * interp( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
+                         interp( v[ijk-ii2    ], v[ijk-ii1    ], v[ijk    ], v[ijk+ii1    ] ) * interp( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
+                         interp( v[ijk-ii2+jj1], v[ijk-ii1+jj1], v[ijk+jj1], v[ijk+ii1+jj1] ) * interp( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
+                         interp( v[ijk-ii2+jj2], v[ijk-ii1+jj2], v[ijk+jj2], v[ijk+ii1+jj2] ) * interp( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] ))
 
-                 + grad( interp( c[ijk-ii2-kk1], c[ijk-ii1-kk1], c[ijk-kk1], c[ijk+ii1-kk1] ) * interp( a[ijk-kk3], a[ijk-kk2], a[ijk-kk1], a[ijk    ] ),
-                         interp( c[ijk-ii2    ], c[ijk-ii1    ], c[ijk    ], c[ijk+ii1    ] ) * interp( a[ijk-kk2], a[ijk-kk1], a[ijk    ], a[ijk+kk1] ),
-                         interp( c[ijk-ii2+kk1], c[ijk-ii1+kk1], c[ijk+kk1], c[ijk+ii1+kk1] ) * interp( a[ijk-kk1], a[ijk    ], a[ijk+kk1], a[ijk+kk2] ),
-                         interp( c[ijk-ii2+kk2], c[ijk-ii1+kk2], c[ijk+kk2], c[ijk+ii1+kk2] ) * interp( a[ijk    ], a[ijk+kk1], a[ijk+kk2], a[ijk+kk3] ));
+                 + grad( interp( w[ijk-ii2-kk1], w[ijk-ii1-kk1], w[ijk-kk1], w[ijk+ii1-kk1] ) * interp( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
+                         interp( w[ijk-ii2    ], w[ijk-ii1    ], w[ijk    ], w[ijk+ii1    ] ) * interp( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
+                         interp( w[ijk-ii2+kk1], w[ijk-ii1+kk1], w[ijk+kk1], w[ijk+ii1+kk1] ) * interp( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
+                         interp( w[ijk-ii2+kk2], w[ijk-ii1+kk2], w[ijk+kk2], w[ijk+ii1+kk2] ) * interp( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] ));
       }
 }
 
@@ -100,22 +100,22 @@ int main()
   const int itot = 256;
   const int jtot = 256;
   const int ktot = 256;
-  const int gc = 4;
+  const int gc   = 4;
   const int iter = 5;
 
   // Initialize the grid.
   Grid grid(itot, jtot, ktot, gc);
 
   // Create fields on the grid.
-  Field a (grid);
-  Field b (grid);
-  Field c (grid);
-  Field at(grid);
+  Field u (grid);
+  Field v (grid);
+  Field w (grid);
+  Field ut(grid);
 
   // Initialize the fields.
-  a.randomize();
-  b.randomize();
-  c.randomize();
+  u.randomize();
+  v.randomize();
+  w.randomize();
 
   // Initialize a time step.
   const double dt = 1.e-3;
@@ -123,13 +123,13 @@ int main()
   // Execute the loop iter times.
   for (int ii=0; ii<iter; ++ii)
   {
-    advection(at.get_data(), a.get_data(), b.get_data(), c.get_data(),
+    advection(ut.get_data(), u.get_data(), v.get_data(), w.get_data(),
               grid.istart, grid.iend,
               grid.jstart, grid.jend,
               grid.kstart, grid.kend,
               grid.icells, grid.ijcells);
 
-    tendency(at.get_data(), a.get_data(),
+    tendency(ut.get_data(), u.get_data(),
              dt,
              grid.istart, grid.iend,
              grid.jstart, grid.jend,
@@ -138,7 +138,7 @@ int main()
   }
 
   // Print a value in the middle of the field.
-  std::cout << std::setprecision(8) << "a = " << a(itot/2, jtot/2, ktot/2) << std::endl;
+  std::cout << std::setprecision(8) << "u = " << u(itot/2, jtot/2, ktot/2) << std::endl;
 
   return 0;
 }

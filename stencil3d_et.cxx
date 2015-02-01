@@ -18,15 +18,15 @@ int main()
   Grid grid(itot, jtot, ktot, gc);
 
   // Create fields on the grid.
-  Field a (grid);
-  Field b (grid);
-  Field c (grid);
-  Field at(grid);
+  Field u (grid);
+  Field v (grid);
+  Field w (grid);
+  Field ut(grid);
 
   // Initialize the fields.
-  a.randomize();
-  b.randomize();
-  c.randomize();
+  u.randomize();
+  v.randomize();
+  w.randomize();
 
   // Initialize the time step.
   const double dt = 1.e-3;
@@ -35,19 +35,19 @@ int main()
   for (int n=0; n<iter; ++n)
   {
     // Advection operator.
-    at += Gx_h( Ix  (a) * Ix  (a) )
-        + Gy  ( Ix_h(b) * Iy_h(a) )
-        + Gz  ( Ix_h(c) * Iz_h(a) );
+    ut += Gx_h( Ix  (u) * Ix  (u) )
+        + Gy  ( Ix_h(v) * Iy_h(u) )
+        + Gz  ( Ix_h(w) * Iz_h(u) );
 
     // Time integration.
-    a += dt*at;
+    u += dt*ut;
 
     // Tendency reset.
-    at = 0.;
+    ut = 0.;
   }
 
   // Print a value in the middle of the field.
-  std::cout << std::setprecision(8) << "a = " << a(itot/2, jtot/2, ktot/2) << std::endl;
+  std::cout << std::setprecision(8) << "u = " << u(itot/2, jtot/2, ktot/2) << std::endl;
 
   return 0;
 }
