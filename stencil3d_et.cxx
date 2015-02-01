@@ -40,9 +40,9 @@ int main()
   for (int n=0; n<iter; ++n)
   {
     // Advection operator.
-    at += gradx<0>( interpx<1>(a) * interpx<1>(a) )
-        + grady<1>( interpx<0>(b) * interpy<0>(a) )
-        + gradz<1>( interpx<0>(c) * interpz<0>(a) );
+    at += gradxh( interpx (a) * interpx (a) )
+        + grady ( interpxh(b) * interpyh(a) )
+        + gradz ( interpxh(c) * interpzh(a) );
 
     // Time integration.
     a += dt*at;
