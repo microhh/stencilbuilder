@@ -198,6 +198,8 @@ namespace StencilBuilder
       {
         for (int k=grid_.kstart; k<grid_.kend; ++k)
           for (int j=grid_.jstart; j<grid_.jend; ++j)
+            #pragma clang loop vectorize(enable)
+            #pragma GCC ivdep
             #pragma ivdep
             for (int i=grid_.istart; i<grid_.iend; ++i)
               (*this)(i, j, k) = expression(i, j, k);
@@ -210,6 +212,8 @@ namespace StencilBuilder
       {
         for (int k=grid_.kstart; k<grid_.kend; ++k)
           for (int j=grid_.jstart; j<grid_.jend; ++j)
+            #pragma clang loop vectorize(enable)
+            #pragma GCC ivdep
             #pragma ivdep
             for (int i=grid_.istart; i<grid_.iend; ++i)
               (*this)(i, j, k) = expression;
@@ -223,6 +227,8 @@ namespace StencilBuilder
       {
         for (int k=grid_.kstart; k<grid_.kend; ++k)
           for (int j=grid_.jstart; j<grid_.jend; ++j)
+            #pragma clang loop vectorize(enable)
+            #pragma GCC ivdep
             #pragma ivdep
             for (int i=grid_.istart; i<grid_.iend; ++i)
               (*this)(i, j, k) += expression(i, j, k);

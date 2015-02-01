@@ -11,7 +11,7 @@ int main()
   const int itot = 256;
   const int jtot = 256;
   const int ktot = 256;
-  const int gc   = 4;
+  const int gc = 4;
   const int iter = 5;
 
   // Initialize the grid.

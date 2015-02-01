@@ -36,6 +36,8 @@ void advection(double * const restrict at, const double * const restrict a,
 
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
+      #pragma clang loop vectorize(enable)
+      #pragma GCC ivdep
       #pragma ivdep
       for (int i=istart; i<iend; ++i)
       {
@@ -70,6 +72,8 @@ void tendency(double * const restrict at, double * const restrict a,
 
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
+      #pragma clang loop vectorize(enable)
+      #pragma GCC ivdep
       #pragma ivdep
       for (int i=istart; i<iend; ++i)
       {
@@ -79,6 +83,8 @@ void tendency(double * const restrict at, double * const restrict a,
 
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
+      #pragma clang loop vectorize(enable)
+      #pragma GCC ivdep
       #pragma ivdep
       for (int i=istart; i<iend; ++i)
       {
