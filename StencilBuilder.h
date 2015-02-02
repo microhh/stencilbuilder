@@ -1,3 +1,7 @@
+#ifndef STENCIL_BUILDER
+#include <typeinfo>
+#include <cxxabi.h>
+
 #define restrict __restrict__
 
 namespace StencilBuilder
@@ -6,6 +10,15 @@ namespace StencilBuilder
   constexpr UnitVec ivec = {1, 0, 0};
   constexpr UnitVec jvec = {0, 1, 0};
   constexpr UnitVec kvec = {0, 0, 1};
+
+  // Function for printing the demangled name of a type to the screen.
+  template<class T>
+  std::string getDemangledName(const T& t)
+  {
+    int status = 0;
+    char* demangled = abi::__cxa_demangle(typeid(t).name(), 0, 0, &status);
+    return std::string(demangled);
+  }
 
   struct Grid
   {
@@ -264,3 +277,4 @@ namespace StencilBuilder
       double* restrict data_;
   };
 }
+#endif
