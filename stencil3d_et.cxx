@@ -30,14 +30,24 @@ int main()
 
   // Initialize the time step.
   const double dt = 1.e-3;
+  const double visc = 1.5;
+
+  auto advection_x = Gx_h( Ix  (u) * Ix  (u) );
+  auto advection_y = Gy  ( Ix_h(v) * Iy_h(u) );
+  auto advection_z = Gz  ( Ix_h(w) * Iz_h(u) );
+
+  auto diffusion_x = visc * ( Gx_h( Gx  (u) ) );
+  auto diffusion_y = visc * ( Gy  ( Gy_h(u) ) );
+  auto diffusion_z = visc * ( Gz  ( Gz_h(u) ) );
 
   // Execute the loop iter times.
   for (int n=0; n<iter; ++n)
   {
     // Advection operator.
-    ut += Gx_h( Ix  (u) * Ix  (u) )
-        + Gy  ( Ix_h(v) * Iy_h(u) )
-        + Gz  ( Ix_h(w) * Iz_h(u) );
+    ut += advection_x + advection_y + advection_z;
+
+    // Diffusion operator.
+    ut += diffusion_x + diffusion_y + diffusion_z;
 
     // Time integration.
     u += dt*ut;
@@ -49,13 +59,8 @@ int main()
   // Print a value in the middle of the field.
   std::cout << std::setprecision(8) << "u = " << u(itot/2, jtot/2, ktot/2) << std::endl;
 
-  // Print the nested type.
-  auto advection = Gx_h( Ix  (u) * Ix  (u) )
-                 + Gy  ( Ix_h(v) * Iy_h(u) )
-                 + Gz  ( Ix_h(w) * Iz_h(u) );
-
-  std::cout << std::endl;
-  std::cout << "Operator type: " << std::endl << getDemangledName(advection) << std::endl;
+  // std::cout << std::endl;
+  // std::cout << "Operator type: " << std::endl << getDemangledName(advection) << std::endl;
 
   return 0;
 }
