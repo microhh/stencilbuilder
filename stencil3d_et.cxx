@@ -32,22 +32,18 @@ int main()
   const double dt = 1.e-3;
   const double visc = 1.5;
 
-  auto advection_x = Gx_h( Ix  (u) * Ix  (u) );
-  auto advection_y = Gy  ( Ix_h(v) * Iy_h(u) );
-  auto advection_z = Gz  ( Ix_h(w) * Iz_h(u) );
-
-  auto diffusion_x = visc * ( Gx_h( Gx  (u) ) );
-  auto diffusion_y = visc * ( Gy  ( Gy_h(u) ) );
-  auto diffusion_z = visc * ( Gz  ( Gz_h(u) ) );
-
   // Execute the loop iter times.
   for (int n=0; n<iter; ++n)
   {
     // Advection operator.
-    ut += advection_x + advection_y + advection_z;
+    ut += Gx_h( Ix  (u) * Ix  (u) )
+        + Gy  ( Ix_h(v) * Iy_h(u) )
+        + Gz  ( Ix_h(w) * Iz_h(u) );
 
     // Diffusion operator.
-    ut += diffusion_x + diffusion_y + diffusion_z;
+    ut += visc * ( Gx_h( Gx  (u) )
+                 + Gy  ( Gy_h(u) )
+                 + Gz  ( Gz_h(u) ) );
 
     // Time integration.
     u += dt*ut;
