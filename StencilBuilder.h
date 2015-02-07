@@ -259,13 +259,29 @@ namespace StencilBuilder
       template<class T>
       inline Field& operator+=(const T& restrict expression)
       {
-        for (int k=grid_.kstart; k<grid_.kend; ++k)
-          for (int j=grid_.jstart; j<grid_.jend; ++j)
-            #pragma clang loop vectorize(enable)
-            #pragma GCC ivdep
-            #pragma ivdep
-            for (int i=grid_.istart; i<grid_.iend; ++i)
-              (*this)(i,j,k) += expression(i,j,k);
+        const int iBlockSize = grid_.itot;
+        const int jBlockSize = 32;
+        const int kBlockSize = 32;
+
+        const int iBlocks = grid_.itot / iBlockSize;
+        const int jBlocks = grid_.jtot / jBlockSize;
+        const int kBlocks = grid_.ktot / kBlockSize;
+
+        for (int kk=0; kk<kBlocks; ++kk)
+          for (int jj=0; jj<jBlocks; ++jj)
+            for (int ii=0; ii<iBlocks; ++ii)
+              for (int k=0; k<kBlockSize; ++k)
+                for (int j=0; j<jBlockSize; ++j)
+                  #pragma clang loop vectorize(enable)
+                  #pragma GCC ivdep
+                  #pragma ivdep
+                  for (int i=0; i<iBlockSize; ++i)
+                  {
+                    const int ic = i + ii*iBlockSize + grid_.istart;
+                    const int jc = j + jj*jBlockSize + grid_.jstart;
+                    const int kc = k + kk*kBlockSize + grid_.kstart;
+                    (*this)(ic,jc,kc) += expression(ic,jc,kc);
+                  }
 
         return *this;
       }
