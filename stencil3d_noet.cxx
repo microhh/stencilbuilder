@@ -35,29 +35,44 @@ void advection(double * const restrict ut, const double * const restrict u,
   const int kk2 = 2*ijcells;
   const int kk3 = 3*ijcells;
 
+  const int iBlockSize = iend-istart;
+  const int jBlockSize = 32;
+  const int kBlockSize = 32;
+
+  const int iBlocks = (iend-istart) / iBlockSize;
+  const int jBlocks = (jend-jstart) / jBlockSize;
+  const int kBlocks = (kend-kstart) / kBlockSize;
+
   #pragma omp for
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      #pragma clang loop vectorize(enable)
-      #pragma GCC ivdep
-      #pragma ivdep
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj1 + k*kk1;
-        ut[ijk] += grad( interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ) * interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
-                         interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ) * interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
-                         interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ) * interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
-                         interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ) * interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ))
+  for (int kk=0; kk<kBlocks; ++kk)
+    for (int jj=0; jj<jBlocks; ++jj)
+      for (int ii=0; ii<iBlocks; ++ii)
+        for (int k=0; k<kBlockSize; ++k)
+          for (int j=0; j<jBlockSize; ++j)
+            #pragma clang loop vectorize(enable)
+            #pragma GCC ivdep
+            #pragma ivdep
+            for (int i=0; i<iBlockSize; ++i)
+            {
+              const int ic = i + ii*iBlockSize + istart;
+              const int jc = j + jj*jBlockSize + jstart;
+              const int kc = k + kk*kBlockSize + kstart;
+              const int ijk = ic + jc*jj1 + kc*kk1;
 
-                 + grad( interp( v[ijk-ii2-jj1], v[ijk-ii1-jj1], v[ijk-jj1], v[ijk+ii1-jj1] ) * interp( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
-                         interp( v[ijk-ii2    ], v[ijk-ii1    ], v[ijk    ], v[ijk+ii1    ] ) * interp( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
-                         interp( v[ijk-ii2+jj1], v[ijk-ii1+jj1], v[ijk+jj1], v[ijk+ii1+jj1] ) * interp( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
-                         interp( v[ijk-ii2+jj2], v[ijk-ii1+jj2], v[ijk+jj2], v[ijk+ii1+jj2] ) * interp( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] ))
+              ut[ijk] += grad( interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ) * interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
+                               interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ) * interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
+                               interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ) * interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
+                               interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ) * interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ))
 
-                 + grad( interp( w[ijk-ii2-kk1], w[ijk-ii1-kk1], w[ijk-kk1], w[ijk+ii1-kk1] ) * interp( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
-                         interp( w[ijk-ii2    ], w[ijk-ii1    ], w[ijk    ], w[ijk+ii1    ] ) * interp( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
-                         interp( w[ijk-ii2+kk1], w[ijk-ii1+kk1], w[ijk+kk1], w[ijk+ii1+kk1] ) * interp( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
-                         interp( w[ijk-ii2+kk2], w[ijk-ii1+kk2], w[ijk+kk2], w[ijk+ii1+kk2] ) * interp( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] ));
+                       + grad( interp( v[ijk-ii2-jj1], v[ijk-ii1-jj1], v[ijk-jj1], v[ijk+ii1-jj1] ) * interp( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
+                               interp( v[ijk-ii2    ], v[ijk-ii1    ], v[ijk    ], v[ijk+ii1    ] ) * interp( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
+                               interp( v[ijk-ii2+jj1], v[ijk-ii1+jj1], v[ijk+jj1], v[ijk+ii1+jj1] ) * interp( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
+                               interp( v[ijk-ii2+jj2], v[ijk-ii1+jj2], v[ijk+jj2], v[ijk+ii1+jj2] ) * interp( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] ))
+
+                       + grad( interp( w[ijk-ii2-kk1], w[ijk-ii1-kk1], w[ijk-kk1], w[ijk+ii1-kk1] ) * interp( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
+                               interp( w[ijk-ii2    ], w[ijk-ii1    ], w[ijk    ], w[ijk+ii1    ] ) * interp( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
+                               interp( w[ijk-ii2+kk1], w[ijk-ii1+kk1], w[ijk+kk1], w[ijk+ii1+kk1] ) * interp( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
+                               interp( w[ijk-ii2+kk2], w[ijk-ii1+kk2], w[ijk+kk2], w[ijk+ii1+kk2] ) * interp( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] ));
       }
 }
 
@@ -79,29 +94,44 @@ void diffusion(double * const restrict ut, const double * const restrict u,
   const int kk2 = 2*ijcells;
   const int kk3 = 3*ijcells;
 
+  const int iBlockSize = iend-istart;
+  const int jBlockSize = 32;
+  const int kBlockSize = 32;
+
+  const int iBlocks = (iend-istart) / iBlockSize;
+  const int jBlocks = (jend-jstart) / jBlockSize;
+  const int kBlocks = (kend-kstart) / kBlockSize;
+
   #pragma omp for
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      #pragma clang loop vectorize(enable)
-      #pragma GCC ivdep
-      #pragma ivdep
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj1 + k*kk1;
-        ut[ijk] += visc * ( grad( grad( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
-                                  grad( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
-                                  grad( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
-                                  grad( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ))
+  for (int kk=0; kk<kBlocks; ++kk)
+    for (int jj=0; jj<jBlocks; ++jj)
+      for (int ii=0; ii<iBlocks; ++ii)
+        for (int k=0; k<kBlockSize; ++k)
+          for (int j=0; j<jBlockSize; ++j)
+            #pragma clang loop vectorize(enable)
+            #pragma GCC ivdep
+            #pragma ivdep
+            for (int i=0; i<iBlockSize; ++i)
+            {
+              const int ic = i + ii*iBlockSize + istart;
+              const int jc = j + jj*jBlockSize + jstart;
+              const int kc = k + kk*kBlockSize + kstart;
+              const int ijk = ic + jc*jj1 + kc*kk1;
 
-                          + grad( grad( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
-                                  grad( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
-                                  grad( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
-                                  grad( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] ))
+              ut[ijk] += visc * ( grad( grad( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
+                                        grad( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
+                                        grad( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
+                                        grad( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ))
 
-                          + grad( grad( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
-                                  grad( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
-                                  grad( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
-                                  grad( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] )));
+                                + grad( grad( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
+                                        grad( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
+                                        grad( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
+                                        grad( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] ))
+
+                                + grad( grad( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
+                                        grad( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
+                                        grad( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
+                                        grad( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] )));
       }
 }
 
@@ -124,64 +154,90 @@ void advection_diffusion(double * const restrict ut, const double * const restri
   const int kk2 = 2*ijcells;
   const int kk3 = 3*ijcells;
 
-  #pragma omp for
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      #pragma clang loop vectorize(enable)
-      #pragma GCC ivdep
-      #pragma ivdep
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj1 + k*kk1;
-        ut[ijk] += grad( interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ) * interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
-                         interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ) * interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
-                         interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ) * interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
-                         interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ) * interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ))
+  const int iBlockSize = iend-istart;
+  const int jBlockSize = 32;
+  const int kBlockSize = 32;
 
-                 + visc * ( grad( grad( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
-                                  grad( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
-                                  grad( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
-                                  grad( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] )));
+  const int iBlocks = (iend-istart) / iBlockSize;
+  const int jBlocks = (jend-jstart) / jBlockSize;
+  const int kBlocks = (kend-kstart) / kBlockSize;
+
+  #pragma omp for
+  for (int kk=0; kk<kBlocks; ++kk)
+    for (int jj=0; jj<jBlocks; ++jj)
+      for (int ii=0; ii<iBlocks; ++ii)
+        for (int k=0; k<kBlockSize; ++k)
+          for (int j=0; j<jBlockSize; ++j)
+            #pragma clang loop vectorize(enable)
+            #pragma GCC ivdep
+            #pragma ivdep
+            for (int i=0; i<iBlockSize; ++i)
+            {
+              const int ic = i + ii*iBlockSize + istart;
+              const int jc = j + jj*jBlockSize + jstart;
+              const int kc = k + kk*kBlockSize + kstart;
+              const int ijk = ic + jc*jj1 + kc*kk1;
+              ut[ijk] += grad( interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ) * interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
+                               interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ) * interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
+                               interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ) * interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
+                               interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ) * interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ))
+
+                       + visc * ( grad( grad( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
+                                        grad( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
+                                        grad( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
+                                        grad( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] )));
       }
 
   #pragma omp for
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      #pragma clang loop vectorize(enable)
-      #pragma GCC ivdep
-      #pragma ivdep
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj1 + k*kk1;
-        ut[ijk] += grad( interp( v[ijk-ii2-jj1], v[ijk-ii1-jj1], v[ijk-jj1], v[ijk+ii1-jj1] ) * interp( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
-                         interp( v[ijk-ii2    ], v[ijk-ii1    ], v[ijk    ], v[ijk+ii1    ] ) * interp( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
-                         interp( v[ijk-ii2+jj1], v[ijk-ii1+jj1], v[ijk+jj1], v[ijk+ii1+jj1] ) * interp( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
-                         interp( v[ijk-ii2+jj2], v[ijk-ii1+jj2], v[ijk+jj2], v[ijk+ii1+jj2] ) * interp( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] ))
+  for (int kk=0; kk<kBlocks; ++kk)
+    for (int jj=0; jj<jBlocks; ++jj)
+      for (int ii=0; ii<iBlocks; ++ii)
+        for (int k=0; k<kBlockSize; ++k)
+          for (int j=0; j<jBlockSize; ++j)
+            #pragma clang loop vectorize(enable)
+            #pragma GCC ivdep
+            #pragma ivdep
+            for (int i=0; i<iBlockSize; ++i)
+            {
+              const int ic = i + ii*iBlockSize + istart;
+              const int jc = j + jj*jBlockSize + jstart;
+              const int kc = k + kk*kBlockSize + kstart;
+              const int ijk = ic + jc*jj1 + kc*kk1;
+              ut[ijk] += grad( interp( v[ijk-ii2-jj1], v[ijk-ii1-jj1], v[ijk-jj1], v[ijk+ii1-jj1] ) * interp( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
+                               interp( v[ijk-ii2    ], v[ijk-ii1    ], v[ijk    ], v[ijk+ii1    ] ) * interp( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
+                               interp( v[ijk-ii2+jj1], v[ijk-ii1+jj1], v[ijk+jj1], v[ijk+ii1+jj1] ) * interp( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
+                               interp( v[ijk-ii2+jj2], v[ijk-ii1+jj2], v[ijk+jj2], v[ijk+ii1+jj2] ) * interp( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] ))
 
-                 + visc * ( grad( grad( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
-                                  grad( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
-                                  grad( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
-                                  grad( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] )) );
+                       + visc * ( grad( grad( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
+                                        grad( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
+                                        grad( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
+                                        grad( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] )) );
       }
 
   #pragma omp for
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      #pragma clang loop vectorize(enable)
-      #pragma GCC ivdep
-      #pragma ivdep
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj1 + k*kk1;
-        ut[ijk] += grad( interp( w[ijk-ii2-kk1], w[ijk-ii1-kk1], w[ijk-kk1], w[ijk+ii1-kk1] ) * interp( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
-                         interp( w[ijk-ii2    ], w[ijk-ii1    ], w[ijk    ], w[ijk+ii1    ] ) * interp( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
-                         interp( w[ijk-ii2+kk1], w[ijk-ii1+kk1], w[ijk+kk1], w[ijk+ii1+kk1] ) * interp( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
-                         interp( w[ijk-ii2+kk2], w[ijk-ii1+kk2], w[ijk+kk2], w[ijk+ii1+kk2] ) * interp( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] ))
+  for (int kk=0; kk<kBlocks; ++kk)
+    for (int jj=0; jj<jBlocks; ++jj)
+      for (int ii=0; ii<iBlocks; ++ii)
+        for (int k=0; k<kBlockSize; ++k)
+          for (int j=0; j<jBlockSize; ++j)
+            #pragma clang loop vectorize(enable)
+            #pragma GCC ivdep
+            #pragma ivdep
+            for (int i=0; i<iBlockSize; ++i)
+            {
+              const int ic = i + ii*iBlockSize + istart;
+              const int jc = j + jj*jBlockSize + jstart;
+              const int kc = k + kk*kBlockSize + kstart;
+              const int ijk = ic + jc*jj1 + kc*kk1;
+              ut[ijk] += grad( interp( w[ijk-ii2-kk1], w[ijk-ii1-kk1], w[ijk-kk1], w[ijk+ii1-kk1] ) * interp( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
+                               interp( w[ijk-ii2    ], w[ijk-ii1    ], w[ijk    ], w[ijk+ii1    ] ) * interp( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
+                               interp( w[ijk-ii2+kk1], w[ijk-ii1+kk1], w[ijk+kk1], w[ijk+ii1+kk1] ) * interp( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
+                               interp( w[ijk-ii2+kk2], w[ijk-ii1+kk2], w[ijk+kk2], w[ijk+ii1+kk2] ) * interp( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] ))
 
-                 + visc * ( grad( grad( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
-                                  grad( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
-                                  grad( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
-                                  grad( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] )));
+                       + visc * ( grad( grad( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
+                                        grad( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
+                                        grad( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
+                                        grad( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] )));
       }
 }
 
