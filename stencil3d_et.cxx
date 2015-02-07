@@ -33,18 +33,21 @@ int main()
   const double visc = 1.5;
 
   // Execute the loop iter times.
-  for (int n=0; n<iter; ++n)
+  #pragma omp parallel
   {
-    // Advection and diffusion operator, split in directions.
-    ut += Gx_h( Ix  (u) * Ix  (u) ) + visc * ( Gx_h( Gx  (u) ) );
-    ut += Gy  ( Ix_h(v) * Iy_h(u) ) + visc * ( Gy  ( Gy_h(u) ) );
-    ut += Gz  ( Ix_h(w) * Iz_h(u) ) + visc * ( Gz  ( Gz_h(u) ) );
+    for (int n=0; n<iter; ++n)
+    {
+      // Advection and diffusion operator, split in directions.
+      ut += Gx_h( Ix  (u) * Ix  (u) ) + visc * ( Gx_h( Gx  (u) ) );
+      ut += Gy  ( Ix_h(v) * Iy_h(u) ) + visc * ( Gy  ( Gy_h(u) ) );
+      ut += Gz  ( Ix_h(w) * Iz_h(u) ) + visc * ( Gz  ( Gz_h(u) ) );
 
-    // Time integration.
-    u += dt*ut;
+      // Time integration.
+      u += dt*ut;
 
-    // Tendency reset.
-    ut = 0.;
+      // Tendency reset.
+      ut = 0.;
+    }
   }
 
   // Print a value in the middle of the field.

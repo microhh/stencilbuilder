@@ -230,6 +230,7 @@ namespace StencilBuilder
       template<class T>
       inline Field& operator= (const T& restrict expression)
       {
+        #pragma omp for
         for (int k=grid_.kstart; k<grid_.kend; ++k)
           for (int j=grid_.jstart; j<grid_.jend; ++j)
             #pragma clang loop vectorize(enable)
@@ -244,6 +245,7 @@ namespace StencilBuilder
       // Overload, NOT specialization, for assignment with a constant.
       inline Field& operator= (const double& restrict expression)
       {
+        #pragma omp for
         for (int k=grid_.kstart; k<grid_.kend; ++k)
           for (int j=grid_.jstart; j<grid_.jend; ++j)
             #pragma clang loop vectorize(enable)
@@ -267,6 +269,7 @@ namespace StencilBuilder
         const int jBlocks = grid_.jtot / jBlockSize;
         const int kBlocks = grid_.ktot / kBlockSize;
 
+        #pragma omp for
         for (int kk=0; kk<kBlocks; ++kk)
           for (int jj=0; jj<jBlocks; ++jj)
             for (int ii=0; ii<iBlocks; ++ii)

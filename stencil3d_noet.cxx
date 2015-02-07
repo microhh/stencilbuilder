@@ -35,6 +35,7 @@ void advection(double * const restrict ut, const double * const restrict u,
   const int kk2 = 2*ijcells;
   const int kk3 = 3*ijcells;
 
+  #pragma omp for
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
       #pragma clang loop vectorize(enable)
@@ -78,6 +79,7 @@ void diffusion(double * const restrict ut, const double * const restrict u,
   const int kk2 = 2*ijcells;
   const int kk3 = 3*ijcells;
 
+  #pragma omp for
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
       #pragma clang loop vectorize(enable)
@@ -115,6 +117,7 @@ void tendency(double * const restrict at, double * const restrict a,
   const int jj = icells;
   const int kk = ijcells;
 
+  #pragma omp for
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
       #pragma clang loop vectorize(enable)
@@ -126,6 +129,7 @@ void tendency(double * const restrict at, double * const restrict a,
         a[ijk] += dt*at[ijk];
       }
 
+  #pragma omp for
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
       #pragma clang loop vectorize(enable)
@@ -166,27 +170,30 @@ int main()
   const double visc = 1.5;
 
   // Execute the loop iter times.
-  for (int ii=0; ii<iter; ++ii)
+  #pragma omp parallel
   {
-    advection(ut.get_data(), u.get_data(), v.get_data(), w.get_data(),
-              grid.istart, grid.iend,
-              grid.jstart, grid.jend,
-              grid.kstart, grid.kend,
-              grid.icells, grid.ijcells);
+    for (int n=0; n<iter; ++n)
+    {
+      advection(ut.get_data(), u.get_data(), v.get_data(), w.get_data(),
+                grid.istart, grid.iend,
+                grid.jstart, grid.jend,
+                grid.kstart, grid.kend,
+                grid.icells, grid.ijcells);
 
-    diffusion(ut.get_data(), u.get_data(),
-              visc,
-              grid.istart, grid.iend,
-              grid.jstart, grid.jend,
-              grid.kstart, grid.kend,
-              grid.icells, grid.ijcells);
+      diffusion(ut.get_data(), u.get_data(),
+                visc,
+                grid.istart, grid.iend,
+                grid.jstart, grid.jend,
+                grid.kstart, grid.kend,
+                grid.icells, grid.ijcells);
 
-    tendency(ut.get_data(), u.get_data(),
-             dt,
-             grid.istart, grid.iend,
-             grid.jstart, grid.jend,
-             grid.kstart, grid.kend,
-             grid.icells, grid.ijcells);
+      tendency(ut.get_data(), u.get_data(),
+               dt,
+               grid.istart, grid.iend,
+               grid.jstart, grid.jend,
+               grid.kstart, grid.kend,
+               grid.icells, grid.ijcells);
+    }
   }
 
   // Print a value in the middle of the field.
