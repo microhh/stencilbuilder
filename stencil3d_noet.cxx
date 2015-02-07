@@ -105,8 +105,67 @@ void diffusion(double * const restrict ut, const double * const restrict u,
       }
 }
 
+// Test function with a similar structure as the advection operator.
+void advection_diffusion(double * const restrict ut, const double * const restrict u,
+                         const double * const restrict v, const double * const restrict w,
+                         const double visc,
+                         const int istart, const int iend,
+                         const int jstart, const int jend,
+                         const int kstart, const int kend,
+                         const int icells, const int ijcells)
+{
+  const int ii1 = 1;
+  const int ii2 = 2;
+  const int ii3 = 3;
+  const int jj1 = 1*icells;
+  const int jj2 = 2*icells;
+  const int jj3 = 3*icells;
+  const int kk1 = 1*ijcells;
+  const int kk2 = 2*ijcells;
+  const int kk3 = 3*ijcells;
 
-  // Test function for time integration.
+  #pragma omp for
+  for (int k=kstart; k<kend; ++k)
+    for (int j=jstart; j<jend; ++j)
+      #pragma clang loop vectorize(enable)
+      #pragma GCC ivdep
+      #pragma ivdep
+      for (int i=istart; i<iend; ++i)
+      {
+        const int ijk = i + j*jj1 + k*kk1;
+        ut[ijk] += grad( interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ) * interp( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
+                         interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ) * interp( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
+                         interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ) * interp( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
+                         interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ) * interp( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] ))
+
+                 + visc * ( grad( grad( u[ijk-ii3], u[ijk-ii2], u[ijk-ii1], u[ijk    ] ),
+                                  grad( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
+                                  grad( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
+                                  grad( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] )));
+
+        ut[ijk] += grad( interp( v[ijk-ii2-jj1], v[ijk-ii1-jj1], v[ijk-jj1], v[ijk+ii1-jj1] ) * interp( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
+                         interp( v[ijk-ii2    ], v[ijk-ii1    ], v[ijk    ], v[ijk+ii1    ] ) * interp( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
+                         interp( v[ijk-ii2+jj1], v[ijk-ii1+jj1], v[ijk+jj1], v[ijk+ii1+jj1] ) * interp( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
+                         interp( v[ijk-ii2+jj2], v[ijk-ii1+jj2], v[ijk+jj2], v[ijk+ii1+jj2] ) * interp( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] ))
+
+                 + visc * ( grad( grad( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
+                                  grad( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
+                                  grad( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
+                                  grad( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] )) );
+
+        ut[ijk] += grad( interp( w[ijk-ii2-kk1], w[ijk-ii1-kk1], w[ijk-kk1], w[ijk+ii1-kk1] ) * interp( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
+                         interp( w[ijk-ii2    ], w[ijk-ii1    ], w[ijk    ], w[ijk+ii1    ] ) * interp( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
+                         interp( w[ijk-ii2+kk1], w[ijk-ii1+kk1], w[ijk+kk1], w[ijk+ii1+kk1] ) * interp( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
+                         interp( w[ijk-ii2+kk2], w[ijk-ii1+kk2], w[ijk+kk2], w[ijk+ii1+kk2] ) * interp( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] ))
+
+                 + visc * ( grad( grad( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
+                                  grad( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
+                                  grad( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
+                                  grad( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] )));
+      }
+}
+
+// Test function for time integration.
 void tendency(double * const restrict at, double * const restrict a,
               const double dt,
               const int istart, const int iend,
@@ -174,6 +233,7 @@ int main()
   {
     for (int n=0; n<iter; ++n)
     {
+      /*
       advection(ut.get_data(), u.get_data(), v.get_data(), w.get_data(),
                 grid.istart, grid.iend,
                 grid.jstart, grid.jend,
@@ -186,6 +246,14 @@ int main()
                 grid.jstart, grid.jend,
                 grid.kstart, grid.kend,
                 grid.icells, grid.ijcells);
+      */
+
+      advection_diffusion(ut.get_data(), u.get_data(), v.get_data(), w.get_data(),
+                          visc,
+                          grid.istart, grid.iend,
+                          grid.jstart, grid.jend,
+                          grid.kstart, grid.kend,
+                          grid.icells, grid.ijcells);
 
       tendency(ut.get_data(), u.get_data(),
                dt,
