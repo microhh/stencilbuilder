@@ -142,7 +142,17 @@ void advection_diffusion(double * const restrict ut, const double * const restri
                                   grad( u[ijk-ii2], u[ijk-ii1], u[ijk    ], u[ijk+ii1] ),
                                   grad( u[ijk-ii1], u[ijk    ], u[ijk+ii1], u[ijk+ii2] ),
                                   grad( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] )));
+      }
 
+  #pragma omp for
+  for (int k=kstart; k<kend; ++k)
+    for (int j=jstart; j<jend; ++j)
+      #pragma clang loop vectorize(enable)
+      #pragma GCC ivdep
+      #pragma ivdep
+      for (int i=istart; i<iend; ++i)
+      {
+        const int ijk = i + j*jj1 + k*kk1;
         ut[ijk] += grad( interp( v[ijk-ii2-jj1], v[ijk-ii1-jj1], v[ijk-jj1], v[ijk+ii1-jj1] ) * interp( u[ijk-jj3], u[ijk-jj2], u[ijk-jj1], u[ijk    ] ),
                          interp( v[ijk-ii2    ], v[ijk-ii1    ], v[ijk    ], v[ijk+ii1    ] ) * interp( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
                          interp( v[ijk-ii2+jj1], v[ijk-ii1+jj1], v[ijk+jj1], v[ijk+ii1+jj1] ) * interp( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
@@ -152,7 +162,17 @@ void advection_diffusion(double * const restrict ut, const double * const restri
                                   grad( u[ijk-jj2], u[ijk-jj1], u[ijk    ], u[ijk+jj1] ),
                                   grad( u[ijk-jj1], u[ijk    ], u[ijk+jj1], u[ijk+jj2] ),
                                   grad( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] )) );
+      }
 
+  #pragma omp for
+  for (int k=kstart; k<kend; ++k)
+    for (int j=jstart; j<jend; ++j)
+      #pragma clang loop vectorize(enable)
+      #pragma GCC ivdep
+      #pragma ivdep
+      for (int i=istart; i<iend; ++i)
+      {
+        const int ijk = i + j*jj1 + k*kk1;
         ut[ijk] += grad( interp( w[ijk-ii2-kk1], w[ijk-ii1-kk1], w[ijk-kk1], w[ijk+ii1-kk1] ) * interp( u[ijk-kk3], u[ijk-kk2], u[ijk-kk1], u[ijk    ] ),
                          interp( w[ijk-ii2    ], w[ijk-ii1    ], w[ijk    ], w[ijk+ii1    ] ) * interp( u[ijk-kk2], u[ijk-kk1], u[ijk    ], u[ijk+kk1] ),
                          interp( w[ijk-ii2+kk1], w[ijk-ii1+kk1], w[ijk+kk1], w[ijk+ii1+kk1] ) * interp( u[ijk-kk1], u[ijk    ], u[ijk+kk1], u[ijk+kk2] ),
