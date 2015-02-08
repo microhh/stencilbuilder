@@ -11,7 +11,9 @@ namespace StencilBuilder
   constexpr UnitVec jvec = {0, 1, 0};
   constexpr UnitVec kvec = {0, 0, 1};
 
-  enum GridLoc {Hlf = 0, Ctr = 1};
+  typedef const int GridLoc;
+  const GridLoc Hlf = 0;
+  const GridLoc Ctr = 1;
 
   // Function for printing the demangled name of a type to the screen.
   template<class T>
@@ -82,11 +84,10 @@ namespace StencilBuilder
 
     inline double operator()(const int i, const int j, const int k) const
     {
-      const int iloc = static_cast<int>(loc);
-      return Op::apply(inner_(i + vec[0]*(-2+iloc), j + vec[1]*(-2+iloc), k + vec[2]*(-2+iloc)),
-                       inner_(i + vec[0]*(-1+iloc), j + vec[1]*(-1+iloc), k + vec[2]*(-1+iloc)),
-                       inner_(i + vec[0]*(   iloc), j + vec[1]*(   iloc), k + vec[2]*(   iloc)),
-                       inner_(i + vec[0]*( 1+iloc), j + vec[1]*( 1+iloc), k + vec[2]*( 1+iloc)));
+      return Op::apply(inner_(i + vec[0]*(-2+loc), j + vec[1]*(-2+loc), k + vec[2]*(-2+loc)),
+                       inner_(i + vec[0]*(-1+loc), j + vec[1]*(-1+loc), k + vec[2]*(-1+loc)),
+                       inner_(i + vec[0]*(   loc), j + vec[1]*(   loc), k + vec[2]*(   loc)),
+                       inner_(i + vec[0]*( 1+loc), j + vec[1]*( 1+loc), k + vec[2]*( 1+loc)));
     }
   };
 
