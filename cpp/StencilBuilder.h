@@ -266,8 +266,8 @@ namespace StencilBuilder
       inline Field& operator+=(const T& restrict expression)
       {
         const int iBlockSize = grid_.itot;
-        const int jBlockSize = 32;
-        const int kBlockSize = 32;
+        const int jBlockSize = grid_.jtot;
+        const int kBlockSize = 128;
 
         const int iBlocks = grid_.itot / iBlockSize;
         const int jBlocks = grid_.jtot / jBlockSize;

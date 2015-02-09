@@ -8,11 +8,11 @@ using namespace StencilBuilder;
 int main()
 {
   // Test configuration settings.
-  const int itot = 256;
-  const int jtot = 256;
-  const int ktot = 256;
+  const int itot = 128;
+  const int jtot = 128;
+  const int ktot = 2048;
   const int gc = 4;
-  const int iter = 5;
+  const int iter = 50;
 
   // Initialize the grid.
   Grid grid(itot, jtot, ktot, gc);
