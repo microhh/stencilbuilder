@@ -13,7 +13,7 @@ int main()
   const int jtot = 128;
   const int ktot = 2048;
   const int gc = 4;
-  const int iter = 50;
+  const int iter = 10;
 
   // Initialize the grid.
   Grid grid(itot, jtot, ktot, gc);
@@ -35,6 +35,7 @@ int main()
 
   // Execute the loop iter times and measure elapsed time.
   auto start = std::chrono::high_resolution_clock::now();
+
   for (int n=0; n<iter; ++n)
   {
     // Advection and diffusion operator, split in directions.
@@ -48,9 +49,9 @@ int main()
     // Tendency reset.
     ut = 0.;
   }
+
   auto end = std::chrono::high_resolution_clock::now();
   double elapsed = std::chrono::duration_cast<std::chrono::duration<double> >(end - start).count();
-
   std::cout << "Elapsed time in loop (s): " << elapsed << std::endl;
 
   // Print a value in the middle of the field.

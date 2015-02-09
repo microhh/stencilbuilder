@@ -18,6 +18,7 @@ inline double grad(const double m2, const double m1, const double p1, const doub
   return (1./24.)*(m2-p2) + (27./24.)*(p1-m1);
 }
 
+/*
 // Test function with a similar structure as the advection operator.
 void advection(double * const restrict ut, const double * const restrict u,
                const double * const restrict v, const double * const restrict w,
@@ -135,6 +136,7 @@ void diffusion(double * const restrict ut, const double * const restrict u,
                                         grad( u[ijk    ], u[ijk+kk1], u[ijk+kk2], u[ijk+kk3] )));
       }
 }
+*/
 
 // Test function with a similar structure as the advection operator.
 void advection_diffusion(double * const restrict ut, const double * const restrict u,
@@ -256,29 +258,32 @@ void tendency(double * const restrict at, double * const restrict a,
   const int jj = icells;
   const int kk = ijcells;
 
-  #pragma omp parallel for
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      #pragma clang loop vectorize(enable)
-      #pragma GCC ivdep
-      #pragma ivdep
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj + k*kk;
-        a[ijk] += dt*at[ijk];
-      }
+  #pragma omp parallel
+  {
+    #pragma omp for
+    for (int k=kstart; k<kend; ++k)
+      for (int j=jstart; j<jend; ++j)
+        #pragma clang loop vectorize(enable)
+        #pragma GCC ivdep
+        #pragma ivdep
+        for (int i=istart; i<iend; ++i)
+        {
+          const int ijk = i + j*jj + k*kk;
+          a[ijk] += dt*at[ijk];
+        }
 
-  #pragma omp parallel for
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      #pragma clang loop vectorize(enable)
-      #pragma GCC ivdep
-      #pragma ivdep
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj + k*kk;
-        at[ijk] = 0.;
-      }
+    #pragma omp for
+    for (int k=kstart; k<kend; ++k)
+      for (int j=jstart; j<jend; ++j)
+        #pragma clang loop vectorize(enable)
+        #pragma GCC ivdep
+        #pragma ivdep
+        for (int i=istart; i<iend; ++i)
+        {
+          const int ijk = i + j*jj + k*kk;
+          at[ijk] = 0.;
+        }
+  }
 }
 
 int main()
@@ -288,7 +293,7 @@ int main()
   const int jtot = 128;
   const int ktot = 2048;
   const int gc   = 4;
-  const int iter = 50;
+  const int iter = 10;
 
   // Initialize the grid.
   Grid grid(itot, jtot, ktot, gc);
@@ -310,6 +315,7 @@ int main()
 
   // Execute the loop iter times and measure elapsed time.
   auto start = std::chrono::high_resolution_clock::now();
+
   for (int n=0; n<iter; ++n)
   {
     /*
@@ -341,9 +347,9 @@ int main()
              grid.kstart, grid.kend,
              grid.icells, grid.ijcells);
   }
+
   auto end = std::chrono::high_resolution_clock::now();
   double elapsed = std::chrono::duration_cast<std::chrono::duration<double> >(end - start).count();
-
   std::cout << "Elapsed time in loop (s): " << elapsed << std::endl;
 
   // Print a value in the middle of the field.
