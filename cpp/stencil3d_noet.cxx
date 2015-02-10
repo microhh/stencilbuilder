@@ -158,14 +158,14 @@ void advection_diffusion(double * const restrict ut, const double * const restri
   const int kk3 = 3*ijcells;
 
   const int iBlockSize = iend-istart;
-  const int jBlockSize = jend-jstart;
-  const int kBlockSize = 64;
+  const int jBlockSize = 16;
+  const int kBlockSize = 16;
 
   const int iBlocks = (iend-istart) / iBlockSize;
   const int jBlocks = (jend-jstart) / jBlockSize;
   const int kBlocks = (kend-kstart) / kBlockSize;
 
-  #pragma omp for
+  #pragma omp for schedule(dynamic,16) collapse(2)
   for (int kk=0; kk<kBlocks; ++kk)
     for (int jj=0; jj<jBlocks; ++jj)
       for (int ii=0; ii<iBlocks; ++ii)
@@ -191,7 +191,7 @@ void advection_diffusion(double * const restrict ut, const double * const restri
                                         grad( u[ijk    ], u[ijk+ii1], u[ijk+ii2], u[ijk+ii3] )));
       }
 
-  #pragma omp for
+  #pragma omp for schedule(dynamic,16) collapse(2)
   for (int kk=0; kk<kBlocks; ++kk)
     for (int jj=0; jj<jBlocks; ++jj)
       for (int ii=0; ii<iBlocks; ++ii)
@@ -217,7 +217,7 @@ void advection_diffusion(double * const restrict ut, const double * const restri
                                         grad( u[ijk    ], u[ijk+jj1], u[ijk+jj2], u[ijk+jj3] )) );
       }
 
-  #pragma omp for
+  #pragma omp for schedule(dynamic,16) collapse(2)
   for (int kk=0; kk<kBlocks; ++kk)
     for (int jj=0; jj<jBlocks; ++jj)
       for (int ii=0; ii<iBlocks; ++ii)
@@ -255,7 +255,7 @@ void tendency(double * const restrict at, double * const restrict a,
   const int jj = icells;
   const int kk = ijcells;
 
-  #pragma omp for
+  #pragma omp for schedule(dynamic,16)
   for (int k=kstart; k<kend; ++k)
     for (int j=jstart; j<jend; ++j)
       #pragma clang loop vectorize(enable)
@@ -265,17 +265,6 @@ void tendency(double * const restrict at, double * const restrict a,
       {
         const int ijk = i + j*jj + k*kk;
         a[ijk] += dt*at[ijk];
-      }
-
-  #pragma omp for
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      #pragma clang loop vectorize(enable)
-      #pragma GCC ivdep
-      #pragma ivdep
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj + k*kk;
         at[ijk] = 0.;
       }
 }
@@ -283,8 +272,8 @@ void tendency(double * const restrict at, double * const restrict a,
 int main()
 {
   // Test configuration settings.
-  const int itot = 128;
-  const int jtot = 128;
+  const int itot = 256;
+  const int jtot = 256;
   const int ktot = 2048;
   const int gc   = 4;
   const int iter = 10;
