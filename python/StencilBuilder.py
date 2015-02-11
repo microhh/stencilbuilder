@@ -391,5 +391,5 @@ def printStencil(lhs, rhs, operator):
 
   index = "[ijk]"
   indent = len(lhs.name) + len(index) + len(operator) + 2
-  print("{0}{1} {2} {3}".format(lhs.name, index, operator, rhs.getString(0, 0, 0, indent)))
+  print("{0}{1} {2} {3};".format(lhs.name, index, operator, rhs.getString(0, 0, 0, indent)))
 
