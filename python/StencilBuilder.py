@@ -329,6 +329,7 @@ def printStencil(lhs, rhs, operator):
   if (not np.array_equal(lhs.loc, rhs.loc)):
     raise (RuntimeError)
 
-  indent = len(lhs.name) + len(operator) + 2
-  print("{0} {1} {2}".format(lhs.name, operator, rhs.getString(0, 0, 0, indent)))
+  index = "[ijk]"
+  indent = len(lhs.name) + len(index) + len(operator) + 2
+  print("{0}{1} {2} {3}".format(lhs.name, index, operator, rhs.getString(0, 0, 0, indent)))
 
