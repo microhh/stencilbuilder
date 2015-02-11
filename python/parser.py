@@ -18,7 +18,6 @@ blocks = []
 lineindex = -1
 block = []
 names = []
-indent = 0
 
 for n in lines:
   lineindex += 1
@@ -54,15 +53,19 @@ for n in blocks:
   # Get the code block.
   code = ''.join(n[0])
 
-  # Execute the code block and capture the output.
+  # Execute the code block and capture the output by temporarily
+  # redirecting the stdout.
   buffer = StringIO.StringIO()
-  # Temporarily redirect stdout to buffer, restore after call!
   sys.stdout = buffer
   exec(code)
   sys.stdout = sys.__stdout__
   output = buffer.getvalue().splitlines()
   del(code)
   del(buffer)
+
+  # Add the indentation.
+  for l in range(len(output)):
+    output[l] = '{0}{1}'.format(' ' * n[3], output[l])
 
   # Delete the StencilBuilder lines.
   del(lines[n[1]:n[2]+1])
