@@ -9,10 +9,16 @@ w = Field("w", wloc)
 ut = Field("ut", uloc)
 vt = Field("vt", vloc)
 
+ug = Vector("ug", zloc)
+vg = Vector("vg", zloc)
+
 fc = Scalar("fc")
 
-utrhs = fc * interpx( interpy( v ) )
-vtrhs = fc * interpx( interpy( u ) )
+ugrid = Scalar("ugrid")
+vgrid = Scalar("vgrid")
 
-printStencil(ut, utrhs, "=")
-printStencil(vt, vtrhs, "=")
+utrhs = fc * ( interpx( interpy( v ) ) + vgrid - vg )
+vtrhs = fc * ( interpx( interpy( u ) ) + ugrid - ug )
+
+printStencil(ut, utrhs, "+=")
+printStencil(vt, vtrhs, "-=")
