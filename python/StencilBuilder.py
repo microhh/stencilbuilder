@@ -324,25 +324,25 @@ class Field(Node):
 
   def getString(self, i, j, k, pad):
     if (i > 0):
-      ii = "+{0}".format(i)
+      ii = "+ii{0}".format(abs(i))
     elif (i < 0):
-      ii = "{0}".format(i)
+      ii = "-ii{0}".format(abs(i))
     else:
-      ii = "  "
+      ii = "    "
     if (j > 0):
-      jj = "+{0}".format(j)
+      jj = "+jj{0}".format(abs(j))
     elif (j < 0):
-      jj = "{0}".format(j)
+      jj = "-jj{0}".format(abs(j))
     else:
-      jj = "  "
+      jj = "    "
     if (k > 0):
-      kk = "+{0}".format(k)
+      kk = "+kk{0}".format(abs(k))
     elif (k < 0):
-      kk = "{0}".format(k)
+      kk = "-kk{0}".format(abs(k))
     else:
-      kk = "  "
+      kk = "    "
 
-    return "{0}[i{1},j{2},k{3}]".format(self.name, ii, jj, kk)
+    return "{0}[ijk{1}{2}{3}]".format(self.name, ii, jj, kk)
 
 # Vector class representing a profile
 class Vector(Node):
