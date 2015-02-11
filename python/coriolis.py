@@ -2,14 +2,17 @@
 
 from StencilBuilder import *
 
-u = Field("u" , uloc)
-v = Field("v" , vloc)
-w = Field("w" , wloc)
+u = Field("u", uloc)
+v = Field("v", vloc)
+w = Field("w", wloc)
+
+ut = Field("ut", uloc)
+vt = Field("vt", vloc)
 
 fc = Scalar("fc")
 
-ut = fc * interpx( interpy( v ) )
-vt = fc * interpx( interpy( u ) )
+utrhs = fc * interpx( interpy( v ) )
+vtrhs = fc * interpx( interpy( u ) )
 
-print("ut[i,j,k] = {0};\n".format(ut.getString(0,0,0,12)))
-print("vt[i,j,k] = {0};\n".format(vt.getString(0,0,0,12)))
+printStencil(ut, utrhs, "=")
+printStencil(vt, vtrhs, "=")

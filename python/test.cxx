@@ -25,19 +25,23 @@ void advecu(double *ut, double *u, double *v, double *w,
       for (int i=istart; i<iend; ++i)
       {
         const int ijk = i + j*jj + k*kk;
-        //$ SBStart ut
+        //$ SBStart
         u = Field("u", uloc)
         v = Field("v", vloc)
         w = Field("w", wloc)
+
+        ut = Field("u", uloc)
         
         dxi = Scalar("dxi")
         dyi = Scalar("dyi")
 
         dzi4 = Vector("dzi4", zloc)
 
-        ut = gradx( interpx(u) * interpx(u) ) * dxi \
-           + grady( interpx(v) * interpy(u) ) * dyi \
-           + gradz( interpx(w) * interpz(u) ) * dzi4
+        utrhs = gradx( interpx(u) * interpx(u) ) * dxi \
+              + grady( interpx(v) * interpy(u) ) * dyi \
+              + gradz( interpx(w) * interpz(u) ) * dzi4
+
+        printStencil(ut, utrhs, "+=")
         //$ SBEnd
       }
 }
@@ -63,15 +67,19 @@ void advecv(double *vt, double *u, double *v, double *w,
         u = Field("u", uloc)
         v = Field("v", vloc)
         w = Field("w", wloc)
+
+        vt = Field("vt", vloc)
         
         dxi = Scalar("dxi")
         dyi = Scalar("dyi")
 
         dzi4 = Vector("dzi4", zloc)
 
-        vt = gradx( interpy(u) * interpx(v) ) * dxi \
-           + grady( interpy(v) * interpy(v) ) * dyi \
-           + gradz( interpy(w) * interpz(v) ) * dzi4
+        vtrhs = gradx( interpy(u) * interpx(v) ) * dxi \
+              + grady( interpy(v) * interpy(v) ) * dyi \
+              + gradz( interpy(w) * interpz(v) ) * dzi4
+
+        printStencil(vt, vtrhs, "+=")
         //$ SBEnd
       }
 }

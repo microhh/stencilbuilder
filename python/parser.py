@@ -1,4 +1,6 @@
 #!/usr/bin/python
+import sys
+import StringIO
 
 from StencilBuilder import *
 
@@ -27,10 +29,6 @@ for n in lines:
     indent = line
     kw = n[line + 3::].strip().split(' ')
     if(kw[0] == "SBStart"):
-      if(len(kw) == 1):
-        raise(RuntimeError)
-      else:
-        names[0:0] = kw[1::]
       startline = lineindex
       record = True
       continue
@@ -38,7 +36,7 @@ for n in lines:
     elif(kw[0] == "SBEnd"):
       endline = lineindex
       record = False
-      blocks.append((block, startline, endline, names, indent))
+      blocks.append((block, startline, endline, indent))
       block = []
       names = []
       continue
@@ -53,29 +51,24 @@ for n in lines:
 blocks.reverse()
 
 for n in blocks:
-  # Execute the block and save the output
-  exec(''.join(n[0]))
+  # Get the code block.
+  code = ''.join(n[0])
 
-  # Loop over the variables to be printed
-  test = []
-  for v in n[3]:
-    #indent = ''.rjust(n[4])
-    indent = len(v) + 10
-    evalstring = v + ".getString(0,0,0,{0})".format(indent)
-    tmplist = (v + "[i,j,k] = " + eval(evalstring) + ";").split('\n')
-    # Indent each line to make it fit properly aligned into the code
-    for t in range(len(tmplist)):
-      tmplist[t] = ''.rjust(n[4]) + tmplist[t]
+  # Execute the code block and capture the output.
+  buffer = StringIO.StringIO()
+  # Temporarily redirect stdout to buffer, restore after call!
+  sys.stdout = buffer
+  exec(code)
+  sys.stdout = sys.__stdout__
+  output = buffer.getvalue().splitlines()
+  del(code)
+  del(buffer)
 
-    # insert a empty line in between statements
-    if(len(test) > 0):
-      test.append('')
-    test.extend(tmplist)
-
-  # Delete the StencilBuilder lines
+  # Delete the StencilBuilder lines.
   del(lines[n[1]:n[2]+1])
-  # Replace it with the new code
-  lines[n[1]:n[1]] = test[:]
+
+  # Replace it with the new code.
+  lines[n[1]:n[1]] = output
 
 f = file("test_new.cxx", "w")
 for n in lines:

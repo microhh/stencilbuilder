@@ -324,3 +324,11 @@ def grady(inner):
   return NodeStencilGrad(inner, 1)
 def gradz(inner):
   return NodeStencilGrad(inner, 2)
+
+def printStencil(lhs, rhs, operator):
+  if (not np.array_equal(lhs.loc, rhs.loc)):
+    raise (RuntimeError)
+
+  indent = len(lhs.name) + len(operator) + 2
+  print("{0} {1} {2}".format(lhs.name, operator, rhs.getString(0, 0, 0, indent)))
+
