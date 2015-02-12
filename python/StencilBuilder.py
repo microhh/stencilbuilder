@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import numpy as np
-import copy
 
 # Define the location arrays
 uloc = np.array([1,0,0])
@@ -34,23 +33,23 @@ class NodeOperator(Node):
       self.pad = 0
 
     if (type(left) == Scalar):
-      self.loc = right.loc
+      self.loc = np.copy(right.loc)
     elif (type(right) == Scalar):
-      self.loc = left.loc
+      self.loc = np.copy(left.loc)
 
     # Check for potential location failures.
     elif (type(left) == Vector):
       if (left.loc[2] == right.loc[2]):
-        self.loc = right.loc
+        self.loc = np.copy(right.loc)
       else:
         raise (Exception("Types on which operator is applied do not share same grid location"))
     elif (type(right) == Vector):
       if (left.loc[2] == right.loc[2]):
-        self.loc = left.loc
+        self.loc = np.copy(left.loc)
       else:
         raise (Exception("Types on which operator is applied do not share same grid location"))
     elif (np.array_equal(left.loc, right.loc)):
-      self.loc = copy.deepcopy(left.loc)
+      self.loc = np.copy(left.loc)
     else:
       raise (Exception("Types on which operator is applied do not share same grid location"))
 
@@ -82,7 +81,7 @@ class NodeStencilFour(Node):
     self.pad = 6
 
     self.dim = dim
-    self.loc = copy.deepcopy(inner.loc)
+    self.loc = np.copy(inner.loc)
     self.loc[dim] = not self.loc[dim]
 
     self.c0 = c0
@@ -149,7 +148,7 @@ class Field(Node):
   def __init__(self, name, loc):
     self.name  = name
     self.depth = 0
-    self.loc   = loc
+    self.loc   = np.copy(loc)
 
   def getString(self, i, j, k, pad):
     ii = formatIndex(i, "ii")
@@ -172,6 +171,7 @@ class Scalar(Node):
   def __init__(self, name):
     self.name  = name
     self.depth = 0
+    self.loc   = np.array([0, 0, 0])
 
   def getString(self, i, j, k, pad):
     return "{0}".format(self.name)
