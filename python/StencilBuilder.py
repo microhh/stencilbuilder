@@ -12,26 +12,18 @@ zhloc = 1
 
 # Check locations
 def checkLocs(left, right):
-  if (type(left) == Scalar):
-    loc = np.copy(right.loc)
-  elif (type(right) == Scalar):
-    loc = np.copy(left.loc)
-
-  # Check for potential location failures.
-  elif (type(left) == Vector):
-    if (left.loc[2] == right.loc[2]):
-      loc = np.copy(right.loc)
+  loc = np.array([ None, None, None ])
+  for i in range(len(loc)):
+    if (left.loc[i] == None and right.loc[i] == None):
+      continue
+    elif (left.loc[i] == None):
+      loc[i] = right.loc[i]
+    elif (right.loc[i] == None):
+      loc[i] = left.loc[i]
+    elif (left.loc[i] != right.loc[i]):
+      raise (Exception("Left and right are not at the same grid location"))
     else:
-      raise (Exception("Types on which operator is applied do not share same grid location"))
-  elif (type(right) == Vector):
-    if (left.loc[2] == right.loc[2]):
-      loc = np.copy(left.loc)
-    else:
-      raise (Exception("Types on which operator is applied do not share same grid location"))
-  elif (np.array_equal(left.loc, right.loc)):
-    loc = np.copy(left.loc)
-  else:
-    raise (Exception("Types on which operator is applied do not share same grid location"))
+      loc[i] = left.loc[i]
 
   return loc
 
@@ -48,7 +40,7 @@ class Node(object):
 
 class NodeOperator(Node):
   def __init__(self, left, right, operatorString):
-    self.left  = left
+    self.left = left
     self.right = right
     self.operatorString = operatorString
     self.depth = max(left.depth, right.depth)
@@ -167,7 +159,7 @@ class Vector(Node):
   def __init__(self, name, loc):
     self.name  = name
     self.depth = 0
-    self.loc   = np.array([0, 0, loc])
+    self.loc   = np.array([None, None, loc])
 
   def getString(self, i, j, k, pad):
     kk = formatIndex(k, "")
@@ -177,7 +169,7 @@ class Scalar(Node):
   def __init__(self, name):
     self.name  = name
     self.depth = 0
-    self.loc   = np.array([0, 0, 0])
+    self.loc   = np.array([None, None, None])
 
   def getString(self, i, j, k, pad):
     return "{0}".format(self.name)
