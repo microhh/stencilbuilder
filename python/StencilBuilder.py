@@ -315,7 +315,15 @@ class NodeStencilGrad(Node):
           self.inner.getString(i3, j3, k3, pad),
           ob=ob, cb=cb)
 
-# Field class representing a three dimensional field
+def formatIndex(n, nstr):
+  if (n > 0):
+    nn = "+{0}{1}".format(nstr, abs(n))
+  elif (n < 0):
+    nn = "-{0}{1}".format(nstr, abs(n))
+  else:
+    nn = "    "
+  return nn
+
 class Field(Node):
   def __init__(self, name, loc):
     self.name  = name
@@ -323,25 +331,9 @@ class Field(Node):
     self.loc   = loc
 
   def getString(self, i, j, k, pad):
-    if (i > 0):
-      ii = "+ii{0}".format(abs(i))
-    elif (i < 0):
-      ii = "-ii{0}".format(abs(i))
-    else:
-      ii = "    "
-    if (j > 0):
-      jj = "+jj{0}".format(abs(j))
-    elif (j < 0):
-      jj = "-jj{0}".format(abs(j))
-    else:
-      jj = "    "
-    if (k > 0):
-      kk = "+kk{0}".format(abs(k))
-    elif (k < 0):
-      kk = "-kk{0}".format(abs(k))
-    else:
-      kk = "    "
-
+    ii = formatIndex(i, "ii")
+    jj = formatIndex(j, "jj")
+    kk = formatIndex(k, "kk")
     return "{0}[ijk{1}{2}{3}]".format(self.name, ii, jj, kk)
 
 # Vector class representing a profile
@@ -352,13 +344,7 @@ class Vector(Node):
     self.loc   = np.array([0, 0, loc])
 
   def getString(self, i, j, k, pad):
-    if (k > 0):
-      kk = "+{0}".format(k)
-    elif (k < 0):
-      kk = "{0}".format(k)
-    else:
-      kk = "  "
-
+    kk = formatIndex(k, "kk")
     return "{0}[k{1}]".format(self.name, kk)
 
 class Scalar(Node):
