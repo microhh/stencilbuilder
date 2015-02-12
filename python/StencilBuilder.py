@@ -14,18 +14,19 @@ zhloc = 1
 # Base Node class
 class Node(object):
   def __add__(self, right):
-    return NodeAdd(self, right)
+    return NodeOperator(self, right, "+")
 
   def __sub__(self, right):
-    return NodeSub(self, right)
+    return NodeOperator(self, right, "-")
 
   def __mul__(self, right):
-    return NodeMult(self, right)
+    return NodeOperator(self, right, "*")
 
-class NodeAdd(Node):
-  def __init__(self, left, right):
+class NodeOperator(Node):
+  def __init__(self, left, right, operatorString):
     self.left  = left
     self.right = right
+    self.operatorString = operatorString
     self.depth = max(left.depth, right.depth)
     if (self.depth > 1):
       self.pad = 2
@@ -66,128 +67,13 @@ class NodeAdd(Node):
       for n in range(1, self.depth):
         lb = lb + '\n'
 
-      return "{ob}{0}\n{lb}{ws}+ {1}{cb}".format(self.left.getString(i, j, k, pad),
+      return "{ob}{0}\n{lb}{ws}{os} {1}{cb}".format(self.left.getString(i, j, k, pad),
                                                  self.right.getString(i, j, k, pad),
-                                                 ws=ws, lb=lb, ob=ob, cb=cb)
-    elif (type(self.left) == Field and type(self.right) == Field):
-      return "{ob}{0}+{1}{cb}".format(self.left.getString(i, j, k, pad),
-                                      self.right.getString(i, j, k, pad),
-                                      ob=ob, cb=cb)
-
+                                                 ws=ws, lb=lb, ob=ob, os=self.operatorString, cb=cb)
     else:
-      return "{ob}{0} + {1}{cb}".format(self.left.getString(i, j, k, pad),
+      return "{ob}{0} {os} {1}{cb}".format(self.left.getString(i, j, k, pad),
                                         self.right.getString(i, j, k, pad),
-                                        ob=ob, cb=cb)
-
-class NodeSub(Node):
-  def __init__(self, left, right):
-    self.left  = left
-    self.right = right
-    self.depth = max(left.depth, right.depth)
-    if (self.depth > 1):
-      self.pad = 2
-    else:
-      self.pad = 0
-
-    if (type(left) == Scalar):
-      self.loc = right.loc
-    elif (type(right) == Scalar):
-      self.loc = left.loc
-      
-    # In case of Vector, only check the k-location
-    # CvH types of Vector*Vector will go wrong...
-    elif (type(left) == Vector):
-      if (left.loc[2] == right.loc[2]):
-        self.loc = right.loc
-      else:
-        raise (RuntimeError)
-    elif (type(right) == Vector):
-      if (left.loc[2] == right.loc[2]):
-        self.loc = left.loc
-      else:
-        raise (RuntimeError)
-    elif (np.array_equal(left.loc, right.loc)):
-      self.loc = copy.deepcopy(left.loc)
-    else:
-      raise (RuntimeError)
-
-  def getString(self, i, j, k, pad):
-    ob = '( '
-    cb = ' )'
-
-    if (self.depth > 1):
-      ws = ''.rjust(pad)
-      pad += self.pad
-
-      lb = ''
-      for n in range(1, self.depth):
-        lb = lb + '\n'
-
-      return "{ob}{0}\n{lb}{ws}- {1}{cb}".format(self.left.getString(i, j, k, pad),
-                                                 self.right.getString(i, j, k, pad),
-                                                 ws=ws, lb=lb, ob=ob, cb=cb)
-    elif (type(self.left) == Field and type(self.right) == Field):
-      return "{ob}{0}-{1}{cb}".format(self.left.getString(i, j, k, pad),
-                                      self.right.getString(i, j, k, pad),
-                                      ob=ob, cb=cb)
-
-    else:
-      return "{ob}{0} - {1}{cb}".format(self.left.getString(i, j, k, pad),
-                                        self.right.getString(i, j, k, pad),
-                                        ob=ob, cb=cb)
-
-class NodeMult(Node):
-  def __init__(self, left, right):
-    self.left  = left
-    self.right = right
-    self.depth = max(left.depth, right.depth)
-    if (self.depth > 1):
-      self.pad = 2
-    else:
-      self.pad = 0
-
-    if (type(left) == Scalar):
-      self.loc = right.loc
-    elif (type(right) == Scalar):
-      self.loc = left.loc
-      
-    # In case of Vector, only check the k-location
-    # CvH types of Vector*Vector will go wrong...
-    elif (type(left) == Vector):
-      if (left.loc[2] == right.loc[2]):
-        self.loc = right.loc
-      else:
-        raise (RuntimeError)
-    elif (type(right) == Vector):
-      if (left.loc[2] == right.loc[2]):
-        self.loc = left.loc
-      else:
-        raise (RuntimeError)
-    elif (np.array_equal(left.loc, right.loc)):
-      self.loc = copy.deepcopy(left.loc)
-    else:
-      raise (RuntimeError)
-
-  def getString(self, i, j, k, pad):
-    ob = '( '
-    cb = ' )'
-
-    if (self.depth > 1):
-      ws = ''.rjust(pad)
-      pad += self.pad
-
-      lb = ''
-      for n in range(1, self.depth):
-        lb = lb + '\n'
-
-      return "{ob}{0}\n{lb}{ws}* {1}{cb}".format(self.left.getString(i, j, k, pad),
-                                                 self.right.getString(i, j, k, pad),
-                                                 ws=ws, lb=lb, ob=ob, cb=cb)
-
-    else:
-      return "{ob}{0} * {1}{cb}".format(self.left.getString(i, j, k, pad),
-                                        self.right.getString(i, j, k, pad),
-                                        ob=ob, cb=cb)
+                                        ob=ob, os=self.operatorString, cb=cb)
 
 class NodeStencilInterp(Node):
   def __init__(self, inner, dim):
@@ -336,7 +222,6 @@ class Scalar(Node):
 
   def getString(self, i, j, k, pad):
     return "{0}".format(self.name)
-
 
 # Define functions.
 def interpx(inner):
