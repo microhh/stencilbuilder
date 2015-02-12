@@ -38,22 +38,21 @@ class NodeOperator(Node):
     elif (type(right) == Scalar):
       self.loc = left.loc
 
-    # In case of Vector, only check the k-location
-    # CvH types of Vector*Vector will go wrong...
+    # Check for potential location failures.
     elif (type(left) == Vector):
       if (left.loc[2] == right.loc[2]):
         self.loc = right.loc
       else:
-        raise (RuntimeError)
+        raise (Exception("Types on which operator is applied do not share same grid location"))
     elif (type(right) == Vector):
       if (left.loc[2] == right.loc[2]):
         self.loc = left.loc
       else:
-        raise (RuntimeError)
+        raise (Exception("Types on which operator is applied do not share same grid location"))
     elif (np.array_equal(left.loc, right.loc)):
       self.loc = copy.deepcopy(left.loc)
     else:
-      raise (RuntimeError)
+      raise (Exception("Types on which operator is applied do not share same grid location"))
 
   def getString(self, i, j, k, pad):
     ob = '( '
