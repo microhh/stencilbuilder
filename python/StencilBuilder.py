@@ -10,6 +10,31 @@ sloc = np.array([0,0,0])
 zloc  = 0
 zhloc = 1
 
+# Check locations
+def checkLocs(left, right):
+  if (type(left) == Scalar):
+    loc = np.copy(right.loc)
+  elif (type(right) == Scalar):
+    loc = np.copy(left.loc)
+
+  # Check for potential location failures.
+  elif (type(left) == Vector):
+    if (left.loc[2] == right.loc[2]):
+      loc = np.copy(right.loc)
+    else:
+      raise (Exception("Types on which operator is applied do not share same grid location"))
+  elif (type(right) == Vector):
+    if (left.loc[2] == right.loc[2]):
+      loc = np.copy(left.loc)
+    else:
+      raise (Exception("Types on which operator is applied do not share same grid location"))
+  elif (np.array_equal(left.loc, right.loc)):
+    loc = np.copy(left.loc)
+  else:
+    raise (Exception("Types on which operator is applied do not share same grid location"))
+
+  return loc
+
 # Base Node class
 class Node(object):
   def __add__(self, right):
@@ -32,26 +57,7 @@ class NodeOperator(Node):
     else:
       self.pad = 0
 
-    if (type(left) == Scalar):
-      self.loc = np.copy(right.loc)
-    elif (type(right) == Scalar):
-      self.loc = np.copy(left.loc)
-
-    # Check for potential location failures.
-    elif (type(left) == Vector):
-      if (left.loc[2] == right.loc[2]):
-        self.loc = np.copy(right.loc)
-      else:
-        raise (Exception("Types on which operator is applied do not share same grid location"))
-    elif (type(right) == Vector):
-      if (left.loc[2] == right.loc[2]):
-        self.loc = np.copy(left.loc)
-      else:
-        raise (Exception("Types on which operator is applied do not share same grid location"))
-    elif (np.array_equal(left.loc, right.loc)):
-      self.loc = np.copy(left.loc)
-    else:
-      raise (Exception("Types on which operator is applied do not share same grid location"))
+    self.loc = checkLocs(left, right)
 
   def getString(self, i, j, k, pad):
     ob = '( '
@@ -192,8 +198,7 @@ def gradz(inner):
   return NodeStencilFour(inner, 2, "cg0", "cg1", "cg2", "cg3")
 
 def printStencil(lhs, rhs, operator):
-  if (not np.array_equal(lhs.loc, rhs.loc)):
-    raise (RuntimeError)
+  checkLocs(lhs, rhs)
 
   index = "[ijk]"
   indent = len(lhs.name) + len(index) + len(operator) + 2
