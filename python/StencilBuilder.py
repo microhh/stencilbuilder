@@ -68,18 +68,19 @@ class NodeOperator(Node):
         lb = lb + '\n'
 
       return "{ob}{0}\n{lb}{ws}{os} {1}{cb}".format(self.left.getString(i, j, k, pad),
-                                                 self.right.getString(i, j, k, pad),
-                                                 ws=ws, lb=lb, ob=ob, os=self.operatorString, cb=cb)
+                                                    self.right.getString(i, j, k, pad),
+                                                    ws=ws, lb=lb, ob=ob,
+                                                    os=self.operatorString, cb=cb)
     else:
       return "{ob}{0} {os} {1}{cb}".format(self.left.getString(i, j, k, pad),
-                                        self.right.getString(i, j, k, pad),
-                                        ob=ob, os=self.operatorString, cb=cb)
+                                           self.right.getString(i, j, k, pad),
+                                           ob=ob, os=self.operatorString, cb=cb)
 
 class NodeStencilFour(Node):
   def __init__(self, inner, dim, c0, c1, c2, c3):
     self.inner = inner
     self.depth = inner.depth + 1
-    self.pad = 8
+    self.pad = 6
 
     self.dim = dim
     self.loc = copy.deepcopy(inner.loc)
