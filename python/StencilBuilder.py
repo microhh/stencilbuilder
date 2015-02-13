@@ -7,8 +7,9 @@ uloc = np.array([1,0,0])
 vloc = np.array([0,1,0])
 wloc = np.array([0,0,1])
 sloc = np.array([0,0,0])
-zloc  = 0
-zhloc = 1
+
+zloc  = np.array([None, None, 0])
+zhloc = np.array([None, None, 1])
 
 # Check locations
 def checkLocs(left, right):
@@ -21,7 +22,7 @@ def checkLocs(left, right):
     elif (right.loc[i] == None):
       loc[i] = left.loc[i]
     elif (left.loc[i] != right.loc[i]):
-      raise (Exception("Left and right are not at the same grid location"))
+      raise RuntimeError("Left and right are not at the same grid location")
     else:
       loc[i] = left.loc[i]
 
@@ -149,9 +150,9 @@ def formatIndex(n, nstr):
 
 class Field(Node):
   def __init__(self, name, loc):
-    self.name  = name
+    self.name = name
     self.depth = 0
-    self.loc   = np.copy(loc)
+    self.loc = np.copy(loc)
 
   def getString(self, i, j, k, pad, plane):
     compact = True
@@ -167,9 +168,9 @@ class Field(Node):
 # Vector class representing a profile
 class Vector(Node):
   def __init__(self, name, loc):
-    self.name  = name
+    self.name = name
     self.depth = 0
-    self.loc   = np.array([ None, None, loc ])
+    self.loc = np.copy(loc)
 
   def getString(self, i, j, k, pad, plane):
     kk = formatIndex(k, "")
@@ -177,9 +178,9 @@ class Vector(Node):
 
 class Scalar(Node):
   def __init__(self, name):
-    self.name  = name
+    self.name = name
     self.depth = 0
-    self.loc   = np.array([ None, None, None ])
+    self.loc = np.array([ None, None, None ])
 
   def getString(self, i, j, k, pad, plane):
     return "{0}".format(self.name)
