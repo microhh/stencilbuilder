@@ -6,16 +6,19 @@ import StringIO
 from StencilBuilder import *
 
 # Retrieve the file from the command line arguments.
-if (len(sys.argv) != 2):
+argc = len(sys.argv)
+if (not 2 <= argc < 4):
   raise RuntimeError("Illegal number of arguments")
 else:
-  filename = str(sys.argv[1])
+  inputfile = str(sys.argv[1])
+  if (argc == 3):
+    outputfile = str(sys.argv[2])
 
 # Save a backup of the original file.
-shutil.copyfile(filename, "{0}{1}".format(filename, ".orig"))
+shutil.copyfile(inputfile, "{0}{1}".format(inputfile, ".orig"))
 
 # Read the file into the memory.
-f = file(filename, "r")
+f = file(inputfile, "r")
 lines = f.readlines()
 f.close()
 
@@ -85,10 +88,11 @@ for n in blocks:
   # Replace it with the new code.
   lines[n[1]:n[1]] = output
 
-for n in lines:
-  print("{0}".format(n))
-
-#f = file("{0}".format(filename), "w")
-#for n in lines:
-#  f.write("{0}\n".format(n))
-#f.close()
+if (argc == 2):
+  for n in lines:
+    print("{0}".format(n))
+elif (argc == 3):
+  f = file("{0}".format(outputfile), "w")
+  for n in lines:
+    f.write("{0}\n".format(n))
+  f.close()
