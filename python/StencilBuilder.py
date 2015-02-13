@@ -22,7 +22,8 @@ def checkLocs(left, right):
     elif (right.loc[i] == None):
       loc[i] = left.loc[i]
     elif (left.loc[i] != right.loc[i]):
-      raise RuntimeError("Left and right are not at the same grid location")
+      raise RuntimeError("Left ({0}) and right ({0}) are not at the same grid location".format(
+        type(left).__name__, type(right).__name__))
     else:
       loc[i] = left.loc[i]
 
