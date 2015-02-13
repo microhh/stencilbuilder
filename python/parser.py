@@ -85,7 +85,10 @@ for n in blocks:
   # Replace it with the new code.
   lines[n[1]:n[1]] = output
 
-f = file("{0}".format(filename), "w")
 for n in lines:
-  f.write("{0}\n".format(n))
-f.close()
+  print("{0}".format(n))
+
+#f = file("{0}".format(filename), "w")
+#for n in lines:
+#  f.write("{0}\n".format(n))
+#f.close()
