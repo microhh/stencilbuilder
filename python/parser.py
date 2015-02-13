@@ -1,14 +1,25 @@
 #!/usr/bin/python
 import sys
+import shutil
 import StringIO
 
 from StencilBuilder import *
 
-f = file("test.cxx", "r")
+# Retrieve the file from the command line arguments.
+if (len(sys.argv) != 2):
+  raise RuntimeError("Illegal number of arguments")
+else:
+  filename = str(sys.argv[1])
+
+# Save a backup of the original file.
+shutil.copyfile(filename, "{0}{1}".format(filename, ".orig"))
+
+# Read the file into the memory.
+f = file(filename, "r")
 lines = f.readlines()
 f.close()
 
-# Remove the line breaks
+# Remove the line breaks.
 for n in range(len(lines)):
   lines[n] = lines[n].rstrip()
 
@@ -19,6 +30,7 @@ lineindex = -1
 block = []
 names = []
 
+# Loop over lines and store blocks of StencilBuilder code.
 for n in lines:
   lineindex += 1
   line = n.find("//$")
@@ -41,7 +53,7 @@ for n in lines:
       continue
 
     else:
-      raise(RuntimeError)
+      raise RuntimeError("Syntax error in StencilBuilder tags")
 
   if(record):
     block.append(n.strip()+'\n')
@@ -73,7 +85,7 @@ for n in blocks:
   # Replace it with the new code.
   lines[n[1]:n[1]] = output
 
-f = file("test_new.cxx", "w")
+f = file("{0}".format(filename), "w")
 for n in lines:
   f.write("{0}\n".format(n))
 f.close()
