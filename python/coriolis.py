@@ -21,4 +21,5 @@ utrhs = fc * ( interpx( interpy( v ) ) + vgrid - vg )
 vtrhs = fc * ( interpx( interpy( u ) ) + ugrid - ug )
 
 printStencil(ut, utrhs, "+=")
-printStencil(vt, vtrhs, "-=")
+printEmptyLine()
+printLoop(vt, vtrhs, "-=")

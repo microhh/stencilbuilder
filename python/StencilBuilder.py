@@ -210,3 +210,25 @@ def printStencil(lhs, rhs, operator):
     plane = np.array([0,0,0])
     print("{0}{1} {2} {3};".format(lhs.name, index, operator, rhs.getString(0, 0, 0, indent, plane)))
 
+def printLoop(lhs, rhs, operator):
+    checkLocs(lhs, rhs)
+
+    index = "[ijk]"
+    indexIndent = len(lhs.name) + len(index) + len(operator) + 2
+
+    plane = np.array([0,0,0])
+
+    # Set one indentation unit in C++ code
+    indent = "  "
+
+    print("{0}for (int k=grid->kstart; k<grid->kend; ++k)".format(indent * 0))
+    print("{0}for (int j=grid->jstart; j<grid->jend; ++j)".format(indent * 1))
+    print("{0}for (int i=grid->istart; i<grid->iend; ++i)".format(indent * 2))
+    print("{0}{{".format(indent * 2))
+    print("{0}const int ijk = i + j*jj + k*kk;".format(indent * 3))
+    print("{0}{1}{2} {3} {4};".format(indent * 3,
+      lhs.name, index, operator, rhs.getString(0, 0, 0, indexIndent + len(indent * 3), plane)))
+    print("{0}}}".format(indent * 2))
+
+def printEmptyLine():
+  print("")

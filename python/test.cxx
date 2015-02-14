@@ -58,30 +58,24 @@ void advecv(double *vt, double *u, double *v, double *w,
   const int jj = 1;
   const int kk = 1;
 
-  for (int k=kstart; k<kend; ++k)
-    for (int j=jstart; j<jend; ++j)
-      for (int i=istart; i<iend; ++i)
-      {
-        const int ijk = i + j*jj + k*kk;
-        //$ SBStart vt
-        u = Field("u", uloc)
-        v = Field("v", vloc)
-        w = Field("w", wloc)
+  //$ SBStart vt
+  u = Field("u", uloc)
+  v = Field("v", vloc)
+  w = Field("w", wloc)
 
-        vt = Field("vt", vloc)
-        
-        dxi = Scalar("dxi")
-        dyi = Scalar("dyi")
+  vt = Field("vt", vloc)
 
-        dzi4 = Vector("dzi4", zloc)
+  dxi = Scalar("dxi")
+  dyi = Scalar("dyi")
 
-        vtrhs = gradx( interpy(u) * interpx(v) ) * dxi \
-              + grady( interpy(v) * interpy(v) ) * dyi \
-              + gradz( interpy(w) * interpz(v) ) * dzi4
+  dzi4 = Vector("dzi4", zloc)
 
-        printStencil(vt, vtrhs, "+=")
-        //$ SBEnd
-      }
+  vtrhs = gradx( interpy(u) * interpx(v) ) * dxi \
+        + grady( interpy(v) * interpy(v) ) * dyi \
+        + gradz( interpy(w) * interpz(v) ) * dzi4
+
+  printLoop(vt, vtrhs, "+=")
+  //$ SBEnd
 }
 
 int main()
