@@ -210,7 +210,9 @@ def printStencil(lhs, rhs, operator):
     plane = np.array([0,0,0])
     print("{0}{1} {2} {3};".format(lhs.name, index, operator, rhs.getString(0, 0, 0, indent, plane)))
 
-def printLoop(lhs, rhs, operator):
+def printLoop(lhs, rhs, operator, istart="grid->istart", iend="grid->iend",
+                                  jstart="grid->jstart", jend="grid->jend",
+                                  kstart="grid->kstart", kend="grid->kend"):
     checkLocs(lhs, rhs)
 
     index = "[ijk]"
@@ -221,14 +223,14 @@ def printLoop(lhs, rhs, operator):
     # Set one indentation unit in C++ code
     indent = "  "
 
-    print("{0}for (int k=grid->kstart; k<grid->kend; ++k)".format(indent * 0))
-    print("{0}for (int j=grid->jstart; j<grid->jend; ++j)".format(indent * 1))
-    print("{0}for (int i=grid->istart; i<grid->iend; ++i)".format(indent * 2))
+    print("{0}for (int k={1}; k<{2}; ++k)".format(indent * 0, kstart, kend))
+    print("{0}for (int j={1}; j<{2}; ++j)".format(indent * 1, jstart, jend))
+    print("{0}for (int i={1}; i<{2}; ++i)".format(indent * 2, istart, iend))
     print("{0}{{".format(indent * 2))
     print("{0}const int ijk = i + j*jj + k*kk;".format(indent * 3))
     print("{0}{1}{2} {3} {4};".format(indent * 3,
-      lhs.name, index, operator, rhs.getString(0, 0, 0, indexIndent + len(indent * 3), plane)))
+        lhs.name, index, operator, rhs.getString(0, 0, 0, indexIndent + len(indent * 3), plane)))
     print("{0}}}".format(indent * 2))
 
 def printEmptyLine():
-  print("")
+    print("")
