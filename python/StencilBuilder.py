@@ -75,7 +75,7 @@ class NodeOperator(Node):
                                                  ob=ob, os=self.operatorString, cb=cb)
 
 class NodeStencilFour(Node):
-    def __init__(self, inner, dim, c0, c1, c2, c3):
+    def __init__(self, inner, dim, c0, c1, c2, c3, bias):
         self.inner = inner
         self.depth = inner.depth + 1
         self.pad = 6
@@ -88,26 +88,27 @@ class NodeStencilFour(Node):
         self.c1 = c1
         self.c2 = c2
         self.c3 = c3
+        self.bias = bias
 
     def getString(self, i, j, k, pad, plane):
         i0 = i1 = i2 = i3 = i
         j0 = j1 = j2 = j3 = j
         k0 = k1 = k2 = k3 = k
         if (self.dim == 0):
-            i0 += -1-self.loc[0]
-            i1 +=   -self.loc[0]
-            i2 += +1-self.loc[0]
-            i3 += +2-self.loc[0]
+            i0 += -1-self.loc[0] + self.bias
+            i1 +=   -self.loc[0] + self.bias
+            i2 += +1-self.loc[0] + self.bias
+            i3 += +2-self.loc[0] + self.bias
         elif (self.dim == 1):
-            j0 += -1-self.loc[1]
-            j1 +=   -self.loc[1]
-            j2 += +1-self.loc[1]
-            j3 += +2-self.loc[1]
+            j0 += -1-self.loc[1] + self.bias
+            j1 +=   -self.loc[1] + self.bias
+            j2 += +1-self.loc[1] + self.bias
+            j3 += +2-self.loc[1] + self.bias
         elif (self.dim == 2):
-            k0 += -1-self.loc[2]
-            k1 +=   -self.loc[2]
-            k2 += +1-self.loc[2]
-            k3 += +2-self.loc[2]
+            k0 += -1-self.loc[2] + self.bias
+            k1 +=   -self.loc[2] + self.bias
+            k2 += +1-self.loc[2] + self.bias
+            k3 += +2-self.loc[2] + self.bias
 
         ob = '( '
         cb = ' )'
@@ -188,18 +189,26 @@ class Scalar(Node):
 
 # Define functions.
 def interpx(inner):
-    return NodeStencilFour(inner, 0, "ci0", "ci1", "ci2", "ci3")
+    return NodeStencilFour(inner, 0, "ci0", "ci1", "ci2", "ci3",  0)
 def interpy(inner):
-    return NodeStencilFour(inner, 1, "ci0", "ci1", "ci2", "ci3")
+    return NodeStencilFour(inner, 1, "ci0", "ci1", "ci2", "ci3",  0)
 def interpz(inner):
-    return NodeStencilFour(inner, 2, "ci0", "ci1", "ci2", "ci3")
+    return NodeStencilFour(inner, 2, "ci0", "ci1", "ci2", "ci3",  0)
+def interpzb(inner):
+    return NodeStencilFour(inner, 2, "bi0", "bi1", "bi2", "bi3",  1)
+def interpzt(inner):
+    return NodeStencilFour(inner, 2, "ti0", "ti1", "ti2", "ti3", -1)
 
 def gradx(inner):
-    return NodeStencilFour(inner, 0, "cg0", "cg1", "cg2", "cg3")
+    return NodeStencilFour(inner, 0, "cg0", "cg1", "cg2", "cg3",  0)
 def grady(inner):
-    return NodeStencilFour(inner, 1, "cg0", "cg1", "cg2", "cg3")
+    return NodeStencilFour(inner, 1, "cg0", "cg1", "cg2", "cg3",  0)
 def gradz(inner):
-    return NodeStencilFour(inner, 2, "cg0", "cg1", "cg2", "cg3")
+    return NodeStencilFour(inner, 2, "cg0", "cg1", "cg2", "cg3",  0)
+def gradzb(inner):
+    return NodeStencilFour(inner, 2, "bg0", "bg1", "bg2", "bg3",  1)
+def gradzt(inner):
+    return NodeStencilFour(inner, 2, "tg0", "tg1", "tg2", "tg3", -1)
 
 def printStencil(lhs, rhs, operator):
     checkLocs(lhs, rhs)
