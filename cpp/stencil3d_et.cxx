@@ -9,11 +9,11 @@ using namespace StencilBuilder;
 int main()
 {
   // Test configuration settings.
-  const int itot = 256;
-  const int jtot = 256;
-  const int ktot = 2048;
+  const int itot = 384;
+  const int jtot = 384;
+  const int ktot = 384;
   const int gc = 4;
-  const int iter = 10;
+  const int iter = 3;
 
   // Initialize the grid.
   Grid grid(itot, jtot, ktot, gc);

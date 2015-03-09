@@ -2,7 +2,7 @@
 #include <typeinfo>
 #include <cxxabi.h>
 
-// #define restrict __restrict__
+#define restrict __restrict__
 
 namespace StencilBuilder
 {
