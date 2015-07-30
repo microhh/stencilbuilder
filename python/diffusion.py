@@ -18,4 +18,6 @@ utrhs = gradx( gradx(u) ) * dxidxi \
       + grady( grady(u) ) * dyidyi \
       + gradz( gradz(u) * dzhi4 ) * dzi4
 
-printStencil(ut, utrhs, "=")
+printStencil(ut, utrhs, "=", "start"   )
+printStencil(ut, utrhs, "=", "interior")
+printStencil(ut, utrhs, "=", "end"   )
