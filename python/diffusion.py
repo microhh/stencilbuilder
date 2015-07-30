@@ -24,9 +24,15 @@ wtrhs = gradx( gradx(w) ) * dxidxi \
       + gradz( gradz(w) * dzi4 ) * dzhi4
 
 printStencil(ut, utrhs, "=", "bot")
+printEmptyLine(3)
 printStencil(ut, utrhs, "=", "int")
+printEmptyLine(3)
 printStencil(ut, utrhs, "=", "top")
 
+printEmptyLine(6)
+
 printStencil(wt, wtrhs, "=", "bot")
+printEmptyLine(3)
 printStencil(wt, wtrhs, "=", "int")
+printEmptyLine(3)
 printStencil(wt, wtrhs, "=", "top")

@@ -23,12 +23,18 @@ wtrhs = gradx( interpz(u) * interpx(w) ) * dxi \
       + grady( interpz(v) * interpy(w) ) * dyi \
       + gradz( interpz(w) * interpz(w) ) * dzhi4
 
-printStencil(ut, utrhs, "=", "bot"   )
-#printStencil(ut, utrhs, "=", "interior")
-#printStencil(ut, utrhs, "=", "end"     )
+printStencil(ut, utrhs, "=", "bot")
+printEmptyLine(3)
+printStencil(ut, utrhs, "=", "int")
+printEmptyLine(3)
+printStencil(ut, utrhs, "=", "top")
 
-printStencil(wt, wtrhs, "=", "bot"  )
+printEmptyLine(6)
 
-#printStencil(wt, wtrhs, "=", "interior")
-#printStencil(wt, wtrhs, "=", "end"     )
+printStencil(wt, wtrhs, "=", "bot")
+printEmptyLine(3)
+printStencil(wt, wtrhs, "=", "int")
+printEmptyLine(3)
+printStencil(wt, wtrhs, "=", "top")
+
 #printLoop(ut, utrhs, "=", kstart="grid->kstart+1", kend="grid->kend-1"  )
