@@ -99,20 +99,23 @@ class NodeStencilFour(Node):
         c1 = 'c' + self.c1[1:]
         c2 = 'c' + self.c2[1:]
         c3 = 'c' + self.c3[1:]
+
+        # Check in which cells biased schemes need to be applied.
         if (self.dim == 2):
-            if ( loc == "bot"  and ( (self.loc[2] == 0 and k == -1) or (self.loc[2] == 1 and k == -1) ) or
-                 loc == "both" and ( (self.loc[2] == 0 and k == -1) or (self.loc[2] == 1 and k == 0 ) ) ):
+            if ( ( loc == "bot"  and k == -1 ) or
+                 ( loc == "both" and ( (self.loc[2] == 0 and k == -1) or (self.loc[2] == 1 and k == 0) ) ) ):
                 bias = 1
                 c0 = 'b' + self.c0[1:]
                 c1 = 'b' + self.c1[1:]
                 c2 = 'b' + self.c2[1:]
                 c3 = 'b' + self.c3[1:]
-        elif (loc == "end" and self.dim == 2 and k == 2):
-            bias = -1
-            c0 = 't' + self.c0[1:]
-            c1 = 't' + self.c1[1:]
-            c2 = 't' + self.c2[1:]
-            c3 = 't' + self.c3[1:]
+            elif ( ( loc == "top"  and k == 2 ) or
+                   ( loc == "toph" and ( (self.loc[2] == 0 and k == 0) or (self.loc[2] == 1 and k == 0) ) ) ):
+                bias = -1
+                c0 = 't' + self.c0[1:]
+                c1 = 't' + self.c1[1:]
+                c2 = 't' + self.c2[1:]
+                c3 = 't' + self.c3[1:]
 
         if (self.dim == 0):
             i0 += -1-self.loc[0]
@@ -187,7 +190,7 @@ class Field(Node):
             kk = formatIndex(k, "kk")
         return "{0}[ijk{1}{2}{3}]".format(self.name, ii, jj, kk)
 
-# Vector class representing a profile
+# Vector class representing a vertical profile
 class Vector(Node):
     def __init__(self, name, loc):
         self.name = name
