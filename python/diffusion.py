@@ -7,6 +7,7 @@ v = Field("v", vloc)
 w = Field("w", wloc)
 
 ut = Field("ut", uloc)
+wt = Field("wt", wloc)
 
 dxidxi = Scalar("dxidxi")
 dyidyi = Scalar("dxidyi")
@@ -18,6 +19,12 @@ utrhs = gradx( gradx(u) ) * dxidxi \
       + grady( grady(u) ) * dyidyi \
       + gradz( gradz(u) * dzhi4 ) * dzi4
 
+wtrhs = gradx( gradx(w) ) * dxidxi \
+      + grady( grady(w) ) * dyidyi \
+      + gradz( gradz(w) * dzi4 ) * dzhi4
+
 printStencil(ut, utrhs, "=", "start"   )
-printStencil(ut, utrhs, "=", "interior")
-printStencil(ut, utrhs, "=", "end"   )
+#printStencil(ut, utrhs, "=", "interior")
+#printStencil(ut, utrhs, "=", "end"   )
+
+printStencil(wt, wtrhs, "=", "start")

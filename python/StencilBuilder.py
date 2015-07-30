@@ -94,24 +94,24 @@ class NodeStencilFour(Node):
         j0 = j1 = j2 = j3 = j
         k0 = k1 = k2 = k3 = k
 
-        if (loc == "start" and self.dim == 2 and k == -1):
-            bias = 1
-            c0 = 'b' + self.c0[1:]
-            c1 = 'b' + self.c1[1:]
-            c2 = 'b' + self.c2[1:]
-            c3 = 'b' + self.c3[1:]
+        bias = 0
+        c0 = 'c' + self.c0[1:]
+        c1 = 'c' + self.c1[1:]
+        c2 = 'c' + self.c2[1:]
+        c3 = 'c' + self.c3[1:]
+        if (loc == "start" and self.dim == 2):
+            if ( (self.loc[2] == 0 and k == -1) or (self.loc[2] == 1 and (k == -1 or k == 0) ) ):
+                bias = 1
+                c0 = 'b' + self.c0[1:]
+                c1 = 'b' + self.c1[1:]
+                c2 = 'b' + self.c2[1:]
+                c3 = 'b' + self.c3[1:]
         elif (loc == "end" and self.dim == 2 and k == 2):
             bias = -1
             c0 = 't' + self.c0[1:]
             c1 = 't' + self.c1[1:]
             c2 = 't' + self.c2[1:]
             c3 = 't' + self.c3[1:]
-        else:
-            bias = 0
-            c0 = 'c' + self.c0[1:]
-            c1 = 'c' + self.c1[1:]
-            c2 = 'c' + self.c2[1:]
-            c3 = 'c' + self.c3[1:]
 
         if (self.dim == 0):
             i0 += -1-self.loc[0]
