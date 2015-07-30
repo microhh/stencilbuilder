@@ -199,7 +199,14 @@ class Vector(Node):
 
     def getString(self, i, j, k, pad, plane, loc):
         kk = formatIndex(k, "")
-        return "{0}[k{1}]".format(self.name, kk)
+        # This is an unelegant solution but threats the double biased spatial operators
+        if ( loc == "both" and (self.loc[2] == 1 and k == 0) ):
+            return "{0}bot".format(self.name, kk)
+        elif ( loc == "toph" and (self.loc[2] == 1 and k == 0) ):
+            return "{0}top".format(self.name, kk)
+
+        else:
+            return "{0}[k{1}]".format(self.name, kk)
 
 class Scalar(Node):
     def __init__(self, name):
