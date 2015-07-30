@@ -23,11 +23,11 @@ wtrhs = gradx( interpz(u) * interpx(w) ) * dxi \
       + grady( interpz(v) * interpy(w) ) * dyi \
       + gradz( interpz(w) * interpz(w) ) * dzhi4
 
-#printStencil(ut, utrhs, "=", "start"   )
+printStencil(ut, utrhs, "=", "bot"   )
 #printStencil(ut, utrhs, "=", "interior")
 #printStencil(ut, utrhs, "=", "end"     )
 
-printStencil(wt, wtrhs, "=", "starth"  )
+printStencil(wt, wtrhs, "=", "bot"  )
 
 #printStencil(wt, wtrhs, "=", "interior")
 #printStencil(wt, wtrhs, "=", "end"     )

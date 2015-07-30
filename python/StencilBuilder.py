@@ -99,8 +99,9 @@ class NodeStencilFour(Node):
         c1 = 'c' + self.c1[1:]
         c2 = 'c' + self.c2[1:]
         c3 = 'c' + self.c3[1:]
-        if (loc == "start" and self.dim == 2):
-            if ( (self.loc[2] == 0 and k == -1) or (self.loc[2] == 1 and (k == -1 or k == 0) ) ):
+        if (self.dim == 2):
+            if ( loc == "bot"  and ( (self.loc[2] == 0 and k == -1) or (self.loc[2] == 1 and k == -1) ) or
+                 loc == "both" and ( (self.loc[2] == 0 and k == -1) or (self.loc[2] == 1 and k == 0 ) ) ):
                 bias = 1
                 c0 = 'b' + self.c0[1:]
                 c1 = 'b' + self.c1[1:]
@@ -223,6 +224,10 @@ def gradz(inner):
 
 def printStencil(lhs, rhs, operator, loc):
     checkLocs(lhs, rhs)
+
+    # If the location is on the half level, add suffix h
+    if (lhs.loc[2]):
+        loc = loc + 'h'
 
     index = "[ijk]"
     indent = len(lhs.name) + len(index) + len(operator) + 2
