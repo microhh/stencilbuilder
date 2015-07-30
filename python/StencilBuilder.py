@@ -100,7 +100,7 @@ class NodeStencilFour(Node):
             c1 = 'b' + self.c1[1:]
             c2 = 'b' + self.c2[1:]
             c3 = 'b' + self.c3[1:]
-        elif (loc == "end" and self.dim == 2 and k == 1):
+        elif (loc == "end" and self.dim == 2 and k == 2):
             bias = -1
             c0 = 't' + self.c0[1:]
             c1 = 't' + self.c1[1:]

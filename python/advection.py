@@ -17,7 +17,7 @@ utrhs = gradx( interpx(u) * interpx(u) ) * dxi \
       + gradz( interpx(w) * interpz(u) ) * dzi4
 
 printStencil(ut, utrhs, "=", "start"   )
-printStencil(ut, utrhs, "=", "interior")
+#printStencil(ut, utrhs, "=", "interior")
 printStencil(ut, utrhs, "=", "end"     )
 
 #printLoop(ut, utrhs, "=", kstart="grid->kstart+1", kend="grid->kend-1"  )
