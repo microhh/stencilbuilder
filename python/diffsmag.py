@@ -22,4 +22,4 @@ utrhs = gradx( evisc  * ( gradx(u)*dxi   + gradx(u)*dxi ) ) \
       + grady( eviscy * ( grady(u)*dyi   + gradx(v)*dxi ) ) \
       + gradz( eviscz * ( gradz(u)*dzhi4 + gradx(w)*dxi ) )
 
-printStencil(ut, utrhs, "=")
+printStencil(ut, utrhs, "=", "bot")

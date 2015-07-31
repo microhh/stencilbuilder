@@ -46,6 +46,8 @@ class NodeOperator(Node):
         self.right = right
         self.operatorString = operatorString
         self.depth = max(left.depth, right.depth)
+        self.depthk = max(left.depthk, right.depthk)
+
         if (self.depth > 1):
             self.pad = 2
         else:
@@ -78,6 +80,9 @@ class NodeStencilFour(Node):
     def __init__(self, inner, dim, c0, c1, c2, c3):
         self.inner = inner
         self.depth = inner.depth + 1
+        self.depthk = inner.depthk + 1 if dim == 2 else inner.depth
+        if (self.depthk > 2):
+            raise RuntimeError("Type ({0}) exceeds maximum depth of 2".format(type(inner).__name__))
         self.pad = 6
 
         self.dim = dim
@@ -103,14 +108,16 @@ class NodeStencilFour(Node):
         # Check in which cells biased schemes need to be applied.
         if (self.dim == 2):
             if ( ( loc == "bot"  and k == -1 ) or
-                 ( loc == "both" and ( (self.loc[2] == 0 and k == -1) or (self.loc[2] == 1 and k == 0) ) ) ):
+                 ( loc == "both" and ( (self.loc[2] == 0 and k == -1) or 
+                                       (self.loc[2] == 1 and k ==  0 and self.depthk == 2) ) ) ):
                 bias = 1
                 c0 = 'b' + self.c0[1:]
                 c1 = 'b' + self.c1[1:]
                 c2 = 'b' + self.c2[1:]
                 c3 = 'b' + self.c3[1:]
             elif ( ( loc == "top"  and k == 2 ) or
-                   ( loc == "toph" and ( (self.loc[2] == 0 and k == 0) or (self.loc[2] == 1 and k == 0) ) ) ):
+                   ( loc == "toph" and ( (self.loc[2] == 0 and k == 0) or
+                                         (self.loc[2] == 1 and k == 0) ) ) ):
                 bias = -1
                 c0 = 't' + self.c0[1:]
                 c1 = 't' + self.c1[1:]
@@ -177,6 +184,7 @@ class Field(Node):
     def __init__(self, name, loc):
         self.name = name
         self.depth = 0
+        self.depthk = 0
         self.loc = np.copy(loc)
 
     def getString(self, i, j, k, pad, plane, loc):
@@ -195,6 +203,7 @@ class Vector(Node):
     def __init__(self, name, loc):
         self.name = name
         self.depth = 0
+        self.depthk = 0
         self.loc = np.copy(loc)
 
     def getString(self, i, j, k, pad, plane, loc):
@@ -212,6 +221,7 @@ class Scalar(Node):
     def __init__(self, name):
         self.name = name
         self.depth = 0
+        self.depthk = 0
         self.loc = np.array([ None, None, None ])
 
     def getString(self, i, j, k, pad, plane, loc):
