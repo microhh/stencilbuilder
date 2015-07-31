@@ -33,7 +33,11 @@ printEmptyLine(6)
 
 printStencil(wt, wtrhs, "=", "bot")
 printEmptyLine(3)
+printStencil(wt, wtrhs, "=", "bot+1")
+printEmptyLine(3)
 printStencil(wt, wtrhs, "=", "int")
+printEmptyLine(3)
+printStencil(wt, wtrhs, "=", "top-1")
 printEmptyLine(3)
 printStencil(wt, wtrhs, "=", "top")
 
