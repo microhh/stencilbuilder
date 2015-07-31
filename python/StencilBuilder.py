@@ -109,7 +109,8 @@ class NodeStencilFour(Node):
         if (self.dim == 2):
             if ( ( loc == "bot"  and k == -1 ) or
                  ( loc == "both" and ( (self.loc[2] == 0 and k == -1) or 
-                                       (self.loc[2] == 1 and k ==  0 and self.depthk == 2) ) ) ):
+                                       (self.loc[2] == 1 and k ==  0 and self.depthk == 2) ) ) or
+                 ( loc == "bot+1h" and ( (self.loc[2] == 0 and k == -2) ) ) ):
                 bias = 1
                 c0 = 'b' + self.c0[1:]
                 c1 = 'b' + self.c1[1:]
@@ -117,7 +118,8 @@ class NodeStencilFour(Node):
                 c3 = 'b' + self.c3[1:]
             elif ( ( loc == "top"  and k == 2 ) or
                    ( loc == "toph" and ( (self.loc[2] == 0 and k == 0) or
-                                         (self.loc[2] == 1 and k == 0) ) ) ):
+                                         (self.loc[2] == 1 and k == 0) ) ) or
+                   ( loc == "top-1h" and ( (self.loc[2] == 0 and k == 1) ) ) ):
                 bias = -1
                 c0 = 't' + self.c0[1:]
                 c1 = 't' + self.c1[1:]
