@@ -10,12 +10,12 @@ wx = Field("wx", uwloc)
 umean = Vector("umean", zloc)
 vmean = Vector("vmean", zloc)
 
-uw_tend = Field("uw_tend", uwloc)
+uw_diss = Field("uw_diss", uwloc)
 
-dxi = Scalar("dxi")
-dyi = Scalar("dyi")
+dxi = Scalar("cgi*dxi")
+dyi = Scalar("cgi*dyi")
 
-visc = Scalar("visc")
+visc = Scalar("2.*visc")
 
 dzi4  = Vector("dzi4" , zloc )
 dzhi4 = Vector("dzhi4", zhloc)
@@ -28,8 +28,4 @@ rhs_diss  = visc * ( gradx(interpz(interpx(u-umean))) * dxi   * gradx(interpz(in
 
 uw_rhs = rhs_diss
 
-#printStencil(uw_tend, uw_rhs, "-=", "bot+1")
-#printEmptyLine(3)
-printStencil(uw_tend, uw_rhs, "-=", "int")
-#printEmptyLine(3)
-#printStencil(uw_tend, uw_rhs, "-=", "top-1")
+printStencil(uw_diss, uw_rhs, "-=", "int", "[k]")

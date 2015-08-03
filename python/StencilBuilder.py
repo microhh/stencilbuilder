@@ -247,19 +247,19 @@ def grady(inner):
 def gradz(inner):
     return NodeStencilFour(inner, 2, "cg0", "cg1", "cg2", "cg3")
 
-def printStencil(lhs, rhs, operator, loc):
+def printStencil(lhs, rhs, operator, loc, index="[ijk]"):
     checkLocs(lhs, rhs)
 
     # If the location is on the half level, add suffix h
     if (lhs.loc[2]):
         loc = loc + 'h'
 
-    index = "[ijk]"
     indent = len(lhs.name) + len(index) + len(operator) + 2
 
     plane = np.array([0,0,0])
     print("{0}{1} {2} {3};".format(lhs.name, index, operator, rhs.getString(0, 0, 0, indent, plane, loc)))
 
+"""
 def printLoop(lhs, rhs, operator, istart="grid->istart", iend="grid->iend",
                                   jstart="grid->jstart", jend="grid->jend",
                                   kstart="grid->kstart", kend="grid->kend"):
@@ -285,3 +285,4 @@ def printLoop(lhs, rhs, operator, istart="grid->istart", iend="grid->iend",
 def printEmptyLine(n=1):
     for i in range(n):
         print("")
+"""
