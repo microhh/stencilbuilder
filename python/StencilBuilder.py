@@ -8,6 +8,9 @@ vloc = np.array([0,1,0])
 wloc = np.array([0,0,1])
 sloc = np.array([0,0,0])
 
+uwloc = np.array([1,0,1])
+vwloc = np.array([0,1,1])
+
 zloc  = np.array([None, None, 0])
 zhloc = np.array([None, None, 1])
 
