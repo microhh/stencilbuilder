@@ -240,6 +240,14 @@ def interpy(inner):
 def interpz(inner):
     return NodeStencilFour(inner, 2, "ci0", "ci1", "ci2", "ci3")
 
+# Shortcuts for double interpolation
+def interpxy(inner):
+    return interpy(interpx(inner))
+def interpxz(inner):
+    return interpz(interpx(inner))
+def interpyz(inner):
+    return interpz(interpy(inner))
+
 def gradx(inner):
     return NodeStencilFour(inner, 0, "cg0", "cg1", "cg2", "cg3")
 def grady(inner):

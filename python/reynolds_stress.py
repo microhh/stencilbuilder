@@ -15,7 +15,8 @@ uw_diss = Field("uw_diss", uwloc)
 dxi = Scalar("cgi*dxi")
 dyi = Scalar("cgi*dyi")
 
-visc = Scalar("2.*visc")
+visc = Scalar("visc")
+two  = Scalar("2.")
 
 dzi4  = Vector("dzi4" , zloc )
 dzhi4 = Vector("dzhi4", zhloc)
@@ -23,10 +24,32 @@ dzhi4 = Vector("dzhi4", zhloc)
 rhs_turb  = gradz( interpz(wx) * (u-umean) ) * dzhi4
 rhs_shear = wx * gradz(umean) * dzhi4
 
-rhs_diss_x = visc * ( gradx(interpz(interpx(u-umean))) * dxi   * gradx(interpz(interpy(v-vmean))) * dxi   )
-rhs_diss_y = visc * ( grady(interpz(interpy(u-umean))) * dyi   * grady(interpz(interpx(v-vmean))) * dyi   )
-rhs_diss_z = visc * ( gradz(               (u-umean) ) * dzhi4 * gradz(interpx(interpy(v-vmean))) * dzhi4 )
+rhs_diss_pseudo_x = two * visc * ( gradx(interpxz(u-umean)) * dxi   * gradx(interpyz(v-vmean)) * dxi   )
+rhs_diss_pseudo_y = two * visc * ( grady(interpyz(u-umean)) * dyi   * grady(interpxz(v-vmean)) * dyi   )
+rhs_diss_pseudo_z = two * visc * ( gradz(        (u-umean)) * dzhi4 * gradz(interpxy(v-vmean)) * dzhi4 )
 
-printStencil(uw_diss, rhs_diss_x, "-=", "int", "[k]")
-printStencil(uw_diss, rhs_diss_y, "-=", "int", "[k]")
-printStencil(uw_diss, rhs_diss_z, "-=", "int", "[k]")
+rhs_diss_x1 = gradx( interpxz( u-umean ) ) * dxi \
+            * ( gradx( interpyz( v-vmean ) ) * dxi + grady( interpyz( u-umean ) ) * dyi )
+rhs_diss_y1 = grady( interpyz( u-umean ) ) * dyi \
+            * two * grady( interpxz( v-vmean ) ) * dyi
+rhs_diss_z1 = gradz( u-umean ) * dzhi4 \
+            * ( gradz( interpxy( v-vmean ) ) * dzhi4 + grady( interpxy( w ) ) * dyi )
+
+rhs_diss_x2 = gradx( interpyz( v-vmean ) ) * dxi \
+            * two * gradx( interpxz( u-umean ) ) * dxi
+rhs_diss_y2 = grady( interpxz( v-vmean ) ) * dyi \
+            * ( grady( interpyz( u-umean ) ) * dyi + gradx( interpyz( v-vmean ) ) * dxi )
+rhs_diss_z2 = gradz( interpxy( v-vmean ) ) * dzhi4 \
+            * ( gradz( u-umean ) * dzhi4 + gradx( w ) * dxi )
+
+printStencil(uw_diss, rhs_diss_x1, "-=", "int", "[k]")
+printEmptyLine(1)
+printStencil(uw_diss, rhs_diss_y1, "-=", "int", "[k]")
+printEmptyLine(1)
+printStencil(uw_diss, rhs_diss_z1, "-=", "int", "[k]")
+printEmptyLine(1)
+printStencil(uw_diss, rhs_diss_x2, "-=", "int", "[k]")
+printEmptyLine(1)
+printStencil(uw_diss, rhs_diss_y2, "-=", "int", "[k]")
+printEmptyLine(1)
+printStencil(uw_diss, rhs_diss_z2, "-=", "int", "[k]")
