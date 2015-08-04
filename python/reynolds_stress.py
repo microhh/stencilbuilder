@@ -22,10 +22,11 @@ dzhi4 = Vector("dzhi4", zhloc)
 
 rhs_turb  = gradz( interpz(wx) * (u-umean) ) * dzhi4
 rhs_shear = wx * gradz(umean) * dzhi4
-rhs_diss  = visc * ( gradx(interpz(interpx(u-umean))) * dxi   * gradx(interpz(interpy(v-vmean))) * dxi \
-                   + grady(interpz(interpy(u-umean))) * dyi   * grady(interpz(interpx(v-vmean))) * dyi \
-                   + gradz(               (u-umean) ) * dzhi4 * gradz(interpx(interpy(v-vmean))) * dzhi4 )
 
-uw_rhs = rhs_diss
+rhs_diss_x = visc * ( gradx(interpz(interpx(u-umean))) * dxi   * gradx(interpz(interpy(v-vmean))) * dxi   )
+rhs_diss_y = visc * ( grady(interpz(interpy(u-umean))) * dyi   * grady(interpz(interpx(v-vmean))) * dyi   )
+rhs_diss_z = visc * ( gradz(               (u-umean) ) * dzhi4 * gradz(interpx(interpy(v-vmean))) * dzhi4 )
 
-printStencil(uw_diss, uw_rhs, "-=", "int", "[k]")
+printStencil(uw_diss, rhs_diss_x, "-=", "int", "[k]")
+printStencil(uw_diss, rhs_diss_y, "-=", "int", "[k]")
+printStencil(uw_diss, rhs_diss_z, "-=", "int", "[k]")
