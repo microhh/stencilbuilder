@@ -22,10 +22,9 @@ dzhi4 = Vector("dzhi4", zhloc)
 
 rhs_turb  = gradz( interpz(wx) * (u-umean) ) * dzhi4
 rhs_shear = wx * gradz(umean) * dzhi4
-#rhs_diss  = visc * ( gradx(interpz(interpx(u-umean))) * dxi   * gradx(interpz(interpy(v-vmean))) * dxi \
-#                   + grady(interpz(interpy(u-umean))) * dyi   * grady(interpz(interpx(v-vmean))) * dyi \
-#                   + gradz(               (u-umean) ) * dzhi4 * gradz(interpx(interpy(v-vmean))) * dzhi4 )
-rhs_diss = gradz(interpx(interpy(v))) * dzhi4
+rhs_diss  = visc * ( gradx(interpz(interpx(u-umean))) * dxi   * gradx(interpz(interpy(v-vmean))) * dxi \
+                   + grady(interpz(interpy(u-umean))) * dyi   * grady(interpz(interpx(v-vmean))) * dyi \
+                   + gradz(               (u-umean) ) * dzhi4 * gradz(interpx(interpy(v-vmean))) * dzhi4 )
 
 uw_rhs = rhs_diss
 

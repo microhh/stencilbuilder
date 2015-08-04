@@ -193,13 +193,13 @@ class Field(Node):
         self.loc = np.copy(loc)
 
     def getString(self, i, j, k, pad, plane, loc):
-        compact = True
+        compact = False
         ii = jj = kk = ""
-        if (plane[0] or not compact):
+        if (i != 0 or plane[0] or not compact):
             ii = formatIndex(i, "ii")
-        if (plane[1] or not compact):
+        if (j != 0 or plane[1] or not compact):
             jj = formatIndex(j, "jj")
-        if (plane[2] or not compact):
+        if (k != 0 or plane[2] or not compact):
             kk = formatIndex(k, "kk")
         return "{0}[ijk{1}{2}{3}]".format(self.name, ii, jj, kk)
 
