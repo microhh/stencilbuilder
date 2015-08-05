@@ -3,15 +3,18 @@
 from StencilBuilder import *
 
 p  = Field("p" , sloc )
+b  = Field("b" , sloc )
 u  = Field("u" , uloc )
 v  = Field("v" , vloc )
 w  = Field("w" , wloc )
+
 wx = Field("wx", uwloc)
+uz = Field("uz", uwloc)
 
 umean = Vector("umean", zloc)
 vmean = Vector("vmean", zloc)
 
-uw_pres = Field("uw_pres", uwloc)
+uw_buoy = Field("uw_buoy", uwloc)
 
 dxi = Scalar("cgi*dxi")
 dyi = Scalar("cgi*dyi")
@@ -33,6 +36,10 @@ rhs_rdstr = interpxz(p) * ( gradz(u-umean) * dzhi4 + gradx(w) * dxi )
 
 rhs_pres = gradz( (u-umean) * interpx(p) ) * dzhi4 + gradx( w * interpz(p) ) * dxi
 
+rhs_visc = visc * gradz( gradz( uz * interpx(w) ) * dzi4 ) * dzhi4
+
+rhs_buoy = interpz(u-umean) * interpxz(b)
+
 #rhs_diss_x1 = gradx( interpxz( u-umean ) ) * dxi \
 #            * ( gradx( interpyz( v-vmean ) ) * dxi + grady( interpyz( u-umean ) ) * dyi )
 #rhs_diss_y1 = grady( interpyz( u-umean ) ) * dyi \
@@ -47,4 +54,4 @@ rhs_pres = gradz( (u-umean) * interpx(p) ) * dzhi4 + gradx( w * interpz(p) ) * d
 #rhs_diss_z2 = gradz( interpxy( v-vmean ) ) * dzhi4 \
 #            * ( gradz( u-umean ) * dzhi4 + gradx( w ) * dxi )
 
-printStencil(uw_pres, rhs_pres, "-=", "int", "[k]")
+printStencil(uw_buoy, rhs_buoy, "+=", "int"  , "[k]")

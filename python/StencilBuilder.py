@@ -83,7 +83,7 @@ class NodeStencilFour(Node):
     def __init__(self, inner, dim, c0, c1, c2, c3):
         self.inner = inner
         self.depth = inner.depth + 1
-        self.depthk = inner.depthk + 1 if dim == 2 else inner.depth
+        self.depthk = inner.depthk + 1 if (dim == 2 and c0[1] == 'g') else inner.depth
         if (self.depthk > 2):
             raise RuntimeError("Type ({0}) exceeds maximum depth of 2".format(type(inner).__name__))
         self.pad = 6
