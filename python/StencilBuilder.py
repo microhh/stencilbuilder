@@ -293,6 +293,7 @@ def printLoop(lhs, rhs, operator, istart="grid->istart", iend="grid->iend",
         lhs.name, index, operator, rhs.getString(0, 0, 0, indexIndent + len(indent * 3), plane, 0)))
     print("{0}}}".format(indent * 2))
 """
+
 def printEmptyLine(n=1):
     for i in range(n):
         print("")

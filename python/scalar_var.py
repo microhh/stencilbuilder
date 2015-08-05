@@ -9,6 +9,8 @@ bmean = Vector("bmean", zloc)
 
 b2_shear = Field("b2_shear", sloc)
 b2_turb  = Field("b2_turb" , sloc)
+b2_visc  = Field("b2_visc" , sloc)
+b2_diss  = Field("b2_diss" , sloc)
 
 visc = Scalar("visc")
 two  = Scalar("2.")
@@ -16,10 +18,13 @@ two  = Scalar("2.")
 dzi4  = Vector("dzi4" , zloc )
 dzhi4 = Vector("dzhi4", zhloc)
 
-rhs_shear = (b-bmean) * interpz(w) * gradz( interpz(bmean) ) * dzi4
+rhs_shear = two * (b-bmean) * interpz(w) * gradz( interpz(bmean) ) * dzi4
 
 rhs_turb = gradz ( interpz(b-bmean) * w ) * dzi4
 
+rhs_visc = visc * gradz( gradz( b-bmean ) * dzhi4 ) * dzi4
+
+rhs_diss = two * visc * gradz( interpz( b-bmean ) ) * dzi4
 
 printStencil(b2_shear, rhs_shear, "-=", "bot", "[k]")
 printEmptyLine(3)
@@ -36,3 +41,17 @@ printEmptyLine(3)
 printStencil(b2_turb, rhs_turb, "-=", "top", "[k]")
 
 printEmptyLine(6)
+
+printStencil(b2_visc, rhs_visc, "-=", "bot", "[k]")
+printEmptyLine(3)
+printStencil(b2_visc, rhs_visc, "-=", "int", "[k]")
+printEmptyLine(3)
+printStencil(b2_visc, rhs_visc, "-=", "top", "[k]")
+
+printEmptyLine(6)
+
+printStencil(b2_diss, rhs_diss, "-=", "bot", "[k]")
+printEmptyLine(3)
+printStencil(b2_diss, rhs_diss, "-=", "int", "[k]")
+printEmptyLine(3)
+printStencil(b2_diss, rhs_diss, "-=", "top", "[k]")
