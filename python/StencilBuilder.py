@@ -265,7 +265,10 @@ def printStencil(lhs, rhs, operator, loc, index="[ijk]"):
     indent = len(lhs.name) + len(index) + len(operator) + 2
 
     plane = np.array([0,0,0])
-    print("{0}{1} {2} {3};".format(lhs.name, index, operator, rhs.getString(0, 0, 0, indent, plane, loc)))
+
+    printString = rhs.getString(0, 0, 0, indent, plane, loc)
+
+    print("{0}{1} {2} {3};".format(lhs.name, index, operator, printString))
 
 """
 def printLoop(lhs, rhs, operator, istart="grid->istart", iend="grid->iend",
