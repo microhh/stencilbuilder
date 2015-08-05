@@ -42,11 +42,11 @@ printStencil(b2_turb, rhs_turb, "-=", "top", "[k]")
 
 printEmptyLine(6)
 
-printStencil(b2_visc, rhs_visc, "-=", "bot", "[k]")
+printStencil(b2_visc, rhs_visc, "+=", "bot", "[k]")
 printEmptyLine(3)
-printStencil(b2_visc, rhs_visc, "-=", "int", "[k]")
+printStencil(b2_visc, rhs_visc, "+=", "int", "[k]")
 printEmptyLine(3)
-printStencil(b2_visc, rhs_visc, "-=", "top", "[k]")
+printStencil(b2_visc, rhs_visc, "+=", "top", "[k]")
 
 printEmptyLine(6)
 
