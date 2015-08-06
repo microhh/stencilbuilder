@@ -102,7 +102,7 @@ class NodeOperatorPower(Node):
             raise RuntimeError("Only integer and float powers are supported")
 
         if (self.depth > 1):
-            self.pad = 2
+            self.pad = 10
         else:
             self.pad = 0
 
