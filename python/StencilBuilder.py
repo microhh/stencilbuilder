@@ -241,13 +241,9 @@ class Field(Node):
 
     def getString(self, i, j, k, pad, plane, loc):
         compact = True
-        ii = jj = kk = ""
-        if ( plane[0] or not compact ):
-            ii = formatIndex(i, "ii")
-        if ( plane[1] or not compact ):
-            jj = formatIndex(j, "jj")
-        if ( plane[2] or not compact ):
-            kk = formatIndex(k, "kk")
+        ii = formatIndex(i, "ii") if ( plane[0] or not compact ) else ""
+        jj = formatIndex(j, "jj") if ( plane[1] or not compact ) else ""
+        kk = formatIndex(k, "kk") if ( plane[2] or not compact ) else ""
         return "{0}[ijk{1}{2}{3}]".format(self.name, ii, jj, kk)
 
 # Vector class representing a vertical profile
@@ -259,7 +255,8 @@ class Vector(Node):
         self.loc = np.copy(loc)
 
     def getString(self, i, j, k, pad, plane, loc):
-        kk = formatIndex(k, "")
+        compact = True
+        kk = formatIndex(k, "") if ( plane[2] or not compact ) else ""
 
         # This is an unelegant solution but threats the double biased spatial operators
         if ( loc == "both" and (self.loc[2] == 1 and k == 0) ):
