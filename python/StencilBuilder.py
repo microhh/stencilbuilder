@@ -50,10 +50,15 @@ class Node(object):
     def __pow__(self, right):
         return NodeOperatorPower(self, right)
 
+    # Cover the case of multiplication with a scalar. Self does not exist and arguments are swapped
+    __radd__ = __add__
+    __rmul__ = __mul__
+
 class NodeOperator(Node):
     def __init__(self, left, right, operatorString):
-        self.left  = left
-        self.right = right
+        # Swap the terms in case right is a scalar multiplication
+        self.left  = left  if ( not is_int_or_float(right) ) else Scalar('{0}'.format(right))
+        self.right = right if ( not is_int_or_float(right) ) else left
         self.operatorString = operatorString
         self.depth = max(self.left.depth, self.right.depth)
         self.depthk = max(self.left.depthk, self.right.depthk)
