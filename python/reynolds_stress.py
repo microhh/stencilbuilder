@@ -14,7 +14,7 @@ uz = Field("uz", uwloc)
 umean = Vector("umean", zloc)
 vmean = Vector("vmean", zloc)
 
-uw_buoy = Field("uw_buoy", uwloc)
+uw_diss = Field("uw_diss", uwloc)
 
 dxi = Scalar("cgi*dxi")
 dyi = Scalar("cgi*dyi")
@@ -28,9 +28,9 @@ dzhi4 = Vector("dzhi4", zhloc)
 rhs_turb  = gradz( interpz(wx) * (u-umean) ) * dzhi4
 rhs_shear = wx * gradz(umean) * dzhi4
 
-rhs_diss_pseudo_x = ( gradx(interpxz(u-umean)) * dxi   * gradx(w) * dxi   )
-rhs_diss_pseudo_y = ( grady(interpyz(u-umean)) * dyi   * grady(interpxy(w)) * dyi   )
-rhs_diss_pseudo_z = ( gradz(        (u-umean)) * dzhi4 * gradz(interpxz(w)) * dzhi4 )
+rhs_diss_x = ( gradx(interpxz(u-umean)) * dxi   * gradx(w) * dxi   )
+rhs_diss_y = ( grady(interpyz(u-umean)) * dyi   * grady(interpxy(w)) * dyi   )
+rhs_diss_z = ( gradz(        (u-umean)) * dzhi4 * gradz(interpxz(w)) * dzhi4 )
 
 rhs_rdstr = interpxz(p) * ( gradz(u-umean) * dzhi4 + gradx(w) * dxi )
 
@@ -54,4 +54,4 @@ rhs_buoy = interpz(u-umean) * interpxz(b)
 #rhs_diss_z2 = gradz( interpxy( v-vmean ) ) * dzhi4 \
 #            * ( gradz( u-umean ) * dzhi4 + gradx( w ) * dxi )
 
-printStencil(uw_buoy, rhs_buoy, "+=", "int"  , "[k]")
+printStencil(uw_diss, rhs_diss_x, "+=", "int"  , "[k]")

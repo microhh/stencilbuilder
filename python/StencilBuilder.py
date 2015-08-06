@@ -196,7 +196,7 @@ class NodeStencilFour(Node):
         cb = ' )'
 
         newplane = np.copy(plane)
-        if (self.depth-1 < 2):
+        if (self.depth-1 < 3):
             newplane[self.dim] = 1
 
         if (self.depth > 1):
@@ -240,13 +240,13 @@ class Field(Node):
         self.loc = np.copy(loc)
 
     def getString(self, i, j, k, pad, plane, loc):
-        compact = False
+        compact = True
         ii = jj = kk = ""
-        if (i != 0 or plane[0] or not compact):
+        if ( plane[0] or not compact ):
             ii = formatIndex(i, "ii")
-        if (j != 0 or plane[1] or not compact):
+        if ( plane[1] or not compact ):
             jj = formatIndex(j, "jj")
-        if (k != 0 or plane[2] or not compact):
+        if ( plane[2] or not compact ):
             kk = formatIndex(k, "kk")
         return "{0}[ijk{1}{2}{3}]".format(self.name, ii, jj, kk)
 
@@ -260,6 +260,7 @@ class Vector(Node):
 
     def getString(self, i, j, k, pad, plane, loc):
         kk = formatIndex(k, "")
+
         # This is an unelegant solution but threats the double biased spatial operators
         if ( loc == "both" and (self.loc[2] == 1 and k == 0) ):
             return "{0}bot".format(self.name, kk)
@@ -317,6 +318,10 @@ def printStencil(lhs, rhs, operator, loc, index="[ijk]"):
 
     print("{0}{1} {2} {3};".format(lhs.name, index, operator, printString))
 
+def printEmptyLine(n=1):
+    for i in range(n):
+        print("")
+
 """
 def printLoop(lhs, rhs, operator, istart="grid->istart", iend="grid->iend",
                                   jstart="grid->jstart", jend="grid->jend",
@@ -340,8 +345,3 @@ def printLoop(lhs, rhs, operator, istart="grid->istart", iend="grid->iend",
         lhs.name, index, operator, rhs.getString(0, 0, 0, indexIndent + len(indent * 3), plane, 0)))
     print("{0}}}".format(indent * 2))
 """
-
-def printEmptyLine(n=1):
-    for i in range(n):
-        print("")
-
