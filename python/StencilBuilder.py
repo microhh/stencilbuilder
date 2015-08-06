@@ -14,6 +14,10 @@ vwloc = np.array([0,1,1])
 zloc  = np.array([None, None, 0])
 zhloc = np.array([None, None, 1])
 
+# Check whether float or int
+def is_int_or_float(var):
+    return ( isinstance(var, int) or isinstance(var, float) )
+
 # Check locations
 def checkLocs(left, right):
     loc = np.array([ None, None, None ])
@@ -48,18 +52,18 @@ class Node(object):
 
 class NodeOperator(Node):
     def __init__(self, left, right, operatorString):
-        self.left = left
+        self.left  = left
         self.right = right
         self.operatorString = operatorString
-        self.depth = max(left.depth, right.depth)
-        self.depthk = max(left.depthk, right.depthk)
+        self.depth = max(self.left.depth, self.right.depth)
+        self.depthk = max(self.left.depthk, self.right.depthk)
 
         if (self.depth > 1):
             self.pad = 2
         else:
             self.pad = 0
 
-        self.loc = checkLocs(left, right)
+        self.loc = checkLocs(self.left, self.right)
 
     def getString(self, i, j, k, pad, plane, loc):
         ob = '( '
@@ -89,7 +93,7 @@ class NodeOperatorPower(Node):
         self.depth = inner.depth
         self.depthk = inner.depthk
 
-        if ( not( isinstance(power, int) or isinstance(power, float) ) ):
+        if ( not is_int_or_float(self.power) ):
             raise RuntimeError("Only integer and float powers are supported")
 
         if (self.depth > 1):
