@@ -43,6 +43,9 @@ class Node(object):
     def __mul__(self, right):
         return NodeOperator(self, right, "*")
 
+    def __pow__(self, right):
+        return NodeOperatorPower(self, right)
+
 class NodeOperator(Node):
     def __init__(self, left, right, operatorString):
         self.left = left
@@ -78,6 +81,41 @@ class NodeOperator(Node):
             return "{ob}{0} {os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, loc),
                                                  self.right.getString(i, j, k, pad, plane, loc),
                                                  ob=ob, os=self.operatorString, cb=cb)
+
+class NodeOperatorPower(Node):
+    def __init__(self, inner, power):
+        self.inner = inner
+        self.power = power
+        self.depth = inner.depth
+        self.depthk = inner.depthk
+
+        if ( not( isinstance(power, int) or isinstance(power, float) ) ):
+            raise RuntimeError("Only integer and float powers are supported")
+
+        if (self.depth > 1):
+            self.pad = 2
+        else:
+            self.pad = 0
+
+        self.loc = inner.loc
+
+    def getString(self, i, j, k, pad, plane, loc):
+        ob = 'std::pow( '
+        cb = ' )'
+
+        if (self.depth > 1):
+            ws = ''.rjust(pad)
+            pad += self.pad
+
+            lb = ''
+            for n in range(1, self.depth):
+                lb = lb + '\n'
+
+            return "{ob}{0}\n{lb}{ws}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, loc),
+                                                       self.power, ws=ws, lb=lb, ob=ob, cb=cb)
+        else:
+            return "{ob}{0}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, loc),
+                                             self.power, ob=ob, cb=cb)
 
 class NodeStencilFour(Node):
     def __init__(self, inner, dim, c0, c1, c2, c3):
