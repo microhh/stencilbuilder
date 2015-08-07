@@ -57,6 +57,18 @@ printStencil(bw_turb, rhs_turb, "-=", "top", "[k]")
 
 printEmptyLine(6)
 
+printStencil(bw_visc, rhs_visc, "-=", "bot", "[k]")
+printEmptyLine(3)
+printStencil(bw_visc, rhs_visc, "-=", "bot+1", "[k]")
+printEmptyLine(3)
+printStencil(bw_visc, rhs_visc, "-=", "int", "[k]")
+printEmptyLine(3)
+printStencil(bw_visc, rhs_visc, "-=", "top-1", "[k]")
+printEmptyLine(3)
+printStencil(bw_visc, rhs_visc, "-=", "top", "[k]")
+
+printEmptyLine(6)
+
 printStencil(bw_buoy, rhs_buoy, "+=", "int", "[k]")
 
 printEmptyLine(6)
@@ -67,18 +79,10 @@ printEmptyLine(6)
 
 printStencil(bw_diss, rhs_diss, "-=", "bot", "[k]")
 printEmptyLine(3)
+printStencil(bw_diss, rhs_diss, "-=", "bot+1", "[k]")
+printEmptyLine(3)
 printStencil(bw_diss, rhs_diss, "-=", "int", "[k]")
 printEmptyLine(3)
+printStencil(bw_diss, rhs_diss, "-=", "top-1", "[k]")
+printEmptyLine(3)
 printStencil(bw_diss, rhs_diss, "-=", "top", "[k]")
-
-printEmptyLine(6)
-
-printStencil(bw_visc, rhs_visc, "-=", "bot", "[k]")
-printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "bot+1", "[k]")
-printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "int", "[k]")
-printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "top-1", "[k]")
-printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "top", "[k]")
