@@ -24,38 +24,38 @@ rhs_shear = 2.*(b-bmean) * interpz(w) * gradz( interpz(bmean) ) * dzi4
 
 rhs_turb = gradz ( interpz(b-bmean)**2 * w ) * dzi4
 
-rhs_visc = visc * gradz( gradz( b-bmean ) * dzhi4 ) * dzi4
+rhs_visc = visc * gradz( gradz( (b-bmean)**2 ) * dzhi4 ) * dzi4
 
 rhs_diss = 2.*visc * ( ( gradx( interpx( b-bmean ) ) * dxi  )**2 \
                      + ( grady( interpy( b-bmean ) ) * dyi  )**2 \
                      + ( gradz( interpz( b-bmean ) ) * dzi4 )**2 )
 
-#printStencil(b2_shear, rhs_shear, "-=", "bot", "[k]")
-#printEmptyLine(3)
+printStencil(b2_shear, rhs_shear, "-=", "bot", "[k]")
+printEmptyLine(3)
 printStencil(b2_shear, rhs_shear, "-=", "int", "[k]")
-#printEmptyLine(3)
-#printStencil(b2_shear, rhs_shear, "-=", "top", "[k]")
+printEmptyLine(3)
+printStencil(b2_shear, rhs_shear, "-=", "top", "[k]")
 
 printEmptyLine(6)
 
-#printStencil(b2_turb, rhs_turb, "-=", "bot", "[k]")
-#printEmptyLine(3)
+printStencil(b2_turb, rhs_turb, "-=", "bot", "[k]")
+printEmptyLine(3)
 printStencil(b2_turb, rhs_turb, "-=", "int", "[k]")
-#printEmptyLine(3)
-#printStencil(b2_turb, rhs_turb, "-=", "top", "[k]")
+printEmptyLine(3)
+printStencil(b2_turb, rhs_turb, "-=", "top", "[k]")
 
 printEmptyLine(6)
 
-#printStencil(b2_visc, rhs_visc, "+=", "bot", "[k]")
-#printEmptyLine(3)
+printStencil(b2_visc, rhs_visc, "+=", "bot", "[k]")
+printEmptyLine(3)
 printStencil(b2_visc, rhs_visc, "+=", "int", "[k]")
-#printEmptyLine(3)
-#printStencil(b2_visc, rhs_visc, "+=", "top", "[k]")
+printEmptyLine(3)
+printStencil(b2_visc, rhs_visc, "+=", "top", "[k]")
 
 printEmptyLine(6)
 
-#printStencil(b2_diss, rhs_diss, "-=", "bot", "[k]")
-#printEmptyLine(3)
+printStencil(b2_diss, rhs_diss, "-=", "bot", "[k]")
+printEmptyLine(3)
 printStencil(b2_diss, rhs_diss, "-=", "int", "[k]")
-#printEmptyLine(3)
-#printStencil(b2_diss, rhs_diss, "-=", "top", "[k]")
+printEmptyLine(3)
+printStencil(b2_diss, rhs_diss, "-=", "top", "[k]")
