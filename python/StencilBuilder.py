@@ -61,7 +61,7 @@ class NodeOperator(Node):
         self.right = right if ( not is_int_or_float(right) ) else left
         self.operatorString = operatorString
         self.depth = max(self.left.depth, self.right.depth)
-        self.depthk = max(self.left.depthk, self.right.depthk)
+        self.depth_gradk = max(self.left.depth_gradk, self.right.depth_gradk)
 
         if (self.depth > 1):
             self.pad = 2
@@ -96,7 +96,7 @@ class NodeOperatorPower(Node):
         self.inner = inner
         self.power = power
         self.depth = inner.depth
-        self.depthk = inner.depthk
+        self.depth_gradk = inner.depth_gradk
 
         if ( not is_int_or_float(self.power) ):
             raise RuntimeError("Only integer and float powers are supported")
@@ -130,9 +130,9 @@ class NodeStencilFour(Node):
     def __init__(self, inner, dim, c0, c1, c2, c3):
         self.inner = inner
         self.depth = inner.depth + 1
-        self.depthk = inner.depthk + 1 if (dim == 2 and c0[1] == 'g') else inner.depthk
-        if (self.depthk > 2):
-            raise RuntimeError("Type ({0}) exceeds maximum depth of 2".format( type(inner).__name__))
+        self.depth_gradk = inner.depth_gradk + 1 if (dim == 2 and c0[1] == 'g') else inner.depth_gradk
+        if (self.depth_gradk > 2):
+            raise RuntimeError("Type ({0}) exceeds maximum depth of 2: third order derivatives are not supported".format( type(inner).__name__))
         self.pad = 6
 
         self.dim = dim
@@ -157,19 +157,35 @@ class NodeStencilFour(Node):
 
         # Check in which cells biased schemes need to be applied.
         if (self.dim == 2):
-            if ( ( loc == "bot"  and k == -1 ) or
-                 ( loc == "both" and ( (self.loc[2] == 0 and k == -1) or 
-                                       (self.loc[2] == 1 and k ==  0 and self.depthk == 2) ) ) or
-                 ( loc == "bot+1h" and ( (self.loc[2] == 0 and k == -2) ) ) ):
+            # RULES:
+            # 1. Cell at "bot"  biases if requested at k == -1
+            # 2. Cell at "both" biases if requested at k == -1
+            # 3. Cell at "both" biases if requested at k == 0, self.loc[2] == 1 and a 
+            #    vertical gradient operator has been applied deeper in the stencil
+            # 4. Cell at "both+1" biases if requested at k == -2
+            if ( ( loc == "bot"    and k == -1 ) or
+                 ( loc == "both"   and k == -1 ) or
+                 ( loc == "both"   and k == 0 and self.loc[2] == 1 and self.depth_gradk > 0) or
+                 ( loc == "bot+1h" and k == -2 ) ):
                 bias = 1
                 c0 = 'b' + self.c0[1:]
                 c1 = 'b' + self.c1[1:]
                 c2 = 'b' + self.c2[1:]
                 c3 = 'b' + self.c3[1:]
-            elif ( ( loc == "top"  and k == 2 ) or
-                   ( loc == "toph" and ( (self.loc[2] == 0 and k == 0) or
-                                         (self.loc[2] == 1 and k == 0) ) ) or
-                   ( loc == "top-1h" and ( (self.loc[2] == 0 and k == 1) ) ) ):
+            # RULES (More complex than bot, because of grid indexing):
+            # 1. Cell at "top"  biases if requested at k == 0 and self.loc[2] == 0
+            # 2. Cell at "top"  biases if requested at k == 1 and self.loc[2] == 1
+            # 3. Cell at "toph" biases if requested at k == 0, self.loc[2] == 0
+            # 4. Cell at "toph" biases if requested at k == 1, self.loc[2] == 1
+            # 5. Cell at "toph" biases if requested at k == 0 and a vertical gradient operator
+            #    has been applied deeper in the stencil
+            # 6. Cell at "toph+1" biases if requested at k == 1
+            elif ( ( loc == "top"    and k == 1 and self.loc[2] == 0) or
+                   ( loc == "top"    and k == 2 and self.loc[2] == 1) or
+                   ( loc == "toph"   and k == 0 and self.loc[2] == 0) or
+                   ( loc == "toph"   and k == 1 and self.loc[2] == 1) or
+                   ( loc == "toph"   and k == 0 and self.loc[2] == 1 and self.depth_gradk > 0) or
+                   ( loc == "top-1h" and k == 1 ) ):
                 bias = -1
                 c0 = 't' + self.c0[1:]
                 c1 = 't' + self.c1[1:]
@@ -236,7 +252,7 @@ class Field(Node):
     def __init__(self, name, loc):
         self.name = name
         self.depth = 0
-        self.depthk = 0
+        self.depth_gradk = 0
         self.loc = np.copy(loc)
 
     def getString(self, i, j, k, pad, plane, loc):
@@ -251,7 +267,7 @@ class Vector(Node):
     def __init__(self, name, loc):
         self.name = name
         self.depth = 0
-        self.depthk = 0
+        self.depth_gradk = 0
         self.loc = np.copy(loc)
 
     def getString(self, i, j, k, pad, plane, loc):
@@ -271,7 +287,7 @@ class Scalar(Node):
     def __init__(self, name):
         self.name = name
         self.depth = 0
-        self.depthk = 0
+        self.depth_gradk = 0
         self.loc = np.array([ None, None, None ])
 
     def getString(self, i, j, k, pad, plane, loc):
