@@ -181,14 +181,14 @@ class NodeStencilFour(Node):
 
                    ( label == "top" and self.depthk == 1 and self.loc[2] == 1 and k == 2 ) or
                    ( label == "top" and self.depthk == 2 and self.loc[2] == 0 and k == 1 ) or
-                   ( label == "top" and self.depthk == 3 and self.loc[2] == 1 and k == 0 ) or
+                   ( label == "top" and self.depthk == 3 and self.loc[2] == 1 and k == 1 ) or
 
                    ( label == "top-1" and self.depthk == 1 and self.loc[2] == 0 and k == 1 ) or
                    ( label == "top-1" and self.depthk == 2 and self.loc[2] == 1 and k == 1 ) or
 
                    ( label == "top-1" and self.depthk == 1 and self.loc[2] == 1 and k == 3 ) or
                    ( label == "top-1" and self.depthk == 2 and self.loc[2] == 0 and k == 2 ) or
-                   ( label == "top-1" and self.depthk == 3 and self.loc[2] == 1 and k == 1 ) ):
+                   ( label == "top-1" and self.depthk == 3 and self.loc[2] == 1 and k == 2 ) ):
 
                 bias = -1
                 c0 = 't' + self.c0[1:]
