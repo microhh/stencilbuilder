@@ -144,7 +144,7 @@ class NodeStencilFour(Node):
         self.c2 = c2
         self.c3 = c3
 
-    def getString(self, i, j, k, pad, plane, loc):
+    def getString(self, i, j, k, pad, plane, label):
         i0 = i1 = i2 = i3 = i
         j0 = j1 = j2 = j3 = j
         k0 = k1 = k2 = k3 = k
@@ -157,19 +157,18 @@ class NodeStencilFour(Node):
 
         # Check in which cells biased schemes need to be applied.
         if (self.dim == 2):
-            print(self.depthk, self.loc[2], k)
             # RULES:
-            if ( ( loc == "bot" and self.depthk == 1 and self.loc[2] == 0 and k == -1 ) or
-                 ( loc == "bot" and self.depthk == 1 and self.loc[2] == 1 and k == -1 ) or
-                 ( loc == "bot" and self.depthk == 2 and self.loc[2] == 0 and k == -1 ) or
-                 ( loc == "bot" and self.depthk == 2 and self.loc[2] == 1 and k ==  0 ) or
-                 ( loc == "bot" and self.depthk == 3 and self.loc[2] == 1 and k ==  0 ) or
+            if ( ( label == "bot" and self.depthk == 1 and self.loc[2] == 0 and k == -1 ) or
+                 ( label == "bot" and self.depthk == 1 and self.loc[2] == 1 and k == -1 ) or
+                 ( label == "bot" and self.depthk == 2 and self.loc[2] == 0 and k == -1 ) or
+                 ( label == "bot" and self.depthk == 2 and self.loc[2] == 1 and k ==  0 ) or
+                 ( label == "bot" and self.depthk == 3 and self.loc[2] == 1 and k ==  0 ) or
 
-                 ( loc == "bot+1" and self.depthk == 1 and self.loc[2] == 0 and k == -2 ) or
-                 ( loc == "bot+1" and self.depthk == 1 and self.loc[2] == 1 and k == -2 ) or
-                 ( loc == "bot+1" and self.depthk == 2 and self.loc[2] == 0 and k == -2 ) or
-                 ( loc == "bot+1" and self.depthk == 2 and self.loc[2] == 1 and k == -1 ) or
-                 ( loc == "bot+1" and self.depthk == 3 and self.loc[2] == 1 and k == -1 ) ):
+                 ( label == "bot+1" and self.depthk == 1 and self.loc[2] == 0 and k == -2 ) or
+                 ( label == "bot+1" and self.depthk == 1 and self.loc[2] == 1 and k == -2 ) or
+                 ( label == "bot+1" and self.depthk == 2 and self.loc[2] == 0 and k == -2 ) or
+                 ( label == "bot+1" and self.depthk == 2 and self.loc[2] == 1 and k == -1 ) or
+                 ( label == "bot+1" and self.depthk == 3 and self.loc[2] == 1 and k == -1 ) ):
 
                 bias = 1
                 c0 = 'b' + self.c0[1:]
@@ -177,17 +176,17 @@ class NodeStencilFour(Node):
                 c2 = 'b' + self.c2[1:]
                 c3 = 'b' + self.c3[1:]
             # RULES (More complex than bot, because of grid indexing):
-            elif ( ( loc == "top" and self.depthk == 1 and self.loc[2] == 0 and k == 0 ) or
-                   ( loc == "top" and self.depthk == 1 and self.loc[2] == 1 and k == 2 ) or
-                   ( loc == "top" and self.depthk == 2 and self.loc[2] == 0 and k == 1 ) or
-                   ( loc == "top" and self.depthk == 2 and self.loc[2] == 1 and k == 0 ) or
-                   ( loc == "top" and self.depthk == 3 and self.loc[2] == 1 and k == 0 ) or
+            elif ( ( label == "top" and self.depthk == 1 and self.loc[2] == 0 and k == 0 ) or
+                   ( label == "top" and self.depthk == 1 and self.loc[2] == 1 and k == 1 ) or
+                   ( label == "top" and self.depthk == 2 and self.loc[2] == 0 and k == 0 ) or
+                   ( label == "top" and self.depthk == 2 and self.loc[2] == 1 and k == 0 ) or
+                   ( label == "top" and self.depthk == 3 and self.loc[2] == 1 and k == 0 ) or
 
-                   ( loc == "top-1" and self.depthk == 1 and self.loc[2] == 0 and k == 1 ) or
-                   ( loc == "top-1" and self.depthk == 1 and self.loc[2] == 1 and k == 3 ) or
-                   ( loc == "top-1" and self.depthk == 2 and self.loc[2] == 0 and k == 2 ) or
-                   ( loc == "top-1" and self.depthk == 2 and self.loc[2] == 1 and k == 1 ) or
-                   ( loc == "top-1" and self.depthk == 3 and self.loc[2] == 1 and k == 1 ) ):
+                   ( label == "top-1" and self.depthk == 1 and self.loc[2] == 0 and k == 1 ) or
+                   ( label == "top-1" and self.depthk == 1 and self.loc[2] == 1 and k == 2 ) or
+                   ( label == "top-1" and self.depthk == 2 and self.loc[2] == 0 and k == 1 ) or
+                   ( label == "top-1" and self.depthk == 2 and self.loc[2] == 1 and k == 1 ) or
+                   ( label == "top-1" and self.depthk == 3 and self.loc[2] == 1 and k == 1 ) ):
 
                 bias = -1
                 c0 = 't' + self.c0[1:]
@@ -227,18 +226,18 @@ class NodeStencilFour(Node):
             for n in range(2, self.depth):
                 lb = lb + '\n'
             return "{ob}{c0}*{0}\n{lb}{ws}+ {c1}*{1}\n{lb}{ws}+ {c2}*{2}\n{lb}{ws}+ {c3}*{3}{cb}".format(
-                self.inner.getString(i0, j0, k0, pad, newplane, loc),
-                self.inner.getString(i1, j1, k1, pad, newplane, loc),
-                self.inner.getString(i2, j2, k2, pad, newplane, loc),
-                self.inner.getString(i3, j3, k3, pad, newplane, loc),
+                self.inner.getString(i0, j0, k0, pad, newplane, label),
+                self.inner.getString(i1, j1, k1, pad, newplane, label),
+                self.inner.getString(i2, j2, k2, pad, newplane, label),
+                self.inner.getString(i3, j3, k3, pad, newplane, label),
                 ws=ws, lb=lb, ob=ob, cb=cb,
                 c0=c0, c1=c1, c2=c2, c3=c3)
         else:
             return "{ob}{c0}*{0} + {c1}*{1} + {c2}*{2} + {c3}*{3}{cb}".format(
-                self.inner.getString(i0, j0, k0, pad, newplane, loc),
-                self.inner.getString(i1, j1, k1, pad, newplane, loc),
-                self.inner.getString(i2, j2, k2, pad, newplane, loc),
-                self.inner.getString(i3, j3, k3, pad, newplane, loc),
+                self.inner.getString(i0, j0, k0, pad, newplane, label),
+                self.inner.getString(i1, j1, k1, pad, newplane, label),
+                self.inner.getString(i2, j2, k2, pad, newplane, label),
+                self.inner.getString(i3, j3, k3, pad, newplane, label),
                 ob=ob, cb=cb,
                 c0=c0, c1=c1, c2=c2, c3=c3)
 
@@ -273,15 +272,16 @@ class Vector(Node):
         self.depthk = 0
         self.loc = np.copy(loc)
 
-    def getString(self, i, j, k, pad, plane, loc):
+    def getString(self, i, j, k, pad, plane, label):
         compact = True
         kk = formatIndex(k, "") if ( plane[2] or not compact ) else ""
 
         # This is an unelegant solution but threats the double biased spatial operators
-        if ( loc == "both" and (self.loc[2] == 1 and k == 0) ):
-            return "{0}bot".format(self.name, kk)
-        elif ( loc == "toph" and (self.loc[2] == 1 and k == 0) ):
-            return "{0}top".format(self.name, kk)
+        print(label, self.loc[2], k, self.depthk)
+        if ( label == "bot" and self.loc[2] == 1 and k == 0 and self.depthk == 2):
+            return "{0}bot".format(self.name)
+        elif ( label == "top" and self.loc[2] == 1 and k == 0 and self.depthk == 2):
+            return "{0}top".format(self.name)
 
         else:
             return "{0}[k{1}]".format(self.name, kk)
