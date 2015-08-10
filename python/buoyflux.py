@@ -37,6 +37,7 @@ rhs_diss = 2.*visc * ( gradx( interpx(w) ) * dxi   * gradx( interpxz( b-bmean ) 
 
 rhs_visc = visc * gradz( gradz( w * interpz(b-bmean) ) * dzi4 ) * dzhi4
 
+"""
 printStencil(bw_shear, rhs_shear, "-=", "bot", "[k]")
 printEmptyLine(3)
 printStencil(bw_shear, rhs_shear, "-=", "int", "[k]")
@@ -56,7 +57,7 @@ printEmptyLine(3)
 printStencil(bw_turb, rhs_turb, "-=", "top", "[k]")
 
 printEmptyLine(6)
-
+"""
 printStencil(bw_visc, rhs_visc, "-=", "bot", "[k]")
 printEmptyLine(3)
 printStencil(bw_visc, rhs_visc, "-=", "bot+1", "[k]")
@@ -66,6 +67,7 @@ printEmptyLine(3)
 printStencil(bw_visc, rhs_visc, "-=", "top-1", "[k]")
 printEmptyLine(3)
 printStencil(bw_visc, rhs_visc, "-=", "top", "[k]")
+"""
 
 printEmptyLine(6)
 
@@ -86,3 +88,4 @@ printEmptyLine(3)
 printStencil(bw_diss, rhs_diss, "-=", "top-1", "[k]")
 printEmptyLine(3)
 printStencil(bw_diss, rhs_diss, "-=", "top", "[k]")
+"""

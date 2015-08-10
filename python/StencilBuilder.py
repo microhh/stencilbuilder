@@ -70,7 +70,7 @@ class NodeOperator(Node):
 
         self.loc = checkLocs(self.left, self.right)
 
-    def getString(self, i, j, k, pad, plane, loc):
+    def getString(self, i, j, k, pad, plane, label):
         ob = '( '
         cb = ' )'
 
@@ -82,13 +82,13 @@ class NodeOperator(Node):
             for n in range(1, self.depth):
                 lb = lb + '\n'
 
-            return "{ob}{0}\n{lb}{ws}{os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, loc),
-                                                          self.right.getString(i, j, k, pad, plane, loc),
+            return "{ob}{0}\n{lb}{ws}{os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, label),
+                                                          self.right.getString(i, j, k, pad, plane, label),
                                                           ws=ws, lb=lb, ob=ob,
                                                           os=self.operatorString, cb=cb)
         else:
-            return "{ob}{0} {os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, loc),
-                                                 self.right.getString(i, j, k, pad, plane, loc),
+            return "{ob}{0} {os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, label),
+                                                 self.right.getString(i, j, k, pad, plane, label),
                                                  ob=ob, os=self.operatorString, cb=cb)
 
 class NodeOperatorPower(Node):
@@ -108,7 +108,7 @@ class NodeOperatorPower(Node):
 
         self.loc = inner.loc
 
-    def getString(self, i, j, k, pad, plane, loc):
+    def getString(self, i, j, k, pad, plane, label):
         ob = 'std::pow( '
         cb = ' )'
 
@@ -120,10 +120,10 @@ class NodeOperatorPower(Node):
             for n in range(1, self.depth):
                 lb = lb + '\n'
 
-            return "{ob}{0}\n{lb}{ws}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, loc),
+            return "{ob}{0}\n{lb}{ws}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, label),
                                                        self.power, ws=ws, lb=lb, ob=ob, cb=cb)
         else:
-            return "{ob}{0}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, loc),
+            return "{ob}{0}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, label),
                                              self.power, ob=ob, cb=cb)
 
 class NodeStencilFour(Node):
@@ -257,7 +257,7 @@ class Field(Node):
         self.depthk = 0
         self.loc = np.copy(loc)
 
-    def getString(self, i, j, k, pad, plane, loc):
+    def getString(self, i, j, k, pad, plane, label):
         compact = True
         ii = formatIndex(i, "ii") if ( plane[0] or not compact ) else ""
         jj = formatIndex(j, "jj") if ( plane[1] or not compact ) else ""
@@ -293,7 +293,7 @@ class Scalar(Node):
         self.depthk = 0
         self.loc = np.array([ None, None, None ])
 
-    def getString(self, i, j, k, pad, plane, loc):
+    def getString(self, i, j, k, pad, plane, label):
         return "{0}".format(self.name)
 
 # Define functions.
