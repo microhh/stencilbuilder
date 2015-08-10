@@ -157,6 +157,7 @@ class NodeStencilFour(Node):
 
         # Check in which cells biased schemes need to be applied.
         if (self.dim == 2):
+            print(self.depthk, self.loc[2], k)
             # RULES:
             if ( ( loc == "bot" and self.depthk == 1 and self.loc[2] == 0 and k == -1 ) or
                  ( loc == "bot" and self.depthk == 1 and self.loc[2] == 1 and k == -1 ) or
