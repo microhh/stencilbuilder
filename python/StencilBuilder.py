@@ -176,14 +176,14 @@ class NodeStencilFour(Node):
                 c2 = 'b' + self.c2[1:]
                 c3 = 'b' + self.c3[1:]
             # RULES (More complex than bot, because of grid indexing):
-            elif ( ( loc == "top" and self.depthk == 1 and self.loc[2] == 0 and k == 1 ) or
-                   ( loc == "top" and self.depthk == 1 and self.loc[2] == 1 and k == 1 ) or
-                   ( loc == "top" and self.depthk == 2 and self.loc[2] == 0 and k == 0 ) or
-                   ( loc == "top" and self.depthk == 2 and self.loc[2] == 1 and k == 1 ) or
+            elif ( ( loc == "top" and self.depthk == 1 and self.loc[2] == 0 and k == 0 ) or
+                   ( loc == "top" and self.depthk == 1 and self.loc[2] == 1 and k == 2 ) or
+                   ( loc == "top" and self.depthk == 2 and self.loc[2] == 0 and k == 1 ) or
+                   ( loc == "top" and self.depthk == 2 and self.loc[2] == 1 and k == 0 ) or
                    ( loc == "top" and self.depthk == 3 and self.loc[2] == 1 and k == 0 ) or
 
-                   ( loc == "top-1" and self.depthk == 1 and self.loc[2] == 0 and k == 2 ) or
-                   ( loc == "top-1" and self.depthk == 1 and self.loc[2] == 1 and k == 2 ) or
+                   ( loc == "top-1" and self.depthk == 1 and self.loc[2] == 0 and k == 1 ) or
+                   ( loc == "top-1" and self.depthk == 1 and self.loc[2] == 1 and k == 3 ) or
                    ( loc == "top-1" and self.depthk == 2 and self.loc[2] == 0 and k == 2 ) or
                    ( loc == "top-1" and self.depthk == 2 and self.loc[2] == 1 and k == 1 ) or
                    ( loc == "top-1" and self.depthk == 3 and self.loc[2] == 1 and k == 1 ) ):
