@@ -21,9 +21,7 @@ printStencil(bt, brhs, "+=", "top-1", "[k]")
 printEmptyLine(3)
 printStencil(bt, brhs, "+=", "top", "[k]")
 
-printEmptyLine(3)
-print("BLA")
-printEmptyLine(3)
+printEmptyLine(6)
 
 printStencil(wt, wrhs, "+=", "bot", "[k]")
 printEmptyLine(3)
