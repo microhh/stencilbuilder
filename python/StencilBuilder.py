@@ -347,6 +347,10 @@ def grady(inner):
 def gradz(inner):
     return NodeStencilFour(inner, 2, "cg0", "cg1", "cg2", "cg3")
 
+def printEmptyLine(n=1):
+    for i in range(n):
+        print("")
+
 def printStencil(lhs, rhs, operator, label, index="[ijk]"):
     checkLocs(lhs, rhs)
 
@@ -355,13 +359,12 @@ def printStencil(lhs, rhs, operator, label, index="[ijk]"):
     plane = np.array([0,0,0])
     max_depthk = 0
 
+    print("Printing stencil {0} with vertical depth {1}, location {2}".format(lhs.name, rhs.depthk, label))
+    printEmptyLine()
+
     printString = rhs.getString(0, 0, 0, indent, plane, label, max_depthk, 0)
 
     print("{0}{1} {2} {3};".format(lhs.name, index, operator, printString))
-
-def printEmptyLine(n=1):
-    for i in range(n):
-        print("")
 
 """
 def printLoop(lhs, rhs, operator, istart="grid->istart", iend="grid->iend",
