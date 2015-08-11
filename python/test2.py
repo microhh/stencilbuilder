@@ -10,7 +10,10 @@ wt = Field("wtest", wloc)
 
 bwt = Field("b_wtest", wloc)
 
-bwrhs = interpz(interpz(interpz(b)))
+dzhi = Vector("dzhi", zhloc)
+dzi  = Vector("dzi" , zloc )
+
+bwrhs = gradz( interpz( gradz(b) * dzhi ) ) * dzhi
 
 printStencil(bwt, bwrhs, "+=", "bot", "[k]")
 printEmptyLine(3)

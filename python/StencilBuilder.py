@@ -70,8 +70,8 @@ class NodeOperator(Node):
 
         self.loc = checkLocs(self.left, self.right)
 
-    def getString(self, i, j, k, pad, plane, label, max_depth):
-        max_depth = max(max_depth, self.depth)
+    def getString(self, i, j, k, pad, plane, label, max_depthk):
+        max_depthk = max(max_depthk, self.depthk)
         ob = '( '
         cb = ' )'
 
@@ -83,13 +83,13 @@ class NodeOperator(Node):
             for n in range(1, self.depth):
                 lb = lb + '\n'
 
-            return "{ob}{0}\n{lb}{ws}{os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, label, max_depth),
-                                                          self.right.getString(i, j, k, pad, plane, label, max_depth),
+            return "{ob}{0}\n{lb}{ws}{os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, label, max_depthk),
+                                                          self.right.getString(i, j, k, pad, plane, label, max_depthk),
                                                           ws=ws, lb=lb, ob=ob,
                                                           os=self.operatorString, cb=cb)
         else:
-            return "{ob}{0} {os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, label, max_depth),
-                                                 self.right.getString(i, j, k, pad, plane, label, max_depth),
+            return "{ob}{0} {os} {1}{cb}".format(self.left.getString(i, j, k, pad, plane, label, max_depthk),
+                                                 self.right.getString(i, j, k, pad, plane, label, max_depthk),
                                                  ob=ob, os=self.operatorString, cb=cb)
 
 class NodeOperatorPower(Node):
@@ -109,8 +109,8 @@ class NodeOperatorPower(Node):
 
         self.loc = inner.loc
 
-    def getString(self, i, j, k, pad, plane, label, max_depth):
-        max_depth = max(max_depth, self.depth)
+    def getString(self, i, j, k, pad, plane, label, max_depthk):
+        max_depthk = max(max_depthk, self.depthk)
 
         ob = 'std::pow( '
         cb = ' )'
@@ -123,10 +123,10 @@ class NodeOperatorPower(Node):
             for n in range(1, self.depth):
                 lb = lb + '\n'
 
-            return "{ob}{0}\n{lb}{ws}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, label, max_depth),
+            return "{ob}{0}\n{lb}{ws}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, label, max_depthk),
                                                        self.power, ws=ws, lb=lb, ob=ob, cb=cb)
         else:
-            return "{ob}{0}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, label, max_depth),
+            return "{ob}{0}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, label, max_depthk),
                                              self.power, ob=ob, cb=cb)
 
 class NodeStencilFour(Node):
@@ -147,8 +147,8 @@ class NodeStencilFour(Node):
         self.c2 = c2
         self.c3 = c3
 
-    def getString(self, i, j, k, pad, plane, label, max_depth):
-        max_depth = max(max_depth, self.depth)
+    def getString(self, i, j, k, pad, plane, label, max_depthk):
+        max_depthk = max(max_depthk, self.depthk)
 
         i0 = i1 = i2 = i3 = i
         j0 = j1 = j2 = j3 = j
@@ -164,7 +164,7 @@ class NodeStencilFour(Node):
         if (self.dim == 2):
             # Check if the stencil has an odd depth, to take into account the staggering
             # If the stencil is evaluated at the cell faces, add one grid point, otherwise remove one
-            if (max_depth % 2 == 1):
+            if (max_depthk % 2 == 1):
                 top_shift = 1 if ( (self.depthk % 2) != self.loc[2] ) else -1
             else:
                 top_shift = 0
@@ -240,18 +240,18 @@ class NodeStencilFour(Node):
             for n in range(2, self.depth):
                 lb = lb + '\n'
             return "{ob}{c0}*{0}\n{lb}{ws}+ {c1}*{1}\n{lb}{ws}+ {c2}*{2}\n{lb}{ws}+ {c3}*{3}{cb}".format(
-                self.inner.getString(i0, j0, k0, pad, newplane, label, max_depth),
-                self.inner.getString(i1, j1, k1, pad, newplane, label, max_depth),
-                self.inner.getString(i2, j2, k2, pad, newplane, label, max_depth),
-                self.inner.getString(i3, j3, k3, pad, newplane, label, max_depth),
+                self.inner.getString(i0, j0, k0, pad, newplane, label, max_depthk),
+                self.inner.getString(i1, j1, k1, pad, newplane, label, max_depthk),
+                self.inner.getString(i2, j2, k2, pad, newplane, label, max_depthk),
+                self.inner.getString(i3, j3, k3, pad, newplane, label, max_depthk),
                 ws=ws, lb=lb, ob=ob, cb=cb,
                 c0=c0, c1=c1, c2=c2, c3=c3)
         else:
             return "{ob}{c0}*{0} + {c1}*{1} + {c2}*{2} + {c3}*{3}{cb}".format(
-                self.inner.getString(i0, j0, k0, pad, newplane, label, max_depth),
-                self.inner.getString(i1, j1, k1, pad, newplane, label, max_depth),
-                self.inner.getString(i2, j2, k2, pad, newplane, label, max_depth),
-                self.inner.getString(i3, j3, k3, pad, newplane, label, max_depth),
+                self.inner.getString(i0, j0, k0, pad, newplane, label, max_depthk),
+                self.inner.getString(i1, j1, k1, pad, newplane, label, max_depthk),
+                self.inner.getString(i2, j2, k2, pad, newplane, label, max_depthk),
+                self.inner.getString(i3, j3, k3, pad, newplane, label, max_depthk),
                 ob=ob, cb=cb,
                 c0=c0, c1=c1, c2=c2, c3=c3)
 
@@ -271,8 +271,8 @@ class Field(Node):
         self.depthk = 0
         self.loc = np.copy(loc)
 
-    def getString(self, i, j, k, pad, plane, label, max_depth):
-        max_depth = max(max_depth, self.depth)
+    def getString(self, i, j, k, pad, plane, label, max_depthk):
+        max_depthk = max(max_depthk, self.depthk)
 
         compact = True
         ii = formatIndex(i, "ii") if ( plane[0] or not compact ) else ""
@@ -288,17 +288,17 @@ class Vector(Node):
         self.depthk = 0
         self.loc = np.copy(loc)
 
-    def getString(self, i, j, k, pad, plane, label, max_depth):
+    def getString(self, i, j, k, pad, plane, label, max_depthk):
+        max_depthk = max(max_depthk, self.depthk)
+
         compact = True
         kk = formatIndex(k, "") if ( plane[2] or not compact ) else ""
 
-        # This is an unelegant solution but threats the double biased spatial operators
-        print(label, self.loc[2], k, self.depthk)
-        if ( label == "bot" and self.loc[2] == 1 and k == 0 and self.depthk == 2):
+        # In case the vector is requested at the boundary in a stencil of a depth 
+        if ( label == "bot" and self.loc[2] == 1 and k == 0 and max_depthk >= 2):
             return "{0}bot".format(self.name)
-        elif ( label == "top" and self.loc[2] == 1 and k == 0 and self.depthk == 2):
+        elif ( label == "top" and self.loc[2] == 1 and k == 0 and max_depthk >= 2):
             return "{0}top".format(self.name)
-
         else:
             return "{0}[k{1}]".format(self.name, kk)
 
@@ -309,7 +309,7 @@ class Scalar(Node):
         self.depthk = 0
         self.loc = np.array([ None, None, None ])
 
-    def getString(self, i, j, k, pad, plane, label, max_depth):
+    def getString(self, i, j, k, pad, plane, label, max_depthk):
         return "{0}".format(self.name)
 
 # Define functions.
@@ -341,9 +341,9 @@ def printStencil(lhs, rhs, operator, label, index="[ijk]"):
     indent = len(lhs.name) + len(index) + len(operator) + 2
 
     plane = np.array([0,0,0])
-    max_depth = 0
+    max_depthk = 0
 
-    printString = rhs.getString(0, 0, 0, indent, plane, label, max_depth)
+    printString = rhs.getString(0, 0, 0, indent, plane, label, max_depthk)
 
     print("{0}{1} {2} {3};".format(lhs.name, index, operator, printString))
 
