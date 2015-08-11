@@ -181,7 +181,13 @@ class NodeStencilFour(Node):
                  ( label == "bot+1" and self.depthk == 1 and self.loc[2] == 1 and k == -2 ) or
                  ( label == "bot+1" and self.depthk == 2 and self.loc[2] == 0 and k == -2 ) or
                  ( label == "bot+1" and self.depthk == 2 and self.loc[2] == 1 and k == -1 ) or
-                 ( label == "bot+1" and self.depthk == 3 and self.loc[2] == 1 and k == -1 ) ):
+                 ( label == "bot+1" and self.depthk == 3 and self.loc[2] == 1 and k == -1 ) or
+
+                 ( label == "bot+2" and self.depthk == 1 and self.loc[2] == 0 and k == -3 ) or
+                 ( label == "bot+2" and self.depthk == 1 and self.loc[2] == 1 and k == -3 ) or
+                 ( label == "bot+2" and self.depthk == 2 and self.loc[2] == 0 and k == -3 ) or
+                 ( label == "bot+2" and self.depthk == 2 and self.loc[2] == 1 and k == -2 ) or
+                 ( label == "bot+2" and self.depthk == 3 and self.loc[2] == 1 and k == -2 ) ):
 
                 bias = 1
                 c0 = 'b' + self.c0[1:]
@@ -201,7 +207,14 @@ class NodeStencilFour(Node):
 
                    ( label == "top-1" and self.depthk == 1 and self.loc[2] == 1 and k == 3 + top_shift ) or
                    ( label == "top-1" and self.depthk == 2 and self.loc[2] == 0 and k == 2 + top_shift ) or
-                   ( label == "top-1" and self.depthk == 3 and self.loc[2] == 1 and k == 2 + top_shift ) ):
+                   ( label == "top-1" and self.depthk == 3 and self.loc[2] == 1 and k == 2 + top_shift ) or
+
+                   ( label == "top-2" and self.depthk == 1 and self.loc[2] == 0 and k == 2 + top_shift ) or
+                   ( label == "top-2" and self.depthk == 2 and self.loc[2] == 1 and k == 2 + top_shift ) or
+
+                   ( label == "top-2" and self.depthk == 1 and self.loc[2] == 1 and k == 4 + top_shift ) or
+                   ( label == "top-2" and self.depthk == 2 and self.loc[2] == 0 and k == 3 + top_shift ) or
+                   ( label == "top-2" and self.depthk == 3 and self.loc[2] == 1 and k == 3 + top_shift ) ):
 
                 bias = -1
                 c0 = 't' + self.c0[1:]
