@@ -23,7 +23,7 @@ dyi = Scalar("cgi*dyi")
 dzi4  = Vector("dzi4" , zloc )
 dzhi4 = Vector("dzhi4", zhloc)
 
-rhs_shear = w * gradz( bmean ) * dzhi4
+rhs_shear = w**2 * gradz( bmean ) * dzhi4
 
 rhs_turb = gradz( interpz(w)**2 * (b-bmean) ) * dzhi4
 
@@ -37,11 +37,7 @@ rhs_diss = 2.*visc * ( gradx( interpx(w) ) * dxi   * gradx( interpxz( b-bmean ) 
 
 rhs_visc = visc * gradz( gradz( w * interpz(b-bmean) ) * dzi4 ) * dzhi4
 
-printStencil(bw_shear, rhs_shear, "-=", "bot", "[k]")
-printEmptyLine(3)
 printStencil(bw_shear, rhs_shear, "-=", "int", "[k]")
-printEmptyLine(3)
-printStencil(bw_shear, rhs_shear, "-=", "top", "[k]")
 
 printEmptyLine(6)
 
@@ -57,19 +53,19 @@ printStencil(bw_turb, rhs_turb, "-=", "top", "[k]")
 
 printEmptyLine(6)
 
-printStencil(bw_visc, rhs_visc, "-=", "bot", "[k]")
+printStencil(bw_visc, rhs_visc, "+=", "bot", "[k]")
 printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "bot+1", "[k]")
+printStencil(bw_visc, rhs_visc, "+=", "bot+1", "[k]")
 printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "bot+2", "[k]")
+printStencil(bw_visc, rhs_visc, "+=", "bot+2", "[k]")
 printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "int", "[k]")
+printStencil(bw_visc, rhs_visc, "+=", "int", "[k]")
 printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "top-2", "[k]")
+printStencil(bw_visc, rhs_visc, "+=", "top-2", "[k]")
 printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "top-1", "[k]")
+printStencil(bw_visc, rhs_visc, "+=", "top-1", "[k]")
 printEmptyLine(3)
-printStencil(bw_visc, rhs_visc, "-=", "top", "[k]")
+printStencil(bw_visc, rhs_visc, "+=", "top", "[k]")
 
 printEmptyLine(6)
 
