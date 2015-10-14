@@ -7,6 +7,7 @@ w = Field("w", wloc)
 p = Field("p", sloc)
 
 bmean = Vector("bmean", zloc)
+pmean = Vector("pmean", zloc)
 
 bw_shear = Field("bw_shear", wloc)
 bw_turb  = Field("bw_turb" , wloc)
@@ -14,6 +15,7 @@ bw_buoy  = Field("bw_buoy" , wloc)
 bw_rdstr = Field("bw_rdstr", wloc)
 bw_diss  = Field("bw_diss" , wloc)
 bw_visc  = Field("bw_visc" , wloc)
+bw_pres  = Field("bw_pres" , wloc)
 
 visc = Scalar("visc")
 
@@ -29,7 +31,9 @@ rhs_turb = gradz( interpz(w)**2 * (b-bmean) ) * dzhi4
 
 rhs_buoy = interpz( b-bmean )**2
 
-rhs_rdstr = interpz(p) * gradz( b-bmean ) * dzhi4
+rhs_pres = gradz( (p-pmean) * (b-bmean) ) * dzhi4
+
+rhs_rdstr = interpz( p-pmean ) * gradz( b-bmean ) * dzhi4
 
 rhs_diss = 2.*visc * ( gradx( interpx(w) ) * dxi   * gradx( interpxz( b-bmean ) ) * dxi \
                      + grady( interpy(w) ) * dyi   * grady( interpyz( b-bmean ) ) * dyi \
@@ -86,3 +90,8 @@ printEmptyLine(3)
 printStencil(bw_diss, rhs_diss, "-=", "top-1", "[k]")
 printEmptyLine(3)
 printStencil(bw_diss, rhs_diss, "-=", "top", "[k]")
+
+printEmptyLine(6)
+
+printStencil(bw_pres, rhs_pres, "-=", "int", "[k]")
+
