@@ -26,16 +26,14 @@ dzhi4    = Vector("dzhi4", zhloc)
 
 bv_shear = Field("bv_shear", vloc)
 bv_turb  = Field("bv_turb" , vloc)
-bv_strat = Field("bv_strat", vloc)
 bv_visc  = Field("bv_visc" , vloc)
 bv_diss  = Field("bv_diss" , vloc)
 
 rhs_shear = interpyz(w)*interpy(b-bmean)*gradz(interpz(vmean))*dzi4 \
-          + (v-umean)*interpyz(w) * gradz(interpyz(bmean))*dzi4
+          + interpyz(w)*(v-umean) * gradz(interpyz(bmean))*dzi4 \
+          + N2*(interpxy(u-umean)*(v-vmean)*sinalpha + interpyz(w)*(v-vmean)*cosalpha )
 
 rhs_turb = gradz( interpz(v-vmean) * interpy(w) * interpyz(b-bmean) ) * dzi4
-
-rhs_strat = N2*( (v-vmean)*interpxy(u-umean)*sinalpha + (v-vmean)*interpyz(w)*cosalpha ) 
 
 rhs_visc = visc * gradz(gradz((v-umean) * interpy(b-bmean) ) * dzhi4) * dzi4
 
@@ -56,10 +54,6 @@ printEmptyLine(3)
 printStencil(bv_turb, rhs_turb, "-=", "top-1", "[k]")
 printEmptyLine(3)
 printStencil(bv_turb, rhs_turb, "-=", "top", "[k]")
-
-printEmptyLine(6)
-
-printStencil(bv_strat, rhs_strat, "-=", "int", "[k]")
 
 printEmptyLine(6)
 

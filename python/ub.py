@@ -27,18 +27,16 @@ dzhi4    = Vector("dzhi4", zhloc)
 bu_shear = Field("bu_shear", uloc)
 bu_turb  = Field("bu_turb" , uloc)
 bu_buoy  = Field("bu_buoy" , uloc)
-bu_strat = Field("bu_strat", uloc)
 bu_visc  = Field("bu_visc" , uloc)
 bu_diss  = Field("bu_diss" , uloc)
 
 rhs_shear = interpxz(w)*interpx(b-bmean)*gradz(interpz(umean))*dzi4 \
-          + (u-umean)*interpxz(w) * gradz(interpxz(bmean))*dzi4
+          + (u-umean)*interpxz(w) * gradz(interpxz(bmean))*dzi4 \
+          + N2*((u-umean)**2 * sinalpha + (u-umean)*interpxz(w)*cosalpha)
 
-rhs_turb = gradz( interpz(u-umean) * interpx(w) * interpxz(b-bmean) ) * dzi4
+rhs_turb = gradz( interpx(w) * interpz(u-umean) * interpxz(b-bmean) ) * dzi4
 
 rhs_buoy = interpx( b-bmean )**2 * sinalpha 
-
-rhs_strat = N2*((u-umean)**2 * sinalpha + (u-umean)*interpxz(w)*cosalpha)
 
 rhs_visc = visc * gradz(gradz((u-umean) * interpx(b-bmean) ) * dzhi4) * dzi4
 
@@ -63,10 +61,6 @@ printStencil(bu_turb, rhs_turb, "-=", "top", "[k]")
 printEmptyLine(6)
 
 printStencil(bu_buoy, rhs_buoy, "+=", "int", "[k]")
-
-printEmptyLine(6)
-
-printStencil(bu_strat, rhs_strat, "-=", "int", "[k]")
 
 printEmptyLine(6)
 
