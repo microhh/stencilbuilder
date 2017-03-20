@@ -9,6 +9,7 @@ wloc = np.array([0,0,1])
 sloc = np.array([0,0,0])
 
 uwloc = np.array([1,0,1])
+uvloc = np.array([1,1,0])
 vwloc = np.array([0,1,1])
 
 zloc  = np.array([None, None, 0])
@@ -339,6 +340,8 @@ def interpxz(inner):
     return interpz(interpx(inner))
 def interpyz(inner):
     return interpz(interpy(inner))
+def interpxyz(inner):
+    return interpz(interpy(interpx(inner)))
 
 def gradx(inner):
     return NodeStencilFour(inner, 0, "cg0", "cg1", "cg2", "cg3")
