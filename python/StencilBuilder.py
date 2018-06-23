@@ -157,10 +157,10 @@ class NodeStencilFour(Node):
         k0 = k1 = k2 = k3 = k
 
         bias = 0
-        c0 = 'c' + self.c0[1:]
-        c1 = 'c' + self.c1[1:]
-        c2 = 'c' + self.c2[1:]
-        c3 = 'c' + self.c3[1:]
+        c0 = self.c0[:]
+        c1 = self.c1[:]
+        c2 = self.c2[:]
+        c3 = self.c3[:]
 
         # Check in which cells biased schemes need to be applied.
         if (self.dim == 2):
@@ -191,10 +191,11 @@ class NodeStencilFour(Node):
                  ( label == "bot+2" and self.depthk == 3 and self.loc[2] == 1 and k == -2 ) ):
 
                 bias = 1
-                c0 = 'b' + self.c0[1:]
-                c1 = 'b' + self.c1[1:]
-                c2 = 'b' + self.c2[1:]
-                c3 = 'b' + self.c3[1:]
+                c0 = self.c0[:] + "bot"
+                c1 = self.c1[:]
+                c2 = self.c2[:]
+                c3 = self.c3[:]
+
             # RULES (More complex than bot, because of grid indexing):
             elif ( ( label == "top" and self.depthk == 1 and self.loc[2] == 0 and k == 0 + top_shift ) or
                    ( label == "top" and self.depthk == 2 and self.loc[2] == 1 and k == 0 + top_shift ) or
@@ -218,10 +219,10 @@ class NodeStencilFour(Node):
                    ( label == "top-2" and self.depthk == 3 and self.loc[2] == 1 and k == 3 + top_shift ) ):
 
                 bias = -1
-                c0 = 't' + self.c0[1:]
-                c1 = 't' + self.c1[1:]
-                c2 = 't' + self.c2[1:]
-                c3 = 't' + self.c3[1:]
+                c0 = self.c0[:] + "top"
+                c1 = self.c1[:]
+                c2 = self.c2[:]
+                c3 = self.c3[:]
 
         if (self.dim == 0):
             i0 += -1-self.loc[0]
@@ -327,11 +328,11 @@ class Scalar(Node):
 
 # Define functions.
 def interpx(inner):
-    return NodeStencilFour(inner, 0, "ci0", "ci1", "ci2", "ci3")
+    return NodeStencilFour(inner, 0, "interp4", "", "", "")
 def interpy(inner):
-    return NodeStencilFour(inner, 1, "ci0", "ci1", "ci2", "ci3")
+    return NodeStencilFour(inner, 1, "interp4", "", "", "")
 def interpz(inner):
-    return NodeStencilFour(inner, 2, "ci0", "ci1", "ci2", "ci3")
+    return NodeStencilFour(inner, 2, "interp4", "", "", "")
 
 # Shortcuts for double interpolation
 def interpxy(inner):
@@ -344,11 +345,11 @@ def interpxyz(inner):
     return interpz(interpy(interpx(inner)))
 
 def gradx(inner):
-    return NodeStencilFour(inner, 0, "cg0", "cg1", "cg2", "cg3")
+    return NodeStencilFour(inner, 0, "grad4", "", "", "")
 def grady(inner):
-    return NodeStencilFour(inner, 1, "cg0", "cg1", "cg2", "cg3")
+    return NodeStencilFour(inner, 1, "grad4", "", "", "")
 def gradz(inner):
-    return NodeStencilFour(inner, 2, "cg0", "cg1", "cg2", "cg3")
+    return NodeStencilFour(inner, 2, "grad4", "", "", "")
 
 def printEmptyLine(n=1):
     for i in range(n):
