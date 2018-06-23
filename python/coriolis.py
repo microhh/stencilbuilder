@@ -20,6 +20,8 @@ vgrid = Scalar("vgrid")
 utrhs = fc * ( interpx( interpy( v ) ) + vgrid - vg )
 vtrhs = fc * ( interpx( interpy( u ) ) + ugrid - ug )
 
-printStencil(ut, utrhs, "+=")
-printEmptyLine()
-printLoop(vt, vtrhs, "-=")
+printStencil(ut, utrhs, "+=", "int")
+printStencil(vt, vtrhs, "+=", "int")
+
+#printEmptyLine()
+#printLoop(vt, vtrhs, "-=", "int")

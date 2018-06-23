@@ -255,7 +255,7 @@ class NodeStencilFour(Node):
             lb = ''
             for n in range(2, self.depth):
                 lb = lb + '\n'
-            return "{ob}{c0}*{0}\n{lb}{ws}+ {c1}*{1}\n{lb}{ws}+ {c2}*{2}\n{lb}{ws}+ {c3}*{3}{cb}".format(
+            return "{c0}{ob}{0} ,\n{lb}{ws}{1} ,\n{lb}{ws}{2} ,\n{lb}{ws}{3}{cb}".format(
                 self.inner.getString(i0, j0, k0, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i1, j1, k1, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i2, j2, k2, pad, newplane, label, max_depthk, self.depthk),
@@ -263,7 +263,7 @@ class NodeStencilFour(Node):
                 ws=ws, lb=lb, ob=ob, cb=cb,
                 c0=c0, c1=c1, c2=c2, c3=c3)
         else:
-            return "{ob}{c0}*{0} + {c1}*{1} + {c2}*{2} + {c3}*{3}{cb}".format(
+            return "{c0}{ob}{0}, {1}, {2}, {3}{cb}".format(
                 self.inner.getString(i0, j0, k0, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i1, j1, k1, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i2, j2, k2, pad, newplane, label, max_depthk, self.depthk),
