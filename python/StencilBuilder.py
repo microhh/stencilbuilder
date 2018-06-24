@@ -130,7 +130,7 @@ class NodeOperatorPower(Node):
                                              self.power, ob=ob, cb=cb)
 
 class NodeStencilFour(Node):
-    def __init__(self, inner, dim, c0, c1, c2, c3):
+    def __init__(self, inner, dim, c0):
         self.inner = inner
         self.depth = inner.depth + 1
         self.depthk = inner.depthk + 1 if dim == 2 else inner.depthk
@@ -142,9 +142,6 @@ class NodeStencilFour(Node):
         self.loc[dim] = not self.loc[dim]
 
         self.c0 = c0
-        self.c1 = c1
-        self.c2 = c2
-        self.c3 = c3
 
     def getString(self, i, j, k, pad, plane, label, max_depthk, outer_depthk):
         max_depthk = max(max_depthk, self.depthk)
@@ -155,9 +152,6 @@ class NodeStencilFour(Node):
 
         bias = 0
         c0 = self.c0[:] + "c"
-        c1 = self.c1[:]
-        c2 = self.c2[:]
-        c3 = self.c3[:]
 
         # Check in which cells biased schemes need to be applied.
         if (self.dim == 2):
@@ -189,9 +183,6 @@ class NodeStencilFour(Node):
 
                 bias = 1
                 c0 = self.c0[:] + "b"
-                c1 = self.c1[:]
-                c2 = self.c2[:]
-                c3 = self.c3[:]
 
             # RULES (More complex than bot, because of grid indexing):
             elif ( ( label == "top" and self.depthk == 1 and self.loc[2] == 0 and k == 0 + top_shift ) or
@@ -217,9 +208,6 @@ class NodeStencilFour(Node):
 
                 bias = -1
                 c0 = self.c0[:] + "t"
-                c1 = self.c1[:]
-                c2 = self.c2[:]
-                c3 = self.c3[:]
 
         if (self.dim == 0):
             i0 += -1-self.loc[0]
@@ -257,16 +245,14 @@ class NodeStencilFour(Node):
                 self.inner.getString(i1, j1, k1, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i2, j2, k2, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i3, j3, k3, pad, newplane, label, max_depthk, self.depthk),
-                ws=ws, lb=lb, ob=ob, cb=cb,
-                c0=c0, c1=c1, c2=c2, c3=c3)
+                ws=ws, lb=lb, ob=ob, cb=cb, c0=c0)
         else:
             return "{c0}{ob}{0}, {1}, {2}, {3}{cb}".format(
                 self.inner.getString(i0, j0, k0, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i1, j1, k1, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i2, j2, k2, pad, newplane, label, max_depthk, self.depthk),
                 self.inner.getString(i3, j3, k3, pad, newplane, label, max_depthk, self.depthk),
-                ob=ob, cb=cb,
-                c0=c0, c1=c1, c2=c2, c3=c3)
+                ob=ob, cb=cb, c0=c0)
 
 def formatIndex(n, nstr):
     if (n > 0):
@@ -325,11 +311,11 @@ class Scalar(Node):
 
 # Define functions.
 def interpx(inner):
-    return NodeStencilFour(inner, 0, "interp4", "", "", "")
+    return NodeStencilFour(inner, 0, "interp4")
 def interpy(inner):
-    return NodeStencilFour(inner, 1, "interp4", "", "", "")
+    return NodeStencilFour(inner, 1, "interp4")
 def interpz(inner):
-    return NodeStencilFour(inner, 2, "interp4", "", "", "")
+    return NodeStencilFour(inner, 2, "interp4")
 
 # Shortcuts for double interpolation
 def interpxy(inner):
@@ -342,11 +328,11 @@ def interpxyz(inner):
     return interpz(interpy(interpx(inner)))
 
 def gradx(inner):
-    return NodeStencilFour(inner, 0, "grad4", "", "", "")
+    return NodeStencilFour(inner, 0, "grad4")
 def grady(inner):
-    return NodeStencilFour(inner, 1, "grad4", "", "", "")
+    return NodeStencilFour(inner, 1, "grad4")
 def gradz(inner):
-    return NodeStencilFour(inner, 2, "grad4", "", "", "")
+    return NodeStencilFour(inner, 2, "grad4")
 
 def printEmptyLine(n=1):
     for i in range(n):
