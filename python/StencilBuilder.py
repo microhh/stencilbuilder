@@ -129,6 +129,121 @@ class NodeOperatorPower(Node):
             return "{ob}{0}, {1}{cb}".format(self.inner.getString(i, j, k, pad, plane, label, max_depthk, self.depthk),
                                              self.power, ob=ob, cb=cb)
 
+class NodeStencilTwo(Node):
+    def __init__(self, inner, dim, c0):
+        self.inner = inner
+        self.depth = inner.depth + 1
+        self.depthk = inner.depthk + 1 if dim == 2 else inner.depthk
+
+        self.pad = 6
+
+        self.dim = dim
+        self.loc = np.copy(inner.loc)
+        self.loc[dim] = not self.loc[dim]
+
+        self.c0 = c0
+
+    def getString(self, i, j, k, pad, plane, label, max_depthk, outer_depthk):
+        max_depthk = max(max_depthk, self.depthk)
+
+        i0 = i1 = i
+        j0 = j1 = j
+        k0 = k1 = k
+
+        bias = 0
+        c0 = self.c0[:] + "c"
+
+        # Check in which cells biased schemes need to be applied.
+        if (self.dim == 2):
+            # Check if the stencil has an odd depth, to take into account the staggering
+            # If the stencil is evaluated at the cell faces, add one grid point, otherwise remove one
+            if (max_depthk % 2 == 1):
+                top_shift = 1 if ( (self.depthk % 2) != self.loc[2] ) else -1
+            else:
+                top_shift = 0
+
+            # RULES:
+            if ( ( label == "bot" and self.depthk == 1 and self.loc[2] == 0 and k == -1 ) or
+                 ( label == "bot" and self.depthk == 1 and self.loc[2] == 1 and k == -1 ) or
+                 ( label == "bot" and self.depthk == 2 and self.loc[2] == 0 and k == -1 ) or
+                 ( label == "bot" and self.depthk == 2 and self.loc[2] == 1 and k ==  0 ) or
+                 ( label == "bot" and self.depthk == 3 and self.loc[2] == 1 and k ==  0 ) or
+
+                 ( label == "bot+1" and self.depthk == 1 and self.loc[2] == 0 and k == -2 ) or
+                 ( label == "bot+1" and self.depthk == 1 and self.loc[2] == 1 and k == -2 ) or
+                 ( label == "bot+1" and self.depthk == 2 and self.loc[2] == 0 and k == -2 ) or
+                 ( label == "bot+1" and self.depthk == 2 and self.loc[2] == 1 and k == -1 ) or
+                 ( label == "bot+1" and self.depthk == 3 and self.loc[2] == 1 and k == -1 ) or
+
+                 ( label == "bot+2" and self.depthk == 1 and self.loc[2] == 0 and k == -3 ) or
+                 ( label == "bot+2" and self.depthk == 1 and self.loc[2] == 1 and k == -3 ) or
+                 ( label == "bot+2" and self.depthk == 2 and self.loc[2] == 0 and k == -3 ) or
+                 ( label == "bot+2" and self.depthk == 2 and self.loc[2] == 1 and k == -2 ) or
+                 ( label == "bot+2" and self.depthk == 3 and self.loc[2] == 1 and k == -2 ) ):
+
+                bias = 1
+                c0 = self.c0[:] + "b"
+
+            # RULES (More complex than bot, because of grid indexing):
+            elif ( ( label == "top" and self.depthk == 1 and self.loc[2] == 0 and k == 0 + top_shift ) or
+                   ( label == "top" and self.depthk == 2 and self.loc[2] == 1 and k == 0 + top_shift ) or
+
+                   ( label == "top" and self.depthk == 1 and self.loc[2] == 1 and k == 2 + top_shift ) or
+                   ( label == "top" and self.depthk == 2 and self.loc[2] == 0 and k == 1 + top_shift ) or
+                   ( label == "top" and self.depthk == 3 and self.loc[2] == 1 and k == 1 + top_shift ) or
+
+                   ( label == "top-1" and self.depthk == 1 and self.loc[2] == 0 and k == 1 + top_shift ) or
+                   ( label == "top-1" and self.depthk == 2 and self.loc[2] == 1 and k == 1 + top_shift ) or
+
+                   ( label == "top-1" and self.depthk == 1 and self.loc[2] == 1 and k == 3 + top_shift ) or
+                   ( label == "top-1" and self.depthk == 2 and self.loc[2] == 0 and k == 2 + top_shift ) or
+                   ( label == "top-1" and self.depthk == 3 and self.loc[2] == 1 and k == 2 + top_shift ) or
+
+                   ( label == "top-2" and self.depthk == 1 and self.loc[2] == 0 and k == 2 + top_shift ) or
+                   ( label == "top-2" and self.depthk == 2 and self.loc[2] == 1 and k == 2 + top_shift ) or
+
+                   ( label == "top-2" and self.depthk == 1 and self.loc[2] == 1 and k == 4 + top_shift ) or
+                   ( label == "top-2" and self.depthk == 2 and self.loc[2] == 0 and k == 3 + top_shift ) or
+                   ( label == "top-2" and self.depthk == 3 and self.loc[2] == 1 and k == 3 + top_shift ) ):
+
+                bias = -1
+                c0 = self.c0[:] + "t"
+
+        if (self.dim == 0):
+            i0 +=   -self.loc[0]
+            i1 += +1-self.loc[0]
+        elif (self.dim == 1):
+            j0 +=   -self.loc[1]
+            j1 += +1-self.loc[1]
+        elif (self.dim == 2):
+            k0 +=   -self.loc[2] + bias
+            k1 += +1-self.loc[2] + bias
+
+        ob = '( '
+        cb = ' )'
+
+        newplane = np.copy(plane)
+        if (self.depth-1 < 3):
+            newplane[self.dim] = 1
+
+        if (self.depth > 1):
+
+            ws = ''.rjust(pad + len(c0) + 2)
+            pad += self.pad + 2
+
+            lb = ''
+            for n in range(2, self.depth):
+                lb = lb + '\n'
+            return "{c0}{ob}{0} ,\n{lb}{ws}{1}{cb}".format(
+                self.inner.getString(i0, j0, k0, pad, newplane, label, max_depthk, self.depthk),
+                self.inner.getString(i1, j1, k1, pad, newplane, label, max_depthk, self.depthk),
+                ws=ws, lb=lb, ob=ob, cb=cb, c0=c0)
+        else:
+            return "{c0}{ob}{0}, {1}{cb}".format(
+                self.inner.getString(i0, j0, k0, pad, newplane, label, max_depthk, self.depthk),
+                self.inner.getString(i1, j1, k1, pad, newplane, label, max_depthk, self.depthk),
+                ob=ob, cb=cb, c0=c0)
+
 class NodeStencilFour(Node):
     def __init__(self, inner, dim, c0):
         self.inner = inner
@@ -333,6 +448,21 @@ def grady(inner):
     return NodeStencilFour(inner, 1, "grad4")
 def gradz(inner):
     return NodeStencilFour(inner, 2, "grad4")
+
+# Define functions.
+def interp2x(inner):
+    return NodeStencilTwo(inner, 0, "interp2")
+def interp2y(inner):
+    return NodeStencilTwo(inner, 1, "interp2")
+def interp2z(inner):
+    return NodeStencilTwo(inner, 2, "interp2")
+
+def grad2x(inner):
+    return NodeStencilTwo(inner, 0, "grad2")
+def grad2y(inner):
+    return NodeStencilTwo(inner, 1, "grad2")
+def grad2z(inner):
+    return NodeStencilTwo(inner, 2, "grad2")
 
 def printEmptyLine(n=1):
     for i in range(n):
