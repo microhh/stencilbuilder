@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import numpy as np
 
 # Define the location arrays
@@ -136,8 +134,7 @@ class NodeStencilFour(Node):
         self.inner = inner
         self.depth = inner.depth + 1
         self.depthk = inner.depthk + 1 if dim == 2 else inner.depthk
-        #if (self.depthk > 2):
-        #    raise RuntimeError("Type ({0}) exceeds maximum depth of 2: third order derivatives are not supported".format( type(inner).__name__))
+
         self.pad = 6
 
         self.dim = dim
@@ -157,7 +154,7 @@ class NodeStencilFour(Node):
         k0 = k1 = k2 = k3 = k
 
         bias = 0
-        c0 = self.c0[:]
+        c0 = self.c0[:] + "c"
         c1 = self.c1[:]
         c2 = self.c2[:]
         c3 = self.c3[:]
@@ -191,7 +188,7 @@ class NodeStencilFour(Node):
                  ( label == "bot+2" and self.depthk == 3 and self.loc[2] == 1 and k == -2 ) ):
 
                 bias = 1
-                c0 = self.c0[:] + "bot"
+                c0 = self.c0[:] + "b"
                 c1 = self.c1[:]
                 c2 = self.c2[:]
                 c3 = self.c3[:]
@@ -219,7 +216,7 @@ class NodeStencilFour(Node):
                    ( label == "top-2" and self.depthk == 3 and self.loc[2] == 1 and k == 3 + top_shift ) ):
 
                 bias = -1
-                c0 = self.c0[:] + "top"
+                c0 = self.c0[:] + "t"
                 c1 = self.c1[:]
                 c2 = self.c2[:]
                 c3 = self.c3[:]
