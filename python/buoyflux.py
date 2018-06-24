@@ -19,8 +19,8 @@ bw_pres  = Field("bw_pres" , wloc)
 
 visc = Scalar("visc")
 
-dxi = Scalar("cgi*dxi")
-dyi = Scalar("cgi*dyi")
+dxi = Scalar("dxi")
+dyi = Scalar("dyi")
 
 dzi4  = Vector("dzi4" , zloc )
 dzhi4 = Vector("dzhi4", zhloc)

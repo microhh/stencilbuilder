@@ -13,8 +13,8 @@ pmean    = Vector("pmean", zloc)
 
 visc     = Scalar("visc")
 cosalpha = Scalar("cos(alpha)")
-dxi      = Scalar("cgi*dxi")
-dyi      = Scalar("cgi*dyi")
+dxi      = Scalar("dxi")
+dyi      = Scalar("dyi")
 
 dzi4     = Vector("dzi4" , zloc )
 dzhi4    = Vector("dzhi4", zhloc)

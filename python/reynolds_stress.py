@@ -21,8 +21,8 @@ uw_shear = Field("uw_shear", uwloc)
 uw_diss  = Field("uw_diss" , uwloc)
 uw_rdstr = Field("uw_rdstr", uwloc)
 
-dxi = Scalar("cgi*dxi")
-dyi = Scalar("cgi*dyi")
+dxi = Scalar("dxi")
+dyi = Scalar("dyi")
 
 visc = Scalar("visc")
 
