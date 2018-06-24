@@ -246,8 +246,8 @@ class NodeStencilFour(Node):
 
         if (self.depth > 1):
 
-            ws = ''.rjust(pad)
-            pad += self.pad
+            ws = ''.rjust(pad + len(c0) + 2)
+            pad += self.pad + 2
 
             lb = ''
             for n in range(2, self.depth):
