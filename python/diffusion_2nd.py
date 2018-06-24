@@ -23,20 +23,8 @@ wtrhs = grad2x( grad2x(w) ) * dxidxi \
       + grad2y( grad2y(w) ) * dyidyi \
       + grad2z( grad2z(w) * dzi ) * dzhi
 
-printStencil(ut, utrhs, "=", "bot")
-printEmptyLine(3)
 printStencil(ut, utrhs, "=", "int")
-printEmptyLine(3)
-printStencil(ut, utrhs, "=", "top")
 
 printEmptyLine(6)
 
-printStencil(wt, wtrhs, "=", "bot")
-printEmptyLine(3)
-printStencil(wt, wtrhs, "=", "bot+1")
-printEmptyLine(3)
 printStencil(wt, wtrhs, "=", "int")
-printEmptyLine(3)
-printStencil(wt, wtrhs, "=", "top-1")
-printEmptyLine(3)
-printStencil(wt, wtrhs, "=", "top")
