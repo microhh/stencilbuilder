@@ -56,7 +56,7 @@ class Node(object):
 class NodeOperator(Node):
     def __init__(self, left, right, operatorString):
         # Swap the terms in case right is a scalar multiplication
-        self.left  = left  if ( not is_int_or_float(right) ) else Scalar('{0}'.format(right))
+        self.left  = left  if ( not is_int_or_float(right) ) else Scalar('TF({0})'.format(right))
         self.right = right if ( not is_int_or_float(right) ) else left
         self.operatorString = operatorString
         self.depth = max(self.left.depth, self.right.depth)
