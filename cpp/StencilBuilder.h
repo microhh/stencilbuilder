@@ -155,6 +155,12 @@ namespace StencilBuilder
         static inline double apply(const double left, const double right) { return left+right; }
     };
 
+    // Subtraction operator.
+    struct Subtract
+    {
+        static inline double apply(const double left, const double right) { return left-right; }
+    };
+
     // OPERATOR NODE CLASS
     // Operator node in expression tree.
     template<class Left, class Op, class Right>
@@ -195,6 +201,14 @@ namespace StencilBuilder
     {
         return Operator<Left, Add, Right>(left, right);
     }
+
+    // Template classes for the subtraction operators.
+    template<class Left, class Right>
+    inline Operator<Left, Subtract, Right> operator-(const Left& left, const Right& right)
+    {
+        return Operator<Left, Subtract, Right>(left, right);
+    }
+
 
     // Field class representing the field, whose operations expand compile time.
     class Field
