@@ -226,7 +226,6 @@ macro fd(arrays, ex)
     k = (ex.args[1] in [ Symbol("w"), Symbol("wt")]) ? -0.5 : 0
     ex = process_expr(ex, arrays.args, i, j, k)
 
-    println(ex)
     return esc(ex)
 end
 
@@ -239,20 +238,25 @@ function kernel!(
     @tturbo unroll=8 for k in ks:ke
         for j in js:je
             for i in is:ie
-                @fd (ut, u, v, w) ut += - gradx(interpx(u) * interpx(u)) - grady(interpx(v)*interpy(u)) - gradz(interpx(w)*interpz(u))
-                @fd (ut, u, v, w) ut += visc * (gradx(gradx(u)) - grady(grady(u)) - gradz(gradz(u)))
+                @fd (ut, u, v, w) ut += (
+                    - gradx(interpx(u) * interpx(u))
+                    - grady(interpx(v) * interpy(u))
+                    - gradz(interpx(w) * interpz(u))
+                    + visc * (gradx(gradx(u)))
+                    + visc * (grady(grady(u)))
+                    + visc * (gradz(gradz(u))) )
             end
         end
     end
 
-    # @tturbo unroll=8 for k in ks:ke
-    #     for j in js:je
-    #         for i in is:ie
-    #             @fd (ut, u) u += dt*ut
-    #             @fd (ut, u) ut = 0.f0
-    #         end
-    #     end
-    # end
+    @tturbo unroll=8 for k in ks:ke
+        for j in js:je
+            for i in is:ie
+                @fd (ut, u) u += dt*ut
+                @fd (ut, u) ut = 0.f0
+            end
+        end
+    end
 end
 
 ## Set the grid size.
