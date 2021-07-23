@@ -336,7 +336,7 @@ int main()
 
   auto end = std::chrono::high_resolution_clock::now();
   double elapsed = std::chrono::duration_cast<std::chrono::duration<double> >(end - start).count();
-  std::cout << "Elapsed time in loop (s): " << elapsed << std::endl;
+  std::cout << "Elapsed time in loop (ms): " << 1e3*elapsed/iter << std::endl;
 
   // Print a value in the middle of the field.
   std::cout << std::setprecision(8) << "u = " << u(itot/2, jtot/2, ktot/2) << std::endl;
