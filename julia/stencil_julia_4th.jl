@@ -235,21 +235,19 @@ function kernel!(
         visc, dxi, dyi, dzi, dt,
         is, ie, js, je, ks, ke)
 
-    @tturbo unroll=8 for k in ks:ke
+    @tturbo for k in ks:ke
         for j in js:je
             for i in is:ie
                 @fd (ut, u, v, w) ut += (
-                    - gradx(interpx(u) * interpx(u))
-                    - grady(interpx(v) * interpy(u))
-                    - gradz(interpx(w) * interpz(u))
-                    + visc * (gradx(gradx(u)))
-                    + visc * (grady(grady(u)))
-                    + visc * (gradz(gradz(u))) )
+                    - gradx(interpx(u) * interpx(u)) + visc * (gradx(gradx(u)))
+                    - grady(interpx(v) * interpy(u)) + visc * (grady(grady(u))) )
+                @fd (ut, u, v, w) ut += (
+                    - gradz(interpx(w) * interpz(u)) + visc * (gradz(gradz(u))) )
             end
         end
     end
 
-    @tturbo unroll=8 for k in ks:ke
+    @tturbo for k in ks:ke
         for j in js:je
             for i in is:ie
                 @fd (ut, u) u += dt*ut
