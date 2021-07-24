@@ -148,10 +148,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i+0.5, j, k)
                     args[n+3] = make_index(args[n+3], arrays, i+1.5, j, k)
                 end
-                args[n  ] = :( ( -1/16) * $(args[n  ])  )
-                args[n+1] = :( (  9/16) * $(args[n+1])  )
-                args[n+2] = :( (  9/16) * $(args[n+2])  )
-                args[n+3] = :( ( -1/16) * $(args[n+3])  )
+                args[n  ] = :( (-1/16) * $(args[n  ])  )
+                args[n+1] = :( ( 9/16) * $(args[n+1])  )
+                args[n+2] = :( ( 9/16) * $(args[n+2])  )
+                args[n+3] = :( (-1/16) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("interpy")
@@ -170,10 +170,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j+0.5, k)
                     args[n+3] = make_index(args[n+3], arrays, i, j+1.5, k)
                 end
-                args[n  ] = :( ( -1/16) * $(args[n  ])  )
-                args[n+1] = :( (  9/16) * $(args[n+1])  )
-                args[n+2] = :( (  9/16) * $(args[n+2])  )
-                args[n+3] = :( ( -1/16) * $(args[n+3])  )
+                args[n  ] = :( (-1/16) * $(args[n  ])  )
+                args[n+1] = :( ( 9/16) * $(args[n+1])  )
+                args[n+2] = :( ( 9/16) * $(args[n+2])  )
+                args[n+3] = :( (-1/16) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("interpz")
@@ -192,10 +192,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j, k+0.5)
                     args[n+3] = make_index(args[n+3], arrays, i, j, k+1.5)
                 end
-                args[n  ] = :( ( -1/16) * $(args[n  ])  )
-                args[n+1] = :( (  9/16) * $(args[n+1])  )
-                args[n+2] = :( (  9/16) * $(args[n+2])  )
-                args[n+3] = :( ( -1/16) * $(args[n+3])  )
+                args[n  ] = :( (-1/16) * $(args[n  ])  )
+                args[n+1] = :( ( 9/16) * $(args[n+1])  )
+                args[n+2] = :( ( 9/16) * $(args[n+2])  )
+                args[n+3] = :( (-1/16) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             else
@@ -213,10 +213,16 @@ macro fd(arrays, ex)
     i = (ex.args[1] in [ Symbol("u"), Symbol("ut")]) ? -0.5 : 0
     j = (ex.args[1] in [ Symbol("v"), Symbol("vt")]) ? -0.5 : 0
     k = (ex.args[1] in [ Symbol("w"), Symbol("wt")]) ? -0.5 : 0
+
+    if isa(arrays, Symbol)
+        arrays = :( [ $arrays ] )
+    end
+
     ex = process_expr(ex, arrays.args, i, j, k)
 
     println("Generated stencil: ")
     println(ex)
+    println("")
 
     return esc(ex)
 end
