@@ -2,6 +2,7 @@
 using BenchmarkTools
 using LoopVectorization
 
+
 ## Macros
 function make_index(a, arrays, i, j, k)
     if a in arrays
@@ -12,7 +13,7 @@ function make_index(a, arrays, i, j, k)
         if i < 0
             i_int = convert(Int, abs(i))
             ex_i = :( i-$i_int )
-        elseif i > 0 
+        elseif i > 0
             i_int = convert(Int, i)
             ex_i = :( i+$i_int )
         else
@@ -22,7 +23,7 @@ function make_index(a, arrays, i, j, k)
         if j < 0
             j_int = convert(Int, abs(j))
             ex_j = :( j-$j_int )
-        elseif j > 0 
+        elseif j > 0
             j_int = convert(Int, j)
             ex_j = :( j+$j_int )
         else
@@ -32,7 +33,7 @@ function make_index(a, arrays, i, j, k)
         if k < 0
             k_int = convert(Int, abs(k))
             ex_k = :( k-$k_int )
-        elseif k > 0 
+        elseif k > 0
             k_int = convert(Int, k)
             ex_k = :( k+$k_int )
         else
@@ -226,8 +227,12 @@ macro fd(arrays, ex)
     k = (ex.args[1] in [ Symbol("w"), Symbol("wt")]) ? -0.5 : 0
     ex = process_expr(ex, arrays.args, i, j, k)
 
+    println("Generated stencil: ")
+    println(ex)
+
     return esc(ex)
 end
+
 
 ## Advection, diffusion, time kernel.
 function kernel!(
@@ -257,23 +262,39 @@ function kernel!(
     end
 end
 
-## Set the grid size.
+
+## Initialize the grid.
 itot = 384; jtot = 384; ktot = 384
 igc = 4; jgc = 4; kgc = 4
 
+dx = 1/itot; dy = 1/jtot; dz = 1/ktot
+dxi = 1/dx; dyi = 1/dy; dzi = 1/dz
+x = dx*collect(0:itot-1)
+y = dy*collect(0:jtot-1)
+z = dz*collect(0:ktot-1)
+
+
 ## Solve the problem in double precision.
 visc = 1.5
-dxi = sqrt(0.1)
-dyi = sqrt(0.1)
-dzi = sqrt(0.1)
-dt = 1.f-3
+dt = 1.e-3
 
-u = rand(Float64, (itot+2*igc, jtot+2*kgc, ktot+2*kgc))
-v = rand(Float64, (itot+2*igc, jtot+2*kgc, ktot+2*kgc))
-w = rand(Float64, (itot+2*igc, jtot+2*kgc, ktot+2*kgc))
+u = zeros(Float64, (itot+2*igc, jtot+2*kgc, ktot+2*kgc))
+v = zeros(Float64, (itot+2*igc, jtot+2*kgc, ktot+2*kgc))
+w = zeros(Float64, (itot+2*igc, jtot+2*kgc, ktot+2*kgc))
 ut = zeros(Float64, (itot+2*igc, jtot+2*kgc, ktot+2*kgc))
 
+
+## Initialize with a sinus.
+n_waves = 3
+is = igc+1; ie = igc+ktot; js = jgc+1; je = jgc+jtot; ks = kgc+1; ke = kgc+ktot
+ijk = [is:ie, js:je, ks:ke]
+u[ijk...] = [ sin(n_waves*2*pi*x) + cos(n_waves*2*pi*y) + sin(n_waves*2*pi*z) for x=x, y=y, z=z]
+
+
+## Run kernel.
+is = igc+1; ie = igc+itot; js = jgc+1; je = jgc+jtot; ks = kgc+1; ke = kgc+ktot
 @btime kernel!(
-        ut, u, v, w,
-        visc, dxi, dyi, dzi, dt,
-        igc+1, igc+itot, jgc+1, jgc+jtot, kgc+1, kgc+ktot)
+        $ut, $u, $v, $w,
+        $visc, $dxi, $dyi, $dzi, $dt,
+        $is, $ie, $js, $je, $ks, $ke)
+
