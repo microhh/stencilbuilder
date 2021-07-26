@@ -238,7 +238,8 @@ function kernel!(
         for j in js:je
             for i in is:ie
                 @fd (ut, u, v, w) ut += (
-                    - gradx(interpx(u) * interpx(u)) + visc * (gradx(gradx(u)))
+                    - gradx(interpx(u) * interpx(u)) + visc * (gradx(gradx(u))) )
+                @fd (ut, u, v, w) ut += (
                     - grady(interpx(v) * interpy(u)) + visc * (grady(grady(u))) )
                 @fd (ut, u, v, w) ut += (
                     - gradz(interpx(w) * interpz(u)) + visc * (gradz(gradz(u))) )

@@ -234,14 +234,15 @@ function kernel!(
         visc, dxi, dyi, dzi, dt,
         is, ie, js, je, ks, ke)
 
-    ci1 = -1/16; ci2 =   9/16; ci3 =  9/16; ci4 =  -1/16
-    cg1 =  1/24; cg2 = -27/24; cg3 = 27/24; cg4 =  -1/24
+    ci1 = -1/16; ci2 =   9/16; ci3 =  9/16; ci4 = -1/16
+    cg1 =  1/24; cg2 = -27/24; cg3 = 27/24; cg4 = -1/24
 
     @tturbo for k in ks:ke
         for j in js:je
             for i in is:ie
                 @fd (ut, u, v, w) ut += (
-                    - gradx(interpx(u) * interpx(u)) + visc * (gradx(gradx(u)))
+                    - gradx(interpx(u) * interpx(u)) + visc * (gradx(gradx(u))) )
+                @fd (ut, u, v, w) ut += (
                     - grady(interpx(v) * interpy(u)) + visc * (grady(grady(u))) )
                 @fd (ut, u, v, w) ut += (
                     - gradz(interpx(w) * interpz(u)) + visc * (gradz(gradz(u))) )
