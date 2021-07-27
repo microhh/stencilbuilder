@@ -1,6 +1,7 @@
 ## Packages
 using BenchmarkTools
 using LoopVectorization
+using Tullio
 
 
 ## Macros
