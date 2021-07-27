@@ -282,8 +282,8 @@ ut = zeros(Float64, (itot+2*igc, jtot+2*kgc, ktot+2*kgc))
 ## Initialize with a sinus.
 n_waves = 3
 is = igc+1; ie = igc+ktot; js = jgc+1; je = jgc+jtot; ks = kgc+1; ke = kgc+ktot
-ijk = [is:ie, js:je, ks:ke]
-u[ijk...] = [ sin(n_waves*2*pi*x) + cos(n_waves*2*pi*y) + sin(n_waves*2*pi*z) for x=x, y=y, z=z]
+uc = @view u[is:ie, js:je, ks:ke]
+@tullio uc = sin(n_waves*2*pi*x[i]) + cos(n_waves*2*pi*y[j]) + sin(n_waves*2*pi*z[k])
 
 
 ## Run kernel.
