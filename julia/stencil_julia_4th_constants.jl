@@ -48,6 +48,9 @@ function make_index(a, arrays, i, j, k)
 end
 
 function process_expr(ex, arrays, i, j, k)
+    ci1 = -1//16; ci2 =   9//16; ci3 =  9//16; ci4 = -1//16
+    cg1 =  1//24; cg2 = -27//24; cg3 = 27//24; cg4 = -1//24
+
     n = 1
 
     if (isa(ex.args[1], Symbol) && ex.args[1] == Symbol("gradx"))
@@ -83,10 +86,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i+0.5, j, k)
                     args[n+3] = make_index(args[n+3], arrays, i+1.5, j, k)
                 end
-                args[n  ] = :( cg1 * $(args[n  ])  )
-                args[n+1] = :( cg2 * $(args[n+1])  )
-                args[n+2] = :( cg3 * $(args[n+2])  )
-                args[n+3] = :( cg4 * $(args[n+3])  )
+                args[n  ] = :( $cg1 * $(args[n  ])  )
+                args[n+1] = :( $cg2 * $(args[n+1])  )
+                args[n+2] = :( $cg3 * $(args[n+2])  )
+                args[n+3] = :( $cg4 * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("grady_")
@@ -105,10 +108,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j+0.5, k)
                     args[n+3] = make_index(args[n+3], arrays, i, j+1.5, k)
                 end
-                args[n  ] = :( cg1 * $(args[n  ])  )
-                args[n+1] = :( cg2 * $(args[n+1])  )
-                args[n+2] = :( cg3 * $(args[n+2])  )
-                args[n+3] = :( cg4 * $(args[n+3])  )
+                args[n  ] = :( $cg1 * $(args[n  ])  )
+                args[n+1] = :( $cg2 * $(args[n+1])  )
+                args[n+2] = :( $cg3 * $(args[n+2])  )
+                args[n+3] = :( $cg4 * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("gradz_")
@@ -127,10 +130,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j, k+0.5)
                     args[n+3] = make_index(args[n+3], arrays, i, j, k+1.5)
                 end
-                args[n  ] = :( cg1 * $(args[n  ])  )
-                args[n+1] = :( cg2 * $(args[n+1])  )
-                args[n+2] = :( cg3 * $(args[n+2])  )
-                args[n+3] = :( cg4 * $(args[n+3])  )
+                args[n  ] = :( $cg1 * $(args[n  ])  )
+                args[n+1] = :( $cg2 * $(args[n+1])  )
+                args[n+2] = :( $cg3 * $(args[n+2])  )
+                args[n+3] = :( $cg4 * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("interpx")
@@ -149,10 +152,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i+0.5, j, k)
                     args[n+3] = make_index(args[n+3], arrays, i+1.5, j, k)
                 end
-                args[n  ] = :( ci1 * $(args[n  ])  )
-                args[n+1] = :( ci2 * $(args[n+1])  )
-                args[n+2] = :( ci3 * $(args[n+2])  )
-                args[n+3] = :( ci4 * $(args[n+3])  )
+                args[n  ] = :( $ci1 * $(args[n  ])  )
+                args[n+1] = :( $ci2 * $(args[n+1])  )
+                args[n+2] = :( $ci3 * $(args[n+2])  )
+                args[n+3] = :( $ci4 * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("interpy")
@@ -171,10 +174,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j+0.5, k)
                     args[n+3] = make_index(args[n+3], arrays, i, j+1.5, k)
                 end
-                args[n  ] = :( ci1 * $(args[n  ])  )
-                args[n+1] = :( ci2 * $(args[n+1])  )
-                args[n+2] = :( ci3 * $(args[n+2])  )
-                args[n+3] = :( ci4 * $(args[n+3])  )
+                args[n  ] = :( $ci1 * $(args[n  ])  )
+                args[n+1] = :( $ci2 * $(args[n+1])  )
+                args[n+2] = :( $ci3 * $(args[n+2])  )
+                args[n+3] = :( $ci4 * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("interpz")
@@ -193,10 +196,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j, k+0.5)
                     args[n+3] = make_index(args[n+3], arrays, i, j, k+1.5)
                 end
-                args[n  ] = :( ci1 * $(args[n  ])  )
-                args[n+1] = :( ci2 * $(args[n+1])  )
-                args[n+2] = :( ci3 * $(args[n+2])  )
-                args[n+3] = :( ci4 * $(args[n+3])  )
+                args[n  ] = :( $ci1 * $(args[n  ])  )
+                args[n+1] = :( $ci2 * $(args[n+1])  )
+                args[n+2] = :( $ci3 * $(args[n+2])  )
+                args[n+3] = :( $ci4 * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             else
@@ -228,6 +231,19 @@ macro fd(arrays, ex)
     return esc(ex)
 end
 
+macro fast3d(ex)
+    ex_loop = quote
+        @tturbo unroll=4 for k in ks:ke
+            for j in js:je
+                for i in is:ie
+                    $ex
+                end
+            end
+        end
+    end
+    return esc(ex_loop)
+end
+
 
 ## Advection, diffusion, time kernel.
 function kernel!(
@@ -235,35 +251,22 @@ function kernel!(
         visc, dxi, dyi, dzi, dt,
         is, ie, js, je, ks, ke)
 
-    ci1 = -1/16; ci2 =   9/16; ci3 =  9/16; ci4 = -1/16
-    cg1 =  1/24; cg2 = -27/24; cg3 = 27/24; cg4 = -1/24
-
-    @tturbo for k in ks:ke
-        for j in js:je
-            for i in is:ie
-                @fd (ut, u, v, w) ut += (
-                    - gradx(interpx(u) * interpx(u)) + visc * (gradx(gradx(u))) )
-                @fd (ut, u, v, w) ut += (
-                    - grady(interpx(v) * interpy(u)) + visc * (grady(grady(u))) )
-                @fd (ut, u, v, w) ut += (
-                    - gradz(interpx(w) * interpz(u)) + visc * (gradz(gradz(u))) )
-            end
-        end
+    @fast3d begin
+        @fd (ut, u, v, w) ut += (
+            - gradx(interpx(u) * interpx(u)) + visc * (gradx(gradx(u)))
+            - grady(interpx(v) * interpy(u)) + visc * (grady(grady(u)))
+            - gradz(interpx(w) * interpz(u)) + visc * (gradz(gradz(u))) )
     end
 
-    @tturbo for k in ks:ke
-        for j in js:je
-            for i in is:ie
-                @fd (ut, u) u += dt*ut
-                @fd (ut, u) ut = 0.f0
-            end
-        end
+    @fast3d begin
+        @fd (ut, u) u += dt*ut
+        @fd (ut, u) ut = 0
     end
 end
 
 
 ## Initialize the grid.
-itot = 384; jtot = 384; ktot = 384
+itot = 512; jtot = 512; ktot = 512
 igc = 4; jgc = 4; kgc = 4
 
 dx = 1/itot; dy = 1/jtot; dz = 1/ktot

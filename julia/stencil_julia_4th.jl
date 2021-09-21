@@ -83,10 +83,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i+0.5, j, k)
                     args[n+3] = make_index(args[n+3], arrays, i+1.5, j, k)
                 end
-                args[n  ] = :( (  1/24) * $(args[n  ])  )
-                args[n+1] = :( (-27/24) * $(args[n+1])  )
-                args[n+2] = :( ( 27/24) * $(args[n+2])  )
-                args[n+3] = :( ( -1/24) * $(args[n+3])  )
+                args[n  ] = :( (  1//24) * $(args[n  ])  )
+                args[n+1] = :( (-27//24) * $(args[n+1])  )
+                args[n+2] = :( ( 27//24) * $(args[n+2])  )
+                args[n+3] = :( ( -1//24) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("grady_")
@@ -105,10 +105,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j+0.5, k)
                     args[n+3] = make_index(args[n+3], arrays, i, j+1.5, k)
                 end
-                args[n  ] = :( (  1/24) * $(args[n  ])  )
-                args[n+1] = :( (-27/24) * $(args[n+1])  )
-                args[n+2] = :( ( 27/24) * $(args[n+2])  )
-                args[n+3] = :( ( -1/24) * $(args[n+3])  )
+                args[n  ] = :( (  1//24) * $(args[n  ])  )
+                args[n+1] = :( (-27//24) * $(args[n+1])  )
+                args[n+2] = :( ( 27//24) * $(args[n+2])  )
+                args[n+3] = :( ( -1//24) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("gradz_")
@@ -127,10 +127,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j, k+0.5)
                     args[n+3] = make_index(args[n+3], arrays, i, j, k+1.5)
                 end
-                args[n  ] = :( (  1/24) * $(args[n  ])  )
-                args[n+1] = :( (-27/24) * $(args[n+1])  )
-                args[n+2] = :( ( 27/24) * $(args[n+2])  )
-                args[n+3] = :( ( -1/24) * $(args[n+3])  )
+                args[n  ] = :( (  1//24) * $(args[n  ])  )
+                args[n+1] = :( (-27//24) * $(args[n+1])  )
+                args[n+2] = :( ( 27//24) * $(args[n+2])  )
+                args[n+3] = :( ( -1//24) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("interpx")
@@ -149,10 +149,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i+0.5, j, k)
                     args[n+3] = make_index(args[n+3], arrays, i+1.5, j, k)
                 end
-                args[n  ] = :( (-1/16) * $(args[n  ])  )
-                args[n+1] = :( ( 9/16) * $(args[n+1])  )
-                args[n+2] = :( ( 9/16) * $(args[n+2])  )
-                args[n+3] = :( (-1/16) * $(args[n+3])  )
+                args[n  ] = :( (-1//16) * $(args[n  ])  )
+                args[n+1] = :( ( 9//16) * $(args[n+1])  )
+                args[n+2] = :( ( 9//16) * $(args[n+2])  )
+                args[n+3] = :( (-1//16) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("interpy")
@@ -171,10 +171,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j+0.5, k)
                     args[n+3] = make_index(args[n+3], arrays, i, j+1.5, k)
                 end
-                args[n  ] = :( (-1/16) * $(args[n  ])  )
-                args[n+1] = :( ( 9/16) * $(args[n+1])  )
-                args[n+2] = :( ( 9/16) * $(args[n+2])  )
-                args[n+3] = :( (-1/16) * $(args[n+3])  )
+                args[n  ] = :( (-1//16) * $(args[n  ])  )
+                args[n+1] = :( ( 9//16) * $(args[n+1])  )
+                args[n+2] = :( ( 9//16) * $(args[n+2])  )
+                args[n+3] = :( (-1//16) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             elseif args[n] == Symbol("interpz")
@@ -193,10 +193,10 @@ function process_expr(ex, arrays, i, j, k)
                     args[n+2] = make_index(args[n+2], arrays, i, j, k+0.5)
                     args[n+3] = make_index(args[n+3], arrays, i, j, k+1.5)
                 end
-                args[n  ] = :( (-1/16) * $(args[n  ])  )
-                args[n+1] = :( ( 9/16) * $(args[n+1])  )
-                args[n+2] = :( ( 9/16) * $(args[n+2])  )
-                args[n+3] = :( (-1/16) * $(args[n+3])  )
+                args[n  ] = :( (-1//16) * $(args[n  ])  )
+                args[n+1] = :( ( 9//16) * $(args[n+1])  )
+                args[n+2] = :( ( 9//16) * $(args[n+2])  )
+                args[n+3] = :( (-1//16) * $(args[n+3])  )
                 insert!(args, n, Symbol("+"))
                 n += 5
             else
@@ -252,7 +252,7 @@ function kernel!(
         for j in js:je
             for i in is:ie
                 @fd (ut, u) u += dt*ut
-                @fd (ut, u) ut = 0.f0
+                @fd (ut, u) ut = 0
             end
         end
     end
@@ -260,7 +260,7 @@ end
 
 
 ## Initialize the grid.
-itot = 384; jtot = 384; ktot = 384
+itot = 512; jtot = 512; ktot = 512
 igc = 4; jgc = 4; kgc = 4
 
 dx = 1/itot; dy = 1/jtot; dz = 1/ktot
